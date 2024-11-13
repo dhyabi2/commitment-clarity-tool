@@ -18,10 +18,12 @@ const ThoughtsList = ({ thoughts, onDelete, onToggleComplete }: ThoughtsListProp
     return (
       <Card className="p-8 text-center bg-white/50 backdrop-blur-sm">
         <h2 className="text-xl font-semibold text-sage-600 mb-2">
-          No thoughts found
+          {thoughts.some(t => t.completed) ? 'No completed thoughts' : 'No thoughts found'}
         </h2>
         <p className="text-sage-500 mb-4">
-          Start by capturing your thoughts in the brain dump area
+          {thoughts.some(t => t.completed) 
+            ? 'Complete some thoughts to see them here'
+            : 'Start by capturing your thoughts in the brain dump area'}
         </p>
         <Button 
           onClick={() => navigate('/')} 
@@ -38,9 +40,12 @@ const ThoughtsList = ({ thoughts, onDelete, onToggleComplete }: ThoughtsListProp
       {thoughts.map((thought) => (
         <Card key={thought.id} className="group hover:shadow-md transition-all duration-300 bg-white/80 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between p-4">
-            <time className="text-sm text-sage-500">
-              {format(new Date(thought.created_at), 'MMM d, yyyy h:mm a')}
-            </time>
+            <div className="flex items-center gap-2">
+              <CheckCircle className={`h-5 w-5 ${thought.completed ? 'text-green-500' : 'text-gray-300'}`} />
+              <time className="text-sm text-sage-500">
+                {format(new Date(thought.created_at), 'MMM d, yyyy h:mm a')}
+              </time>
+            </div>
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
@@ -71,7 +76,9 @@ const ThoughtsList = ({ thoughts, onDelete, onToggleComplete }: ThoughtsListProp
             </div>
           </CardHeader>
           <CardContent className="p-4 pt-0">
-            <p className="text-gray-800 text-left">{thought.content}</p>
+            <p className={`text-gray-800 text-left ${thought.completed ? 'line-through text-gray-500' : ''}`}>
+              {thought.content}
+            </p>
           </CardContent>
         </Card>
       ))}

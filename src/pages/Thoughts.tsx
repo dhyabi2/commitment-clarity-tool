@@ -18,6 +18,7 @@ const Thoughts = () => {
       const { data, error } = await supabase
         .from('thoughts')
         .select('*')
+        .eq('completed', showCompleted)
         .order('created_at', { ascending: false });
       
       if (error) throw error;
@@ -89,15 +90,17 @@ const Thoughts = () => {
     );
   }
 
-  const filteredThoughts = thoughts?.filter(thought => thought.completed === showCompleted) || [];
-
   return (
     <div className="min-h-screen bg-cream p-4 pb-20 md:pb-4">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-sage-600 mb-2">Your Captured Thoughts</h1>
+          <h1 className="text-3xl font-bold text-sage-600 mb-2">
+            {showCompleted ? 'Completed Thoughts' : 'Active Thoughts'}
+          </h1>
           <p className="text-sage-500 mb-4">
-            Review and clarify your thoughts to turn them into actionable commitments
+            {showCompleted 
+              ? 'Review and manage your completed thoughts'
+              : 'Review and clarify your thoughts to turn them into actionable commitments'}
           </p>
           <Button
             onClick={() => setShowCompleted(!showCompleted)}
@@ -124,7 +127,7 @@ const Thoughts = () => {
         )}
 
         <ThoughtsList 
-          thoughts={filteredThoughts}
+          thoughts={thoughts || []}
           onDelete={(id) => deleteThoughtMutation.mutate(id)}
           onToggleComplete={(id, completed) => toggleCompleteMutation.mutate({ thoughtId: id, completed })}
         />
