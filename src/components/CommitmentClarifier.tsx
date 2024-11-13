@@ -59,23 +59,23 @@ const CommitmentClarifier = () => {
   };
 
   return (
-    <Card className="p-6 animate-fade-in">
-      <h2 className="text-2xl font-semibold mb-4">Clarify Your Commitment</h2>
-      <div className="space-y-6">
+    <Card className="p-4 sm:p-6 animate-fade-in">
+      <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Clarify Your Commitment</h2>
+      <div className="space-y-4 sm:space-y-6">
         {step === 1 ? (
-          <div className="space-y-4">
-            <p className="text-gray-600">
+          <div className="space-y-3 sm:space-y-4">
+            <p className="text-gray-600 text-sm sm:text-base">
               What would need to happen for this to be complete?
             </p>
             <Input
               value={outcome}
               onChange={(e) => setOutcome(e.target.value)}
               placeholder="Describe the successful outcome..."
-              className="input-field"
+              className="input-field text-sm sm:text-base"
             />
             <Button 
               onClick={handleNext} 
-              className="btn-primary"
+              className="w-full sm:w-auto btn-primary"
               disabled={!outcome}
             >
               Next
@@ -83,19 +83,19 @@ const CommitmentClarifier = () => {
             </Button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <p className="text-gray-600">
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+            <p className="text-gray-600 text-sm sm:text-base">
               What's the very next physical action required?
             </p>
             <Input
               value={nextAction}
               onChange={(e) => setNextAction(e.target.value)}
               placeholder="What's the next action?"
-              className="input-field"
+              className="input-field text-sm sm:text-base"
             />
             <Button 
               type="submit" 
-              className="btn-primary"
+              className="w-full sm:w-auto btn-primary"
               disabled={addCommitmentMutation.isPending}
             >
               Save Commitment

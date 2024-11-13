@@ -49,25 +49,25 @@ const ActiveCommitments = () => {
   });
 
   if (isLoading) {
-    return <div>Loading commitments...</div>;
+    return <div className="p-4 text-center text-gray-600">Loading commitments...</div>;
   }
 
   return (
-    <div className="animate-fade-in">
-      <h2 className="text-2xl font-semibold mb-4">Active Commitments</h2>
-      <div className="grid gap-4">
+    <div className="animate-fade-in p-4 sm:p-0">
+      <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Active Commitments</h2>
+      <div className="grid gap-3 sm:gap-4">
         {commitments?.filter(c => !c.completed).map((commitment) => (
-          <Card key={commitment.id} className="commitment-card">
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 className="font-medium text-lg">{commitment.outcome}</h3>
+          <Card key={commitment.id} className="commitment-card p-4 sm:p-6">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-medium text-base sm:text-lg truncate">{commitment.outcome}</h3>
                 <div className="flex items-center mt-2 text-gray-600">
-                  <Clock className="h-4 w-4 mr-2" />
-                  <p>{commitment.nextAction}</p>
+                  <Clock className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <p className="text-sm sm:text-base truncate">{commitment.nextAction}</p>
                 </div>
               </div>
               <button 
-                className="p-2 hover:bg-sage-100 rounded-full transition-colors"
+                className="p-2 hover:bg-sage-100 rounded-full transition-colors flex-shrink-0"
                 onClick={() => completeCommitmentMutation.mutate(commitment.id)}
                 disabled={completeCommitmentMutation.isPending}
               >

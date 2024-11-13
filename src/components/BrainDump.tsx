@@ -61,21 +61,21 @@ const BrainDump = () => {
   };
 
   return (
-    <div className="animate-fade-in">
-      <h2 className="text-2xl font-semibold mb-4">Brain Dump</h2>
-      <p className="text-gray-600 mb-4">
+    <div className="animate-fade-in p-4 sm:p-0">
+      <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Brain Dump</h2>
+      <p className="text-gray-600 text-sm sm:text-base mb-4">
         Clear your mind by capturing any unfinished thoughts or tasks here.
       </p>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
         <Textarea
           value={thought}
           onChange={(e) => setThought(e.target.value)}
           placeholder="What's on your mind?"
-          className="min-h-[150px] input-field"
+          className="min-h-[120px] sm:min-h-[150px] input-field text-sm sm:text-base"
         />
         <Button 
           type="submit" 
-          className="btn-primary"
+          className="w-full sm:w-auto btn-primary"
           disabled={addThoughtMutation.isPending}
         >
           <Plus className="mr-2 h-4 w-4" />

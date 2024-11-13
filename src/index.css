@@ -37,13 +37,13 @@
 }
 
 .commitment-card {
-  @apply bg-white rounded-lg p-6 shadow-sm transition-all duration-200 hover:shadow-md;
+  @apply bg-white rounded-lg shadow-sm transition-all duration-200 hover:shadow-md;
 }
 
 .input-field {
-  @apply w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-sage-400;
+  @apply w-full rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-sage-400;
 }
 
 .btn-primary {
-  @apply bg-sage-400 text-white px-4 py-2 rounded-md hover:bg-sage-500 transition-colors;
+  @apply bg-sage-400 text-white px-4 py-2 rounded-md hover:bg-sage-500 transition-colors flex items-center justify-center;
 }
