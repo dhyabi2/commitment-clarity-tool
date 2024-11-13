@@ -38,12 +38,6 @@ const Auth = () => {
     }
   };
 
-  const handleTemporaryAccess = () => {
-    sessionStorage.setItem("temporaryAccess", "true");
-    navigate("/");
-    toast.warning("Using temporary access mode - Not secure for production!");
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-sage-50/50 p-4">
       <Card className="w-full max-w-md">
@@ -76,25 +70,6 @@ const Auth = () => {
               />
             </svg>
             Continue with Google
-          </Button>
-          
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-muted-foreground">
-                Temporary Access (Development Only)
-              </span>
-            </div>
-          </div>
-
-          <Button 
-            variant="outline"
-            onClick={handleTemporaryAccess}
-            className="w-full bg-yellow-50 hover:bg-yellow-100 text-yellow-700 border-yellow-300"
-          >
-            ⚠️ Skip Authentication (Temporary)
           </Button>
         </CardContent>
       </Card>
