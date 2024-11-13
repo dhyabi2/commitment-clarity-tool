@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Thoughts from "./pages/Thoughts";
 import CommitmentClarifier from "./pages/CommitmentClarifier";
 import CompletedCommitments from "./pages/CompletedCommitments";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
             <Route path="/thoughts" element={<Thoughts />} />
             <Route path="/commitment-clarifier" element={<CommitmentClarifier />} />
             <Route path="/completed-commitments" element={<CompletedCommitments />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </div>
         <Navigation />
