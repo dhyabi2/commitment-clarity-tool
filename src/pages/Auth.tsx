@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Auth as SupabaseAuth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -71,17 +69,58 @@ const Auth = () => {
   const handleBiometricSignIn = async () => {
     setIsLoading(true);
     try {
-      // Implement WebAuthn authentication here
-      // This is a placeholder for the biometric authentication logic
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: "user@example.com",
-        password: "biometric-placeholder",
-      });
+      // Get the current user's session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        // If no session exists, we need to create a new credential
+        const credential = await navigator.credentials.create({
+          publicKey: {
+            challenge: new Uint8Array(32),
+            rp: {
+              name: "Your App Name",
+              id: window.location.hostname,
+            },
+            user: {
+              id: new Uint8Array(16),
+              name: email || "user@example.com",
+              displayName: "User",
+            },
+            pubKeyCredParams: [{
+              type: "public-key",
+              alg: -7
+            }],
+            authenticatorSelection: {
+              authenticatorAttachment: "platform",
+              userVerification: "required",
+            },
+            timeout: 60000,
+          }
+        });
 
-      if (error) throw error;
-      toast.success("Successfully signed in with biometrics!");
+        if (credential) {
+          // Use magic link as fallback after biometric authentication
+          await handleEmailSignIn(new Event('submit'));
+        }
+      } else {
+        // If session exists, we can get the credential
+        const assertion = await navigator.credentials.get({
+          publicKey: {
+            challenge: new Uint8Array(32),
+            rpId: window.location.hostname,
+            userVerification: "required",
+            timeout: 60000,
+          }
+        });
+
+        if (assertion) {
+          toast.success("Biometric authentication successful!");
+          navigate("/");
+        }
+      }
     } catch (error) {
-      toast.error("Biometric authentication failed");
+      console.error("Biometric authentication error:", error);
+      toast.error("Biometric authentication failed. Please try email sign-in.");
     } finally {
       setIsLoading(false);
     }
