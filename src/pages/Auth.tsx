@@ -39,6 +39,7 @@ const Auth = () => {
   };
 
   const handleTemporaryAccess = () => {
+    sessionStorage.setItem("temporaryAccess", "true");
     navigate("/");
     toast.warning("Using temporary access mode - Not secure for production!");
   };
