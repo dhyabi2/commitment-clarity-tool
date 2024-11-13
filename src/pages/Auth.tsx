@@ -6,10 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Fingerprint, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-
-// Constants to avoid repetition and make updates easier
-const APP_DOMAIN = "claritytool.replit.app";
-const APP_NAME = "Commitment Manager";
+import { AUTH_CONFIG } from "@/config/auth";
+import { registerBiometricCredential, authenticateWithBiometric } from "@/utils/biometricAuth";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -18,24 +16,25 @@ const Auth = () => {
   const [biometricsAvailable, setBiometricsAvailable] = useState(false);
 
   useEffect(() => {
-    // Check if biometrics is available
-    const checkBiometricAvailability = async () => {
-      if (!window.PublicKeyCredential) {
-        console.log("WebAuthn is not supported by this browser");
-        return;
-      }
-
-      try {
-        const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-        setBiometricsAvailable(available);
-      } catch (error) {
-        console.error("Error checking biometric availability:", error);
-      }
-    };
-
     checkBiometricAvailability();
+    setupAuthListener();
+  }, [navigate]);
 
-    // Check if user is already logged in
+  const checkBiometricAvailability = async () => {
+    if (!window.PublicKeyCredential) {
+      console.log("WebAuthn is not supported by this browser");
+      return;
+    }
+
+    try {
+      const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+      setBiometricsAvailable(available);
+    } catch (error) {
+      console.error("Error checking biometric availability:", error);
+    }
+  };
+
+  const setupAuthListener = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" && session) {
         navigate("/");
@@ -46,7 +45,7 @@ const Auth = () => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate]);
+  };
 
   const handleEmailSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -56,15 +55,14 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `https://${APP_DOMAIN}`,
+          emailRedirectTo: AUTH_CONFIG.SITE_URL,
         },
       });
 
       if (error) throw error;
       
-      // After successful OTP request, register biometric credentials
       if (biometricsAvailable) {
-        await registerBiometricCredential();
+        await registerBiometricCredential(email);
       }
       
       toast.success("Check your email for the login link!");
@@ -75,62 +73,16 @@ const Auth = () => {
     }
   };
 
-  const registerBiometricCredential = async () => {
-    try {
-      const credential = await navigator.credentials.create({
-        publicKey: {
-          challenge: new Uint8Array(32),
-          rp: {
-            name: APP_NAME,
-            id: APP_DOMAIN,
-          },
-          user: {
-            id: new Uint8Array(16),
-            name: email,
-            displayName: email.split('@')[0],
-          },
-          pubKeyCredParams: [{
-            type: "public-key",
-            alg: -7
-          }],
-          authenticatorSelection: {
-            authenticatorAttachment: "platform",
-            userVerification: "required",
-            residentKey: "required",
-          },
-          timeout: 60000,
-        }
-      });
-
-      if (credential) {
-        toast.success("Fingerprint registered successfully!");
-        return true;
-      }
-    } catch (error) {
-      console.error("Error registering biometric credential:", error);
-      toast.error("Failed to register fingerprint. You can try again later.");
-      return false;
-    }
-  };
-
   const handleBiometricSignIn = async () => {
     setIsLoading(true);
     try {
-      const assertion = await navigator.credentials.get({
-        publicKey: {
-          challenge: new Uint8Array(32),
-          rpId: APP_DOMAIN,
-          userVerification: "required",
-          timeout: 60000,
-        }
-      });
+      const assertion = await authenticateWithBiometric();
 
       if (assertion) {
-        // Use the credential to sign in
         const { error } = await supabase.auth.signInWithOtp({
           email,
           options: {
-            emailRedirectTo: `https://${APP_DOMAIN}`,
+            emailRedirectTo: AUTH_CONFIG.SITE_URL,
           },
         });
 
