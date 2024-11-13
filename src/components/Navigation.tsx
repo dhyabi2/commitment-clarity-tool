@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Brain } from 'lucide-react';
+import { Home, Brain, CheckSquare } from 'lucide-react';
 
 const Navigation = () => {
   const location = useLocation();
@@ -27,6 +27,15 @@ const Navigation = () => {
         >
           <Brain className="h-5 w-5" />
           <span className="text-xs mt-1">Thoughts</span>
+        </Link>
+        <Link
+          to="/completed-commitments"
+          className={`flex flex-col items-center p-2 ${
+            isActive('/completed-commitments') ? 'text-sage-600' : 'text-gray-600'
+          }`}
+        >
+          <CheckSquare className="h-5 w-5" />
+          <span className="text-xs mt-1">Completed</span>
         </Link>
       </div>
     </nav>
