@@ -1,0 +1,45 @@
+{
+  "thoughts": [
+    {
+      "id": 1,
+      "content": "First of all, if it's on your mind, your mind isn't clear. Anything you consider unfinished in any way must be captured in a trusted system outside your mind, or what I call a collection bucket, that you know you'll come back to regularly and sort through.",
+      "created_at": "2024-02-20T12:00:00Z",
+      "completed": false
+    },
+    {
+      "id": 2,
+      "content": "Second, you must clarify exactly what your commitment is and decide what you have to do, if anything, to make progress toward fulfilling it.",
+      "created_at": "2024-02-20T12:01:00Z",
+      "completed": false
+    },
+    {
+      "id": 3,
+      "content": "Third, once you've decided on all the actions you need to take, you must keep reminders of them organized in a system you review regularly.",
+      "created_at": "2024-02-20T12:02:00Z",
+      "completed": false
+    }
+  ],
+  "commitments": [
+    {
+      "id": 1,
+      "outcome": "Implement a trusted system for capturing thoughts",
+      "nextaction": "Create a digital platform for collecting thoughts and ideas",
+      "completed": false,
+      "created_at": "2024-02-20T12:05:00Z"
+    },
+    {
+      "id": 2,
+      "outcome": "Establish a clarification process",
+      "nextaction": "Design a workflow for converting thoughts into actionable commitments",
+      "completed": false,
+      "created_at": "2024-02-20T12:06:00Z"
+    },
+    {
+      "id": 3,
+      "outcome": "Build a regular review system",
+      "nextaction": "Set up reminders and organize commitments for periodic review",
+      "completed": false,
+      "created_at": "2024-02-20T12:07:00Z"
+    }
+  ]
+}
