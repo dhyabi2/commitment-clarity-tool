@@ -1,6 +1,7 @@
 import React from 'react';
 import BrainDump from '@/components/BrainDump';
 import ActiveCommitments from '@/components/ActiveCommitments';
+import FAQ from '@/components/FAQ';
 import { Card } from "@/components/ui/card";
 import { Brain, ListTodo } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -54,6 +55,11 @@ const Index = () => {
                 <ActiveCommitments />
               </div>
             </div>
+          </div>
+
+          {/* FAQ Section */}
+          <div className="mt-8">
+            <FAQ />
           </div>
         </div>
 
