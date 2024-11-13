@@ -1,14 +1,18 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { format } from 'date-fns';
 import { Button } from "@/components/ui/button";
-import { ArrowRightCircle } from 'lucide-react';
+import { ArrowRightCircle, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from "@/components/ui/use-toast";
 
 const Thoughts = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
   const { data: thoughts, isLoading } = useQuery({
     queryKey: ['thoughts'],
     queryFn: async () => {
@@ -19,6 +23,31 @@ const Thoughts = () => {
       
       if (error) throw error;
       return data;
+    }
+  });
+
+  const deleteThoughtMutation = useMutation({
+    mutationFn: async (thoughtId: number) => {
+      const { error } = await supabase
+        .from('thoughts')
+        .delete()
+        .eq('id', thoughtId);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['thoughts'] });
+      toast({
+        title: "Thought deleted",
+        description: "Your thought has been successfully removed.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete thought. Please try again.",
+        variant: "destructive",
+      });
     }
   });
 
@@ -65,14 +94,24 @@ const Thoughts = () => {
                   <time className="text-sm text-sage-500">
                     {format(new Date(thought.created_at), 'MMM d, yyyy h:mm a')}
                   </time>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                    onClick={() => navigate('/commitment-clarifier', { state: { thought: thought.content } })}
-                  >
-                    Clarify <ArrowRightCircle className="ml-2 h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:text-red-600"
+                      onClick={() => deleteThoughtMutation.mutate(thought.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      onClick={() => navigate('/commitment-clarifier', { state: { thought: thought.content } })}
+                    >
+                      Clarify <ArrowRightCircle className="ml-2 h-4 w-4" />
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
                   <p className="text-gray-800 text-left">{thought.content}</p>
