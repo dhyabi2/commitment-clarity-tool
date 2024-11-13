@@ -59,11 +59,11 @@ const ActiveCommitments = () => {
         {commitments?.filter(c => !c.completed).map((commitment) => (
           <Card key={commitment.id} className="commitment-card p-4 sm:p-6">
             <div className="flex items-start justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-base sm:text-lg truncate">{commitment.outcome}</h3>
-                <div className="flex items-center mt-2 text-gray-600">
-                  <Clock className="h-4 w-4 mr-2 flex-shrink-0" />
-                  <p className="text-sm sm:text-base truncate">{commitment.nextAction}</p>
+              <div className="flex-1 min-w-0 overflow-hidden">
+                <h3 className="font-medium text-base sm:text-lg break-words">{commitment.outcome}</h3>
+                <div className="flex items-start mt-2 text-gray-600">
+                  <Clock className="h-4 w-4 mr-2 flex-shrink-0 mt-1" />
+                  <p className="text-sm sm:text-base break-words">{commitment.nextAction}</p>
                 </div>
               </div>
               <button 
