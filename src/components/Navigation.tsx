@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Brain, CheckSquare, BarChart } from 'lucide-react';
+import { Home, Brain, CheckSquare, BarChart, HelpCircle } from 'lucide-react';
 
 const Navigation = () => {
   const location = useLocation();
@@ -44,7 +44,16 @@ const Navigation = () => {
           }`}
         >
           <BarChart className="h-5 w-5" />
-          <span className="text-xs mt-1">Dashboard</span>
+          <span className="text-xs mt-1">Stats</span>
+        </Link>
+        <Link
+          to="/faq"
+          className={`flex flex-col items-center p-2 ${
+            isActive('/faq') ? 'text-sage-600' : 'text-gray-600'
+          }`}
+        >
+          <HelpCircle className="h-5 w-5" />
+          <span className="text-xs mt-1">FAQ</span>
         </Link>
       </div>
     </nav>

@@ -1,7 +1,6 @@
 import React from 'react';
 import BrainDump from '@/components/BrainDump';
 import ActiveCommitments from '@/components/ActiveCommitments';
-import FAQ from '@/components/FAQ';
 import { Card } from "@/components/ui/card";
 import { Brain, ListTodo, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -79,11 +78,6 @@ const Index = () => {
                 </Card>
               </div>
             </div>
-          </div>
-
-          {/* FAQ Section with smooth reveal */}
-          <div className="mt-16 opacity-0 animate-[fade-in_1s_ease-out_0.5s_forwards]">
-            <FAQ />
           </div>
         </div>
       </ScrollArea>
