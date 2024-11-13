@@ -5,7 +5,7 @@ import ActiveCommitments from '@/components/ActiveCommitments';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-cream p-4 sm:p-6">
+    <div className="min-h-screen bg-cream p-4 pb-20 md:pb-4">
       <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
         <header className="text-center mb-8 sm:mb-12">
           <h1 className="text-3xl sm:text-4xl font-bold text-sage-600 mb-3 sm:mb-4">
