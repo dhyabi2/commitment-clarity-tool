@@ -7,6 +7,10 @@ import { Fingerprint, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 
+// Constants to avoid repetition and make updates easier
+const APP_DOMAIN = "claritytool.replit.app";
+const APP_NAME = "Commitment Manager";
+
 const Auth = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -52,7 +56,7 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: `https://${APP_DOMAIN}`,
         },
       });
 
@@ -77,8 +81,8 @@ const Auth = () => {
         publicKey: {
           challenge: new Uint8Array(32),
           rp: {
-            name: "Commitment Manager",
-            id: window.location.hostname,
+            name: APP_NAME,
+            id: APP_DOMAIN,
           },
           user: {
             id: new Uint8Array(16),
@@ -115,7 +119,7 @@ const Auth = () => {
       const assertion = await navigator.credentials.get({
         publicKey: {
           challenge: new Uint8Array(32),
-          rpId: window.location.hostname,
+          rpId: APP_DOMAIN,
           userVerification: "required",
           timeout: 60000,
         }
@@ -126,7 +130,7 @@ const Auth = () => {
         const { error } = await supabase.auth.signInWithOtp({
           email,
           options: {
-            emailRedirectTo: window.location.origin,
+            emailRedirectTo: `https://${APP_DOMAIN}`,
           },
         });
 
