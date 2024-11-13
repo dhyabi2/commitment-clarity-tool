@@ -1,7 +1,6 @@
 import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { Filter } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ThoughtsList from '@/components/thoughts/ThoughtsList';
@@ -111,8 +110,18 @@ const Thoughts = () => {
           
           <Tabs defaultValue="active" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="active" className="text-lg">Active Thoughts</TabsTrigger>
-              <TabsTrigger value="completed" className="text-lg">Completed Thoughts</TabsTrigger>
+              <TabsTrigger 
+                value="active" 
+                className="text-lg data-[state=active]:bg-sage-100 data-[state=active]:text-sage-700"
+              >
+                Active Thoughts
+              </TabsTrigger>
+              <TabsTrigger 
+                value="completed" 
+                className="text-lg data-[state=active]:bg-sage-100 data-[state=active]:text-sage-700"
+              >
+                Completed Thoughts
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="active" className="mt-0">
