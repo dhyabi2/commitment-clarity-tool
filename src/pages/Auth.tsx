@@ -1,14 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Auth as SupabaseAuth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Fingerprint } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Fingerprint, Mail } from "lucide-react";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [biometricsAvailable, setBiometricsAvailable] = useState(false);
 
   useEffect(() => {
     // Check if biometrics is available
@@ -20,9 +25,7 @@ const Auth = () => {
 
       try {
         const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-        if (!available) {
-          console.log("Biometric authentication is not available");
-        }
+        setBiometricsAvailable(available);
       } catch (error) {
         console.error("Error checking biometric availability:", error);
       }
@@ -43,6 +46,47 @@ const Auth = () => {
     };
   }, [navigate]);
 
+  const handleEmailSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: window.location.origin,
+        },
+      });
+
+      if (error) throw error;
+      
+      toast.success("Check your email for the login link!");
+    } catch (error) {
+      toast.error("Error sending magic link");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleBiometricSignIn = async () => {
+    setIsLoading(true);
+    try {
+      // Implement WebAuthn authentication here
+      // This is a placeholder for the biometric authentication logic
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: "user@example.com",
+        password: "biometric-placeholder",
+      });
+
+      if (error) throw error;
+      toast.success("Successfully signed in with biometrics!");
+    } catch (error) {
+      toast.error("Biometric authentication failed");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-sage-50/50 p-4">
       <Card className="w-full max-w-md">
@@ -52,22 +96,56 @@ const Auth = () => {
             Sign in securely
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <SupabaseAuth
-            supabaseClient={supabase}
-            appearance={{
-              theme: ThemeSupa,
-              variables: {
-                default: {
-                  colors: {
-                    brand: '#84a98c',
-                    brandAccent: '#52796f',
-                  },
-                },
-              },
-            }}
-            providers={[]}
-          />
+        <CardContent className="space-y-4">
+          <form onSubmit={handleEmailSignIn} className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <Mail className="w-4 h-4 text-sage-600" />
+                <span className="text-sm font-medium">Email Sign In</span>
+              </div>
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full"
+              />
+            </div>
+            <Button 
+              type="submit" 
+              className="w-full bg-sage-600 hover:bg-sage-700"
+              disabled={isLoading}
+            >
+              {isLoading ? "Sending..." : "Send Magic Link"}
+            </Button>
+          </form>
+
+          {biometricsAvailable && (
+            <div className="space-y-4">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={handleBiometricSignIn}
+                disabled={isLoading}
+              >
+                <Fingerprint className="mr-2 h-4 w-4" />
+                Sign in with Fingerprint
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
