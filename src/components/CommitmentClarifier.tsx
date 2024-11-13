@@ -3,14 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { dbPromise } from '@/lib/db';
 
 const CommitmentClarifier = () => {
   const [step, setStep] = useState(1);
   const [outcome, setOutcome] = useState("");
   const [nextAction, setNextAction] = useState("");
-  const { toast } = useToast();
 
   const handleNext = () => {
     if (step === 1 && outcome) {
@@ -18,34 +15,14 @@ const CommitmentClarifier = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (outcome && nextAction) {
-      try {
-        const db = await dbPromise;
-        const id = Date.now(); // Generate a unique ID
-        await db.add('commitments', {
-          id,
-          outcome,
-          nextAction,
-          timestamp: Date.now(),
-        });
-
-        toast({
-          title: "Commitment saved",
-          description: "Your commitment has been stored successfully.",
-        });
-        
-        setOutcome("");
-        setNextAction("");
-        setStep(1);
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to save commitment. Please try again.",
-          variant: "destructive",
-        });
-      }
+      // In a real app, we'd save this to a backend
+      console.log({ outcome, nextAction });
+      setOutcome("");
+      setNextAction("");
+      setStep(1);
     }
   };
 

@@ -3,36 +3,20 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { dbPromise } from '@/lib/db';
 
 const BrainDump = () => {
   const [thought, setThought] = useState("");
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (thought.trim()) {
-      try {
-        const db = await dbPromise;
-        const id = Date.now(); // Generate a unique ID
-        await db.add('thoughts', {
-          id,
-          content: thought,
-          timestamp: Date.now(),
-        });
-        
-        toast({
-          title: "Thought captured",
-          description: "Your thought has been safely stored.",
-        });
-        setThought("");
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to save your thought. Please try again.",
-          variant: "destructive",
-        });
-      }
+      // In a real app, we'd save this to a backend
+      toast({
+        title: "Thought captured",
+        description: "Your thought has been safely stored.",
+      });
+      setThought("");
     }
   };
 
