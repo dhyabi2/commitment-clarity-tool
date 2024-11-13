@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navigation from "./components/Navigation";
 import Index from "./pages/Index";
 import Thoughts from "./pages/Thoughts";
+import CommitmentClarifier from "./pages/CommitmentClarifier";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/thoughts" element={<Thoughts />} />
+            <Route path="/commitment-clarifier" element={<CommitmentClarifier />} />
           </Routes>
         </div>
         <Navigation />
