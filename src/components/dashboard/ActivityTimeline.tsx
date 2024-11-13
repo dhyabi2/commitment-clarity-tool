@@ -6,9 +6,13 @@ const chartConfig = {
     label: "Thoughts",
     color: "#84a98c",
   },
+  completedThoughts: {
+    label: "Completed Thoughts",
+    color: "#52796f",
+  },
   commitments: {
     label: "Commitments",
-    color: "#5b8363",
+    color: "#354f52",
   },
 };
 
@@ -35,15 +39,25 @@ const ActivityTimeline = ({ data }: { data: any[] }) => (
           strokeWidth={2}
           dot={{ fill: "#84a98c", strokeWidth: 2 }}
           activeDot={{ r: 6 }}
-          name="Thoughts"
+          name="Active Thoughts"
+          animationDuration={1500}
+        />
+        <Line
+          type="monotone"
+          dataKey="completedThoughts"
+          stroke="#52796f"
+          strokeWidth={2}
+          dot={{ fill: "#52796f", strokeWidth: 2 }}
+          activeDot={{ r: 6 }}
+          name="Completed Thoughts"
           animationDuration={1500}
         />
         <Line
           type="monotone"
           dataKey="commitments"
-          stroke="#5b8363"
+          stroke="#354f52"
           strokeWidth={2}
-          dot={{ fill: "#5b8363", strokeWidth: 2 }}
+          dot={{ fill: "#354f52", strokeWidth: 2 }}
           activeDot={{ r: 6 }}
           name="Commitments"
           animationDuration={1500}

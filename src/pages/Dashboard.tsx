@@ -50,16 +50,20 @@ const Dashboard = () => {
     const timelineData = [];
     const dates = new Set([
       ...thoughts?.map((t) => new Date(t.created_at).toLocaleDateString()) || [],
-      ...commitments?.map((c) => new Date(c.created_at).toLocaleDateString()) ||
-        [],
+      ...commitments?.map((c) => new Date(c.created_at).toLocaleDateString()) || [],
     ]);
 
     Array.from(dates)
       .sort()
       .forEach((date) => {
-        const thoughtCount =
+        const activeThoughts =
           thoughts?.filter(
-            (t) => new Date(t.created_at).toLocaleDateString() === date
+            (t) => new Date(t.created_at).toLocaleDateString() === date && !t.completed
+          ).length || 0;
+
+        const completedThoughts =
+          thoughts?.filter(
+            (t) => new Date(t.created_at).toLocaleDateString() === date && t.completed
           ).length || 0;
 
         const commitmentCount =
@@ -69,7 +73,8 @@ const Dashboard = () => {
 
         timelineData.push({
           date,
-          thoughts: thoughtCount,
+          thoughts: activeThoughts,
+          completedThoughts: completedThoughts,
           commitments: commitmentCount,
         });
       });
@@ -94,7 +99,7 @@ const Dashboard = () => {
           <Card className="col-span-1 md:col-span-2 hover:shadow-lg transition-shadow duration-300">
             <CardHeader className="p-4">
               <CardTitle className="text-lg md:text-xl">Activity Timeline</CardTitle>
-              <CardDescription>Thoughts vs Commitments over time</CardDescription>
+              <CardDescription>Active Thoughts, Completed Thoughts, and Commitments over time</CardDescription>
             </CardHeader>
             <CardContent className="p-2 md:p-4">
               <ActivityTimeline data={processDataForTimeline()} />
