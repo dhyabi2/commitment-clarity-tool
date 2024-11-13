@@ -35,16 +35,19 @@ export type Database = {
       }
       thoughts: {
         Row: {
+          completed: boolean
           content: string
           created_at: string
           id: number
         }
         Insert: {
+          completed?: boolean
           content: string
           created_at?: string
           id?: number
         }
         Update: {
+          completed?: boolean
           content?: string
           created_at?: string
           id?: number
