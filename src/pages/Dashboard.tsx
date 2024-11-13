@@ -1,5 +1,5 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Card,
@@ -8,52 +8,34 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { Loader2 } from 'lucide-react';
-
-const chartConfig = {
-  thoughts: {
-    label: 'Thoughts',
-    color: '#84a98c'
-  },
-  commitments: {
-    label: 'Commitments',
-    color: '#5b8363'
-  },
-  completed: {
-    label: 'Completed',
-    color: '#84a98c'
-  },
-  pending: {
-    label: 'Pending',
-    color: '#e6ebe7'
-  }
-};
+import { Loader2 } from "lucide-react";
+import ActivityTimeline from "@/components/dashboard/ActivityTimeline";
+import CompletionRate from "@/components/dashboard/CompletionRate";
+import DailyActivity from "@/components/dashboard/DailyActivity";
 
 const Dashboard = () => {
   const { data: thoughts, isLoading: thoughtsLoading } = useQuery({
-    queryKey: ['thoughts-stats'],
+    queryKey: ["thoughts-stats"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('thoughts')
-        .select('*')
-        .order('created_at', { ascending: true });
+        .from("thoughts")
+        .select("*")
+        .order("created_at", { ascending: true });
       if (error) throw error;
       return data;
-    }
+    },
   });
 
   const { data: commitments, isLoading: commitmentsLoading } = useQuery({
-    queryKey: ['commitments-stats'],
+    queryKey: ["commitments-stats"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('commitments')
-        .select('*')
-        .order('created_at', { ascending: true });
+        .from("commitments")
+        .select("*")
+        .order("created_at", { ascending: true });
       if (error) throw error;
       return data;
-    }
+    },
   });
 
   if (thoughtsLoading || commitmentsLoading) {
@@ -67,159 +49,75 @@ const Dashboard = () => {
   const processDataForTimeline = () => {
     const timelineData = [];
     const dates = new Set([
-      ...thoughts?.map(t => new Date(t.created_at).toLocaleDateString()) || [],
-      ...commitments?.map(c => new Date(c.created_at).toLocaleDateString()) || []
+      ...thoughts?.map((t) => new Date(t.created_at).toLocaleDateString()) || [],
+      ...commitments?.map((c) => new Date(c.created_at).toLocaleDateString()) ||
+        [],
     ]);
 
-    Array.from(dates).sort().forEach(date => {
-      const thoughtCount = thoughts?.filter(t => 
-        new Date(t.created_at).toLocaleDateString() === date
-      ).length || 0;
-      
-      const commitmentCount = commitments?.filter(c => 
-        new Date(c.created_at).toLocaleDateString() === date
-      ).length || 0;
+    Array.from(dates)
+      .sort()
+      .forEach((date) => {
+        const thoughtCount =
+          thoughts?.filter(
+            (t) => new Date(t.created_at).toLocaleDateString() === date
+          ).length || 0;
 
-      timelineData.push({
-        date,
-        thoughts: thoughtCount,
-        commitments: commitmentCount
+        const commitmentCount =
+          commitments?.filter(
+            (c) => new Date(c.created_at).toLocaleDateString() === date
+          ).length || 0;
+
+        timelineData.push({
+          date,
+          thoughts: thoughtCount,
+          commitments: commitmentCount,
+        });
       });
-    });
 
     return timelineData;
   };
 
   const calculateCompletionRate = () => {
     if (!commitments?.length) return 0;
-    const completed = commitments.filter(c => c.completed).length;
+    const completed = commitments.filter((c) => c.completed).length;
     return (completed / commitments.length) * 100;
   };
 
-  const COLORS = ['#84a98c', '#e6ebe7'];
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cream to-sage-50 p-4 pb-20 md:pb-4">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <h1 className="text-3xl font-bold text-sage-700 mb-8 animate-fade-in">Performance Dashboard</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Activity Timeline */}
+    <div className="min-h-screen bg-gradient-to-b from-cream to-sage-50 p-2 md:p-4 pb-20 md:pb-4">
+      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-sage-700 mb-4 md:mb-8 animate-fade-in px-2">
+          Performance Dashboard
+        </h1>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <Card className="col-span-1 md:col-span-2 hover:shadow-lg transition-shadow duration-300">
-            <CardHeader>
-              <CardTitle>Activity Timeline</CardTitle>
+            <CardHeader className="p-4">
+              <CardTitle className="text-lg md:text-xl">Activity Timeline</CardTitle>
               <CardDescription>Thoughts vs Commitments over time</CardDescription>
             </CardHeader>
-            <CardContent className="h-[300px]">
-              <ChartContainer config={chartConfig}>
-                <LineChart data={processDataForTimeline()} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <XAxis 
-                    dataKey="date" 
-                    stroke="#5b8363"
-                    fontSize={12}
-                  />
-                  <YAxis 
-                    stroke="#5b8363"
-                    fontSize={12}
-                  />
-                  <ChartTooltip />
-                  <Line 
-                    type="monotone" 
-                    dataKey="thoughts" 
-                    stroke="#84a98c" 
-                    strokeWidth={2}
-                    dot={{ fill: '#84a98c', strokeWidth: 2 }}
-                    activeDot={{ r: 6 }}
-                    name="Thoughts"
-                    animationDuration={1500}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="commitments" 
-                    stroke="#5b8363" 
-                    strokeWidth={2}
-                    dot={{ fill: '#5b8363', strokeWidth: 2 }}
-                    activeDot={{ r: 6 }}
-                    name="Commitments"
-                    animationDuration={1500}
-                  />
-                </LineChart>
-              </ChartContainer>
+            <CardContent className="p-2 md:p-4">
+              <ActivityTimeline data={processDataForTimeline()} />
             </CardContent>
           </Card>
 
-          {/* Completion Rate */}
           <Card className="hover:shadow-lg transition-shadow duration-300">
-            <CardHeader>
-              <CardTitle>Completion Rate</CardTitle>
+            <CardHeader className="p-4">
+              <CardTitle className="text-lg md:text-xl">Completion Rate</CardTitle>
               <CardDescription>Percentage of completed commitments</CardDescription>
             </CardHeader>
-            <CardContent className="h-[300px]">
-              <ChartContainer config={chartConfig}>
-                <PieChart>
-                  <Pie
-                    data={[
-                      { name: 'Completed', value: calculateCompletionRate() },
-                      { name: 'Pending', value: 100 - calculateCompletionRate() }
-                    ]}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    fill="#84a98c"
-                    dataKey="value"
-                    animationDuration={1500}
-                    animationBegin={300}
-                  >
-                    {[0, 1].map((entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={COLORS[index]}
-                        strokeWidth={2}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ChartContainer>
+            <CardContent className="p-2 md:p-4">
+              <CompletionRate completionRate={calculateCompletionRate()} />
             </CardContent>
           </Card>
 
-          {/* Daily Activity */}
           <Card className="hover:shadow-lg transition-shadow duration-300">
-            <CardHeader>
-              <CardTitle>Daily Activity</CardTitle>
+            <CardHeader className="p-4">
+              <CardTitle className="text-lg md:text-xl">Daily Activity</CardTitle>
               <CardDescription>Number of items created per day</CardDescription>
             </CardHeader>
-            <CardContent className="h-[300px]">
-              <ChartContainer config={chartConfig}>
-                <BarChart data={processDataForTimeline().slice(-7)} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <XAxis 
-                    dataKey="date" 
-                    stroke="#5b8363"
-                    fontSize={12}
-                  />
-                  <YAxis 
-                    stroke="#5b8363"
-                    fontSize={12}
-                  />
-                  <ChartTooltip />
-                  <Bar 
-                    dataKey="thoughts" 
-                    fill="#84a98c" 
-                    name="Thoughts"
-                    radius={[4, 4, 0, 0]}
-                    animationDuration={1500}
-                  />
-                  <Bar 
-                    dataKey="commitments" 
-                    fill="#5b8363" 
-                    name="Commitments"
-                    radius={[4, 4, 0, 0]}
-                    animationDuration={1500}
-                  />
-                </BarChart>
-              </ChartContainer>
+            <CardContent className="p-2 md:p-4">
+              <DailyActivity data={processDataForTimeline()} />
             </CardContent>
           </Card>
         </div>
