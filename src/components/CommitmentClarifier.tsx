@@ -3,11 +3,47 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
+import { supabase } from '@/lib/supabase';
+import { useToast } from "@/components/ui/use-toast";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const CommitmentClarifier = () => {
   const [step, setStep] = useState(1);
   const [outcome, setOutcome] = useState("");
   const [nextAction, setNextAction] = useState("");
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const addCommitmentMutation = useMutation({
+    mutationFn: async (commitment: { outcome: string; nextAction: string }) => {
+      const { data, error } = await supabase
+        .from('commitments')
+        .insert([commitment])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['commitments'] });
+      toast({
+        title: "Commitment saved",
+        description: "Your commitment has been successfully recorded.",
+      });
+      setOutcome("");
+      setNextAction("");
+      setStep(1);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to save commitment. Please try again.",
+        variant: "destructive",
+      });
+      console.error('Error saving commitment:', error);
+    }
+  });
 
   const handleNext = () => {
     if (step === 1 && outcome) {
@@ -18,11 +54,7 @@ const CommitmentClarifier = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (outcome && nextAction) {
-      // In a real app, we'd save this to a backend
-      console.log({ outcome, nextAction });
-      setOutcome("");
-      setNextAction("");
-      setStep(1);
+      addCommitmentMutation.mutate({ outcome, nextAction });
     }
   };
 
@@ -41,7 +73,11 @@ const CommitmentClarifier = () => {
               placeholder="Describe the successful outcome..."
               className="input-field"
             />
-            <Button onClick={handleNext} className="btn-primary">
+            <Button 
+              onClick={handleNext} 
+              className="btn-primary"
+              disabled={!outcome}
+            >
               Next
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -57,7 +93,11 @@ const CommitmentClarifier = () => {
               placeholder="What's the next action?"
               className="input-field"
             />
-            <Button type="submit" className="btn-primary">
+            <Button 
+              type="submit" 
+              className="btn-primary"
+              disabled={addCommitmentMutation.isPending}
+            >
               Save Commitment
             </Button>
           </form>
