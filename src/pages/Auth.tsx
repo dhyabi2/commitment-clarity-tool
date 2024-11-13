@@ -44,7 +44,7 @@ const Auth = () => {
     };
   }, [navigate]);
 
-  const handleEmailSignIn = async (e: React.FormEvent) => {
+  const handleEmailSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     
@@ -58,6 +58,11 @@ const Auth = () => {
 
       if (error) throw error;
       
+      // After successful OTP request, register biometric credentials
+      if (biometricsAvailable) {
+        await registerBiometricCredential();
+      }
+      
       toast.success("Check your email for the login link!");
     } catch (error) {
       toast.error("Error sending magic link");
@@ -66,57 +71,69 @@ const Auth = () => {
     }
   };
 
+  const registerBiometricCredential = async () => {
+    try {
+      const credential = await navigator.credentials.create({
+        publicKey: {
+          challenge: new Uint8Array(32),
+          rp: {
+            name: "Commitment Manager",
+            id: window.location.hostname,
+          },
+          user: {
+            id: new Uint8Array(16),
+            name: email,
+            displayName: email.split('@')[0],
+          },
+          pubKeyCredParams: [{
+            type: "public-key",
+            alg: -7
+          }],
+          authenticatorSelection: {
+            authenticatorAttachment: "platform",
+            userVerification: "required",
+            residentKey: "required",
+          },
+          timeout: 60000,
+        }
+      });
+
+      if (credential) {
+        toast.success("Fingerprint registered successfully!");
+        return true;
+      }
+    } catch (error) {
+      console.error("Error registering biometric credential:", error);
+      toast.error("Failed to register fingerprint. You can try again later.");
+      return false;
+    }
+  };
+
   const handleBiometricSignIn = async () => {
     setIsLoading(true);
     try {
-      // Get the current user's session
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        // If no session exists, we need to create a new credential
-        const credential = await navigator.credentials.create({
-          publicKey: {
-            challenge: new Uint8Array(32),
-            rp: {
-              name: "Your App Name",
-              id: window.location.hostname,
-            },
-            user: {
-              id: new Uint8Array(16),
-              name: email || "user@example.com",
-              displayName: "User",
-            },
-            pubKeyCredParams: [{
-              type: "public-key",
-              alg: -7
-            }],
-            authenticatorSelection: {
-              authenticatorAttachment: "platform",
-              userVerification: "required",
-            },
-            timeout: 60000,
-          }
+      const assertion = await navigator.credentials.get({
+        publicKey: {
+          challenge: new Uint8Array(32),
+          rpId: window.location.hostname,
+          userVerification: "required",
+          timeout: 60000,
+        }
+      });
+
+      if (assertion) {
+        // Use the credential to sign in
+        const { error } = await supabase.auth.signInWithOtp({
+          email,
+          options: {
+            emailRedirectTo: window.location.origin,
+          },
         });
 
-        if (credential) {
-          // Use magic link as fallback after biometric authentication
-          await handleEmailSignIn(new Event('submit'));
-        }
-      } else {
-        // If session exists, we can get the credential
-        const assertion = await navigator.credentials.get({
-          publicKey: {
-            challenge: new Uint8Array(32),
-            rpId: window.location.hostname,
-            userVerification: "required",
-            timeout: 60000,
-          }
-        });
-
-        if (assertion) {
-          toast.success("Biometric authentication successful!");
-          navigate("/");
-        }
+        if (error) throw error;
+        
+        toast.success("Biometric authentication successful!");
+        navigate("/");
       }
     } catch (error) {
       console.error("Biometric authentication error:", error);
