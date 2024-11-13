@@ -101,30 +101,55 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-cream to-sage-50 p-4 pb-20 md:pb-4">
       <div className="max-w-7xl mx-auto space-y-6">
-        <h1 className="text-3xl font-bold text-sage-700 mb-8">Performance Dashboard</h1>
+        <h1 className="text-3xl font-bold text-sage-700 mb-8 animate-fade-in">Performance Dashboard</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Activity Timeline */}
-          <Card className="col-span-1 md:col-span-2">
+          <Card className="col-span-1 md:col-span-2 hover:shadow-lg transition-shadow duration-300">
             <CardHeader>
               <CardTitle>Activity Timeline</CardTitle>
               <CardDescription>Thoughts vs Commitments over time</CardDescription>
             </CardHeader>
             <CardContent className="h-[300px]">
               <ChartContainer config={chartConfig}>
-                <LineChart data={processDataForTimeline()}>
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="thoughts" stroke="#84a98c" name="Thoughts" />
-                  <Line type="monotone" dataKey="commitments" stroke="#5b8363" name="Commitments" />
+                <LineChart data={processDataForTimeline()} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  <XAxis 
+                    dataKey="date" 
+                    stroke="#5b8363"
+                    fontSize={12}
+                  />
+                  <YAxis 
+                    stroke="#5b8363"
+                    fontSize={12}
+                  />
+                  <ChartTooltip />
+                  <Line 
+                    type="monotone" 
+                    dataKey="thoughts" 
+                    stroke="#84a98c" 
+                    strokeWidth={2}
+                    dot={{ fill: '#84a98c', strokeWidth: 2 }}
+                    activeDot={{ r: 6 }}
+                    name="Thoughts"
+                    animationDuration={1500}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="commitments" 
+                    stroke="#5b8363" 
+                    strokeWidth={2}
+                    dot={{ fill: '#5b8363', strokeWidth: 2 }}
+                    activeDot={{ r: 6 }}
+                    name="Commitments"
+                    animationDuration={1500}
+                  />
                 </LineChart>
               </ChartContainer>
             </CardContent>
           </Card>
 
           {/* Completion Rate */}
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow duration-300">
             <CardHeader>
               <CardTitle>Completion Rate</CardTitle>
               <CardDescription>Percentage of completed commitments</CardDescription>
@@ -134,8 +159,8 @@ const Dashboard = () => {
                 <PieChart>
                   <Pie
                     data={[
-                      { name: 'completed', value: calculateCompletionRate() },
-                      { name: 'pending', value: 100 - calculateCompletionRate() }
+                      { name: 'Completed', value: calculateCompletionRate() },
+                      { name: 'Pending', value: 100 - calculateCompletionRate() }
                     ]}
                     cx="50%"
                     cy="50%"
@@ -143,9 +168,15 @@ const Dashboard = () => {
                     outerRadius={80}
                     fill="#84a98c"
                     dataKey="value"
+                    animationDuration={1500}
+                    animationBegin={300}
                   >
                     {[0, 1].map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={COLORS[index]}
+                        strokeWidth={2}
+                      />
                     ))}
                   </Pie>
                   <Tooltip />
@@ -155,19 +186,38 @@ const Dashboard = () => {
           </Card>
 
           {/* Daily Activity */}
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow duration-300">
             <CardHeader>
               <CardTitle>Daily Activity</CardTitle>
               <CardDescription>Number of items created per day</CardDescription>
             </CardHeader>
             <CardContent className="h-[300px]">
               <ChartContainer config={chartConfig}>
-                <BarChart data={processDataForTimeline().slice(-7)}>
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="thoughts" fill="#84a98c" name="Thoughts" />
-                  <Bar dataKey="commitments" fill="#5b8363" name="Commitments" />
+                <BarChart data={processDataForTimeline().slice(-7)} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  <XAxis 
+                    dataKey="date" 
+                    stroke="#5b8363"
+                    fontSize={12}
+                  />
+                  <YAxis 
+                    stroke="#5b8363"
+                    fontSize={12}
+                  />
+                  <ChartTooltip />
+                  <Bar 
+                    dataKey="thoughts" 
+                    fill="#84a98c" 
+                    name="Thoughts"
+                    radius={[4, 4, 0, 0]}
+                    animationDuration={1500}
+                  />
+                  <Bar 
+                    dataKey="commitments" 
+                    fill="#5b8363" 
+                    name="Commitments"
+                    radius={[4, 4, 0, 0]}
+                    animationDuration={1500}
+                  />
                 </BarChart>
               </ChartContainer>
             </CardContent>
