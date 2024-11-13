@@ -23,7 +23,9 @@ const CommitmentClarifier = () => {
     if (outcome && nextAction) {
       try {
         const db = await dbPromise;
+        const id = Date.now(); // Generate a unique ID
         await db.add('commitments', {
+          id,
           outcome,
           nextAction,
           timestamp: Date.now(),
