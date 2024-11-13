@@ -12,6 +12,25 @@ import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { Loader2 } from 'lucide-react';
 
+const chartConfig = {
+  thoughts: {
+    label: 'Thoughts',
+    color: '#84a98c'
+  },
+  commitments: {
+    label: 'Commitments',
+    color: '#5b8363'
+  },
+  completed: {
+    label: 'Completed',
+    color: '#84a98c'
+  },
+  pending: {
+    label: 'Pending',
+    color: '#e6ebe7'
+  }
+};
+
 const Dashboard = () => {
   const { data: thoughts, isLoading: thoughtsLoading } = useQuery({
     queryKey: ['thoughts-stats'],
@@ -92,7 +111,7 @@ const Dashboard = () => {
               <CardDescription>Thoughts vs Commitments over time</CardDescription>
             </CardHeader>
             <CardContent className="h-[300px]">
-              <ChartContainer>
+              <ChartContainer config={chartConfig}>
                 <LineChart data={processDataForTimeline()}>
                   <XAxis dataKey="date" />
                   <YAxis />
@@ -111,12 +130,12 @@ const Dashboard = () => {
               <CardDescription>Percentage of completed commitments</CardDescription>
             </CardHeader>
             <CardContent className="h-[300px]">
-              <ChartContainer>
+              <ChartContainer config={chartConfig}>
                 <PieChart>
                   <Pie
                     data={[
-                      { name: 'Completed', value: calculateCompletionRate() },
-                      { name: 'Pending', value: 100 - calculateCompletionRate() }
+                      { name: 'completed', value: calculateCompletionRate() },
+                      { name: 'pending', value: 100 - calculateCompletionRate() }
                     ]}
                     cx="50%"
                     cy="50%"
@@ -142,7 +161,7 @@ const Dashboard = () => {
               <CardDescription>Number of items created per day</CardDescription>
             </CardHeader>
             <CardContent className="h-[300px]">
-              <ChartContainer>
+              <ChartContainer config={chartConfig}>
                 <BarChart data={processDataForTimeline().slice(-7)}>
                   <XAxis dataKey="date" />
                   <YAxis />
