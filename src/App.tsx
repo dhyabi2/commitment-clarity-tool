@@ -18,22 +18,27 @@ const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isTemporaryAccess] = useState(() => sessionStorage.getItem("temporaryAccess") === "true");
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setIsAuthenticated(!!session);
-    });
+    if (!isTemporaryAccess) {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        setIsAuthenticated(!!session);
+      });
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+      return () => {
+        subscription.unsubscribe();
+      };
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [isTemporaryAccess]);
 
   if (isAuthenticated === null) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
-  return isAuthenticated ? <>{children}</> : <Navigate to="/auth" replace />;
+  return isAuthenticated || isTemporaryAccess ? <>{children}</> : <Navigate to="/auth" replace />;
 };
 
 const App = () => (
