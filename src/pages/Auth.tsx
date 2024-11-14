@@ -19,19 +19,36 @@ const Auth = () => {
     try {
       const sessionKey = generateSessionKey();
       
-      // Use upsert operation instead of separate insert/update
-      const { error: upsertError } = await supabase
+      // First, try to update existing session
+      const { data: existingSession, error: checkError } = await supabase
         .from('user_sessions')
-        .upsert({ 
-          email,
-          session_key: sessionKey,
-          last_accessed: new Date().toISOString()
-        }, {
-          onConflict: 'email',
-          ignoreDuplicates: false
-        });
+        .select('*')
+        .eq('email', email)
+        .maybeSingle();
 
-      if (upsertError) throw upsertError;
+      if (checkError && checkError.code !== 'PGRST116') throw checkError;
+
+      if (existingSession) {
+        // Update existing session using the database function
+        const { error: updateError } = await supabase
+          .rpc('update_session_key', {
+            p_email: email,
+            p_new_session_key: sessionKey
+          });
+        
+        if (updateError) throw updateError;
+      } else {
+        // Insert new session for new user
+        const { error: insertError } = await supabase
+          .from('user_sessions')
+          .insert([{ 
+            email,
+            session_key: sessionKey,
+            last_accessed: new Date().toISOString()
+          }]);
+        
+        if (insertError) throw insertError;
+      }
 
       const { error: emailError } = await supabase.auth.signInWithOtp({
         email,
