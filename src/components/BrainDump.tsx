@@ -5,15 +5,21 @@ import { Plus } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getSessionHeaders } from '@/lib/session';
 
 const BrainDump = () => {
   const [thought, setThought] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const sessionHeaders = getSessionHeaders();
 
   const { data: thoughts, isLoading } = useQuery({
     queryKey: ['thoughts'],
     queryFn: async () => {
+      if (!sessionHeaders) {
+        return [];
+      }
+      
       const { data, error } = await supabase
         .from('thoughts')
         .select('*')
@@ -21,11 +27,16 @@ const BrainDump = () => {
       
       if (error) throw error;
       return data;
-    }
+    },
+    enabled: !!sessionHeaders // Only run query if we have session headers
   });
 
   const addThoughtMutation = useMutation({
     mutationFn: async (newThought: string) => {
+      if (!sessionHeaders) {
+        throw new Error('No session headers available');
+      }
+
       const { data, error } = await supabase
         .from('thoughts')
         .insert([{ content: newThought }])
@@ -76,7 +87,7 @@ const BrainDump = () => {
         <Button 
           type="submit" 
           className="w-full sm:w-auto btn-primary"
-          disabled={addThoughtMutation.isPending}
+          disabled={addThoughtMutation.isPending || !sessionHeaders}
         >
           <Plus className="mr-2 h-4 w-4" />
           Capture Thought
