@@ -5,41 +5,30 @@ import { Plus } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import MobileNumberForm from './MobileNumberForm';
 
 const BrainDump = () => {
   const [thought, setThought] = useState("");
-  const [mobileNumber, setMobileNumber] = useState(() => localStorage.getItem('mobileNumber'));
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const { data: thoughts, isLoading } = useQuery({
-    queryKey: ['thoughts', mobileNumber],
+    queryKey: ['thoughts'],
     queryFn: async () => {
-      if (!mobileNumber) return null;
-      
       const { data, error } = await supabase
         .from('thoughts')
         .select('*')
-        .order('created_at', { ascending: false })
-        .eq('mobile_number', mobileNumber);
+        .order('created_at', { ascending: false });
       
       if (error) throw error;
       return data;
-    },
-    enabled: !!mobileNumber
+    }
   });
 
   const addThoughtMutation = useMutation({
     mutationFn: async (newThought: string) => {
-      if (!mobileNumber) throw new Error('Mobile number required');
-      
       const { data, error } = await supabase
         .from('thoughts')
-        .insert([{ 
-          content: newThought,
-          mobile_number: mobileNumber
-        }])
+        .insert([{ content: newThought }])
         .select()
         .single();
       
@@ -58,20 +47,10 @@ const BrainDump = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (thought.trim() && mobileNumber) {
+    if (thought.trim()) {
       addThoughtMutation.mutate(thought);
     }
   };
-
-  const handleMobileNumberSubmit = (number: string) => {
-    localStorage.setItem('mobileNumber', number);
-    setMobileNumber(number);
-    window.location.reload(); // Force reload to update Supabase client headers
-  };
-
-  if (!mobileNumber) {
-    return <MobileNumberForm onSubmit={handleMobileNumberSubmit} />;
-  }
 
   return (
     <div className="animate-fade-in p-4 sm:p-0">
