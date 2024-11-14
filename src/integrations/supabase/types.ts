@@ -16,6 +16,7 @@ export type Database = {
           id: number
           nextaction: string
           outcome: string
+          user_id: string | null
         }
         Insert: {
           completed?: boolean
@@ -23,6 +24,7 @@ export type Database = {
           id?: number
           nextaction: string
           outcome: string
+          user_id?: string | null
         }
         Update: {
           completed?: boolean
@@ -30,6 +32,7 @@ export type Database = {
           id?: number
           nextaction?: string
           outcome?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -39,18 +42,48 @@ export type Database = {
           content: string
           created_at: string
           id: number
+          user_id: string | null
         }
         Insert: {
           completed?: boolean
           content: string
           created_at?: string
           id?: number
+          user_id?: string | null
         }
         Update: {
           completed?: boolean
           content?: string
           created_at?: string
           id?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_sessions: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          last_accessed: string
+          mobile_number: string | null
+          session_key: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          last_accessed?: string
+          mobile_number?: string | null
+          session_key: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          last_accessed?: string
+          mobile_number?: string | null
+          session_key?: string
         }
         Relationships: []
       }
@@ -59,7 +92,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      update_session_key:
+        | {
+            Args: {
+              p_email: string
+              p_mobile_number: string
+              p_new_session_key: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              p_email: string
+              p_new_session_key: string
+            }
+            Returns: undefined
+          }
+      verify_session: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
