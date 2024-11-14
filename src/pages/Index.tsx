@@ -1,13 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import BrainDump from '@/components/BrainDump';
 import ActiveCommitments from '@/components/ActiveCommitments';
 import { Card } from "@/components/ui/card";
-import { Brain, ListTodo, ChevronDown } from "lucide-react";
+import { Brain, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import MobileNumberForm from '@/components/MobileNumberForm';
 
 const Index = () => {
+  const [mobileNumber, setMobileNumber] = useState<string | null>(
+    localStorage.getItem('userMobileNumber')
+  );
+
+  const handleMobileNumberSubmit = (number: string) => {
+    localStorage.setItem('userMobileNumber', number);
+    setMobileNumber(number);
+  };
+
+  if (!mobileNumber) {
+    return <MobileNumberForm onSubmit={handleMobileNumberSubmit} />;
+  }
+
   const scrollToContent = () => {
     window.scrollTo({
       top: window.innerHeight,
