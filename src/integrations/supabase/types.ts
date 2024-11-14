@@ -66,6 +66,7 @@ export type Database = {
           email: string
           id: string
           last_accessed: string
+          mobile_number: string | null
           session_key: string
         }
         Insert: {
@@ -73,6 +74,7 @@ export type Database = {
           email: string
           id?: string
           last_accessed?: string
+          mobile_number?: string | null
           session_key: string
         }
         Update: {
@@ -80,6 +82,7 @@ export type Database = {
           email?: string
           id?: string
           last_accessed?: string
+          mobile_number?: string | null
           session_key?: string
         }
         Relationships: []
@@ -89,13 +92,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      update_session_key: {
-        Args: {
-          p_email: string
-          p_new_session_key: string
-        }
-        Returns: undefined
-      }
+      update_session_key:
+        | {
+            Args: {
+              p_email: string
+              p_mobile_number: string
+              p_new_session_key: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              p_email: string
+              p_new_session_key: string
+            }
+            Returns: undefined
+          }
       verify_session: {
         Args: Record<PropertyKey, never>
         Returns: boolean
