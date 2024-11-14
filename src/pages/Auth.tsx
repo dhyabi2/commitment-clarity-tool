@@ -2,51 +2,40 @@ import React, { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { Mail } from "lucide-react";
 import { generateSessionKey } from '@/utils/session';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
+  const [cooldown, setCooldown] = useState(false);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (isLoading) return;
+    if (isLoading || cooldown) return;
     setIsLoading(true);
 
     try {
       const sessionKey = generateSessionKey();
       
-      // First, try to update existing session
+      // Try to update existing session
       const { error: updateError } = await supabase
         .rpc('update_session_key', {
           p_email: email,
           p_new_session_key: sessionKey
         });
 
-      if (updateError) {
-        // If update fails (no existing user), create new session
-        const { error: insertError } = await supabase
-          .from('user_sessions')
-          .insert([{ 
-            email,
-            session_key: sessionKey,
-            last_accessed: new Date().toISOString()
-          }]);
-        
-        if (insertError) throw insertError;
+      if (updateError && !updateError.message.includes('no rows')) {
+        throw updateError;
       }
 
-      // Send verification email with proper configuration
+      // Send verification email
       const { error: emailError } = await supabase.auth.signInWithOtp({
         email,
         options: {
           emailRedirectTo: `${window.location.origin}/verify?sessionKey=${sessionKey}`,
-          shouldCreateUser: true,
           data: {
             session_key: sessionKey
           }
@@ -55,17 +44,14 @@ const Auth = () => {
 
       if (emailError) {
         if (emailError.message.includes('rate_limit')) {
-          toast({
-            title: "Please wait",
-            description: "For security purposes, please wait a moment before requesting another email.",
-            variant: "destructive",
-          });
-        } else {
-          throw emailError;
+          setCooldown(true);
+          setTimeout(() => setCooldown(false), 60000); // 60 second cooldown
         }
+        throw emailError;
       }
 
     } catch (error: any) {
+      console.error('Auth error:', error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -88,14 +74,16 @@ const Auth = () => {
             onChange={(e) => setEmail(e.target.value)}
             required
             className="w-full"
+            disabled={isLoading || cooldown}
           />
           <Button 
             type="submit" 
             className="w-full bg-sage-500 hover:bg-sage-600"
-            disabled={isLoading}
+            disabled={isLoading || cooldown}
           >
             <Mail className="mr-2 h-4 w-4" />
-            {isLoading ? "Sending..." : "Send Verification Link"}
+            {cooldown ? "Please wait 60 seconds..." : 
+             isLoading ? "Sending..." : "Send Verification Link"}
           </Button>
         </form>
 
