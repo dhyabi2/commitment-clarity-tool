@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/lib/supabase';
 import { Loader2 } from "lucide-react";
 import { setSession } from '@/utils/session';
@@ -9,7 +8,6 @@ import { setSession } from '@/utils/session';
 const Verify = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [isVerifying, setIsVerifying] = useState(true);
 
   useEffect(() => {
@@ -40,8 +38,10 @@ const Verify = () => {
           p_new_session_key: sessionKey
         });
 
-        navigate('/');
+        // Force reload to ensure new headers are applied
+        window.location.href = '/';
       } catch (error) {
+        console.error('Verification error:', error);
         navigate('/auth');
       } finally {
         setIsVerifying(false);
