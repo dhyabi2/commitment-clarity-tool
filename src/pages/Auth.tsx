@@ -41,11 +41,15 @@ const Auth = () => {
         if (insertError) throw insertError;
       }
 
-      // Send verification email
+      // Send verification email with proper configuration
       const { error: emailError } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/verify?sessionKey=${sessionKey}`
+          emailRedirectTo: `${window.location.origin}/verify?sessionKey=${sessionKey}`,
+          shouldCreateUser: true,
+          data: {
+            session_key: sessionKey
+          }
         }
       });
 
