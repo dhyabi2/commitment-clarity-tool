@@ -5,30 +5,41 @@ import { Plus } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import MobileNumberForm from './MobileNumberForm';
 
 const BrainDump = () => {
   const [thought, setThought] = useState("");
+  const [mobileNumber, setMobileNumber] = useState(() => localStorage.getItem('mobileNumber'));
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const { data: thoughts, isLoading } = useQuery({
-    queryKey: ['thoughts'],
+    queryKey: ['thoughts', mobileNumber],
     queryFn: async () => {
+      if (!mobileNumber) return null;
+      
       const { data, error } = await supabase
         .from('thoughts')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .eq('mobile_number', mobileNumber);
       
       if (error) throw error;
       return data;
-    }
+    },
+    enabled: !!mobileNumber
   });
 
   const addThoughtMutation = useMutation({
     mutationFn: async (newThought: string) => {
+      if (!mobileNumber) throw new Error('Mobile number required');
+      
       const { data, error } = await supabase
         .from('thoughts')
-        .insert([{ content: newThought }])
+        .insert([{ 
+          content: newThought,
+          mobile_number: mobileNumber
+        }])
         .select()
         .single();
       
@@ -42,23 +53,24 @@ const BrainDump = () => {
         description: "Your thought has been safely stored.",
       });
       setThought("");
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to save thought. Please try again.",
-        variant: "destructive",
-      });
-      console.error('Error saving thought:', error);
     }
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (thought.trim()) {
+    if (thought.trim() && mobileNumber) {
       addThoughtMutation.mutate(thought);
     }
   };
+
+  const handleMobileNumberSubmit = (number: string) => {
+    localStorage.setItem('mobileNumber', number);
+    setMobileNumber(number);
+  };
+
+  if (!mobileNumber) {
+    return <MobileNumberForm onSubmit={handleMobileNumberSubmit} />;
+  }
 
   return (
     <div className="animate-fade-in p-4 sm:p-0">
