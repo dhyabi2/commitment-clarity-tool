@@ -19,16 +19,14 @@ const Auth = () => {
     try {
       const sessionKey = generateSessionKey();
       
-      // First, try to update existing session
-      const { data: existingSession, error: checkError } = await supabase
+      // First, check if user exists
+      const { data: existingUser } = await supabase
         .from('user_sessions')
-        .select('*')
+        .select('email')
         .eq('email', email)
         .maybeSingle();
 
-      if (checkError && checkError.code !== 'PGRST116') throw checkError;
-
-      if (existingSession) {
+      if (existingUser) {
         // Update existing session using the database function
         const { error: updateError } = await supabase
           .rpc('update_session_key', {
