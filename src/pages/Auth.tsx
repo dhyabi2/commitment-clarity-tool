@@ -19,36 +19,19 @@ const Auth = () => {
     try {
       const sessionKey = generateSessionKey();
       
-      // Check if user already exists
-      const { data: existingUser, error: fetchError } = await supabase
+      // Use upsert operation instead of separate insert/update
+      const { error: upsertError } = await supabase
         .from('user_sessions')
-        .select('*')
-        .eq('email', email)
-        .maybeSingle();
+        .upsert({ 
+          email,
+          session_key: sessionKey,
+          last_accessed: new Date().toISOString()
+        }, {
+          onConflict: 'email',
+          ignoreDuplicates: false
+        });
 
-      if (fetchError) throw fetchError;
-
-      if (existingUser) {
-        const { error: updateError } = await supabase
-          .from('user_sessions')
-          .update({ 
-            session_key: sessionKey,
-            last_accessed: new Date().toISOString()
-          })
-          .eq('email', email);
-
-        if (updateError) throw updateError;
-      } else {
-        const { error: insertError } = await supabase
-          .from('user_sessions')
-          .insert([{ 
-            email, 
-            session_key: sessionKey,
-            last_accessed: new Date().toISOString()
-          }]);
-
-        if (insertError) throw insertError;
-      }
+      if (upsertError) throw upsertError;
 
       const { error: emailError } = await supabase.auth.signInWithOtp({
         email,
