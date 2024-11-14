@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/lib/supabase';
 import { Loader2 } from "lucide-react";
+import { setSession } from '@/utils/session';
 
 const Verify = () => {
   const [searchParams] = useSearchParams();
@@ -16,11 +17,6 @@ const Verify = () => {
       const sessionKey = searchParams.get('sessionKey');
       
       if (!sessionKey) {
-        toast({
-          title: "Error",
-          description: "Invalid verification link",
-          variant: "destructive",
-        });
         navigate('/auth');
         return;
       }
@@ -35,22 +31,17 @@ const Verify = () => {
 
         if (error || !session) throw new Error('Invalid session');
 
-        // Store the session key in localStorage
-        localStorage.setItem('sessionKey', sessionKey);
-        localStorage.setItem('userEmail', session.email);
-
-        toast({
-          title: "Verification successful",
-          description: "Welcome to Clear Mind!",
-        });
+        // Store session information
+        setSession(sessionKey, session.email);
         
-        navigate('/');
-      } catch (error: any) {
-        toast({
-          title: "Error",
-          description: "Failed to verify session. Please try again.",
-          variant: "destructive",
+        // Update last accessed timestamp
+        await supabase.rpc('update_session_key', {
+          p_email: session.email,
+          p_new_session_key: sessionKey
         });
+
+        navigate('/');
+      } catch (error) {
         navigate('/auth');
       } finally {
         setIsVerifying(false);
@@ -58,7 +49,7 @@ const Verify = () => {
     };
 
     verifySession();
-  }, [navigate, searchParams, toast]);
+  }, [navigate, searchParams]);
 
   if (isVerifying) {
     return (
