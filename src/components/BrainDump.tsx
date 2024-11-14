@@ -2,50 +2,54 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
-import { supabase, withMobileNumber, getMobileNumber } from '@/lib/supabase';
+import { useToast } from "@/components/ui/use-toast";
+import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 const BrainDump = () => {
   const [thought, setThought] = useState("");
+  const { toast } = useToast();
   const queryClient = useQueryClient();
-  const mobileNumber = getMobileNumber();
 
   const { data: thoughts, isLoading } = useQuery({
     queryKey: ['thoughts'],
     queryFn: async () => {
-      if (!mobileNumber) return [];
-      
       const { data, error } = await supabase
         .from('thoughts')
         .select('*')
-        .order('created_at', { ascending: false })
-        .headers(withMobileNumber().headers);
+        .order('created_at', { ascending: false });
       
       if (error) throw error;
       return data;
-    },
-    enabled: !!mobileNumber
+    }
   });
 
   const addThoughtMutation = useMutation({
     mutationFn: async (newThought: string) => {
-      if (!mobileNumber) {
-        throw new Error('No mobile number available');
-      }
-
       const { data, error } = await supabase
         .from('thoughts')
         .insert([{ content: newThought }])
         .select()
-        .single()
-        .headers(withMobileNumber().headers);
+        .single();
       
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['thoughts'] });
+      toast({
+        title: "Thought captured",
+        description: "Your thought has been safely stored.",
+      });
       setThought("");
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to save thought. Please try again.",
+        variant: "destructive",
+      });
+      console.error('Error saving thought:', error);
     }
   });
 
@@ -72,7 +76,7 @@ const BrainDump = () => {
         <Button 
           type="submit" 
           className="w-full sm:w-auto btn-primary"
-          disabled={addThoughtMutation.isPending || !mobileNumber}
+          disabled={addThoughtMutation.isPending}
         >
           <Plus className="mr-2 h-4 w-4" />
           Capture Thought
