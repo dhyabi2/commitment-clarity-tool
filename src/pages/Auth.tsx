@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from '@/lib/supabase';
 import { Mail } from "lucide-react";
 import { generateSessionKey } from '@/utils/session';
@@ -14,12 +14,14 @@ const Auth = () => {
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (isLoading) return;
     setIsLoading(true);
 
     try {
       const sessionKey = generateSessionKey();
       
-      // First, check if user exists and update session
+      // First, try to update existing session
       const { error: updateError } = await supabase
         .rpc('update_session_key', {
           p_email: email,
@@ -39,17 +41,27 @@ const Auth = () => {
         if (insertError) throw insertError;
       }
 
+      // Send verification email
       const { error: emailError } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          data: { sessionKey },
           emailRedirectTo: `${window.location.origin}/verify?sessionKey=${sessionKey}`
         }
       });
 
-      if (emailError) throw emailError;
+      if (emailError) {
+        if (emailError.message.includes('rate_limit')) {
+          toast({
+            title: "Please wait",
+            description: "For security purposes, please wait a moment before requesting another email.",
+            variant: "destructive",
+          });
+        } else {
+          throw emailError;
+        }
+      }
 
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     } finally {
       setIsLoading(false);
