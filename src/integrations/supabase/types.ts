@@ -14,25 +14,25 @@ export type Database = {
           completed: boolean
           created_at: string
           id: number
+          mobile_number: string
           nextaction: string
           outcome: string
-          user_id: string | null
         }
         Insert: {
           completed?: boolean
           created_at?: string
           id?: number
+          mobile_number: string
           nextaction: string
           outcome: string
-          user_id?: string | null
         }
         Update: {
           completed?: boolean
           created_at?: string
           id?: number
+          mobile_number?: string
           nextaction?: string
           outcome?: string
-          user_id?: string | null
         }
         Relationships: []
       }
@@ -42,21 +42,21 @@ export type Database = {
           content: string
           created_at: string
           id: number
-          user_id: string | null
+          mobile_number: string
         }
         Insert: {
           completed?: boolean
           content: string
           created_at?: string
           id?: number
-          user_id?: string | null
+          mobile_number: string
         }
         Update: {
           completed?: boolean
           content?: string
           created_at?: string
           id?: number
-          user_id?: string | null
+          mobile_number?: string
         }
         Relationships: []
       }
@@ -66,7 +66,7 @@ export type Database = {
           email: string
           id: string
           last_accessed: string
-          mobile_number: string | null
+          mobile_number: string
           session_key: string
         }
         Insert: {
@@ -74,7 +74,7 @@ export type Database = {
           email: string
           id?: string
           last_accessed?: string
-          mobile_number?: string | null
+          mobile_number: string
           session_key: string
         }
         Update: {
@@ -82,7 +82,7 @@ export type Database = {
           email?: string
           id?: string
           last_accessed?: string
-          mobile_number?: string | null
+          mobile_number?: string
           session_key?: string
         }
         Relationships: []
