@@ -23,17 +23,25 @@ const Auth = () => {
       const sessionKey = generateSessionKey();
       
       // Check if user already exists
-      const { data: existingSession } = await supabase
+      const { data: existingSession, error: fetchError } = await supabase
         .from('user_sessions')
         .select('*')
         .eq('email', email)
         .single();
 
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        // If error is not "no rows returned", throw it
+        throw fetchError;
+      }
+
       if (existingSession) {
         // If user exists, update their session key
         const { error: updateError } = await supabase
           .from('user_sessions')
-          .update({ session_key: sessionKey })
+          .update({ 
+            session_key: sessionKey,
+            last_accessed: new Date().toISOString()
+          })
           .eq('email', email);
 
         if (updateError) throw updateError;
@@ -44,11 +52,15 @@ const Auth = () => {
         });
       } else {
         // If new user, create new session
-        const { error: dbError } = await supabase
+        const { error: insertError } = await supabase
           .from('user_sessions')
-          .insert([{ email, session_key: sessionKey }]);
+          .insert([{ 
+            email, 
+            session_key: sessionKey,
+            last_accessed: new Date().toISOString()
+          }]);
 
-        if (dbError) throw dbError;
+        if (insertError) throw insertError;
 
         toast({
           title: "Verification email sent",
