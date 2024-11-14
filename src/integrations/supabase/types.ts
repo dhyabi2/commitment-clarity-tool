@@ -89,6 +89,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      update_session_key: {
+        Args: {
+          p_email: string
+          p_new_session_key: string
+        }
+        Returns: undefined
+      }
       verify_session: {
         Args: Record<PropertyKey, never>
         Returns: boolean
