@@ -29,7 +29,7 @@ const Verify = () => {
 
         if (error || !session) throw new Error('Invalid session');
 
-        // Store session information
+        // Store session information in localStorage
         setSession(sessionKey, session.email);
         
         // Update last accessed timestamp

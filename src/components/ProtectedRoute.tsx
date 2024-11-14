@@ -15,6 +15,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     }
   }, [navigate]);
 
+  if (!hasValidSession()) {
+    return null;
+  }
+
   return <>{children}</>;
 };
 
