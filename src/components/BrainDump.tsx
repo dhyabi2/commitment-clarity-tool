@@ -66,6 +66,7 @@ const BrainDump = () => {
   const handleMobileNumberSubmit = (number: string) => {
     localStorage.setItem('mobileNumber', number);
     setMobileNumber(number);
+    window.location.reload(); // Force reload to update Supabase client headers
   };
 
   if (!mobileNumber) {
