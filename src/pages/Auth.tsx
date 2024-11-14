@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +10,6 @@ import { generateSessionKey } from '@/utils/session';
 const Auth = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -28,12 +26,9 @@ const Auth = () => {
         .eq('email', email)
         .maybeSingle();
 
-      if (fetchError && fetchError.code !== 'PGRST116') {
-        throw fetchError;
-      }
+      if (fetchError) throw fetchError;
 
       if (existingUser) {
-        // If user exists, update their session key
         const { error: updateError } = await supabase
           .from('user_sessions')
           .update({ 
@@ -43,13 +38,7 @@ const Auth = () => {
           .eq('email', email);
 
         if (updateError) throw updateError;
-
-        toast({
-          title: "Access Restoration",
-          description: "We've sent a verification link to restore your access.",
-        });
       } else {
-        // If new user, create new session
         const { error: insertError } = await supabase
           .from('user_sessions')
           .insert([{ 
@@ -59,14 +48,8 @@ const Auth = () => {
           }]);
 
         if (insertError) throw insertError;
-
-        toast({
-          title: "Verification email sent",
-          description: "Please check your email to verify and access the app.",
-        });
       }
 
-      // Send verification email in both cases
       const { error: emailError } = await supabase.auth.signInWithOtp({
         email,
         options: {
@@ -77,12 +60,8 @@ const Auth = () => {
 
       if (emailError) throw emailError;
 
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+    } catch (error) {
+      throw error;
     } finally {
       setIsLoading(false);
     }
