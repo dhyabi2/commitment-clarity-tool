@@ -1,21 +1,7 @@
 import React, { useState } from 'react';
-import { Card } from "@/components/ui/card";
-import { Check, Clock, X, Pencil, Save } from "lucide-react";
 import { supabase, withMobileNumber, getMobileNumber } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useToast } from "@/components/ui/use-toast";
-import { Input } from "@/components/ui/input";
-import { CommitmentCard } from './CommitmentCard';
 import { CommitmentList } from './CommitmentList';
-import { EditCommitment } from './EditCommitment';
-
-interface Commitment {
-  id: number;
-  outcome: string;
-  nextAction: string;
-  completed: boolean;
-  created_at: string;
-}
 
 interface EditingState {
   id: number | null;
@@ -24,7 +10,6 @@ interface EditingState {
 }
 
 const ActiveCommitments = () => {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const mobileNumber = getMobileNumber();
   const [editing, setEditing] = useState<EditingState>({
@@ -62,19 +47,7 @@ const ActiveCommitments = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['commitments'] });
-      toast({
-        title: "Commitment updated",
-        description: "Your changes have been saved successfully.",
-      });
       setEditing({ id: null, field: null, value: '' });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to update commitment. Please try again.",
-        variant: "destructive",
-      });
-      console.error('Error updating commitment:', error);
     }
   });
 
@@ -90,18 +63,6 @@ const ActiveCommitments = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['commitments'] });
-      toast({
-        title: "Commitment completed",
-        description: "Great job completing your commitment!",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to complete commitment. Please try again.",
-        variant: "destructive",
-      });
-      console.error('Error completing commitment:', error);
     }
   });
 

@@ -2,22 +2,18 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
 import { supabase, withMobileNumber, getMobileNumber } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 const BrainDump = () => {
   const [thought, setThought] = useState("");
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const mobileNumber = getMobileNumber();
 
   const { data: thoughts, isLoading } = useQuery({
     queryKey: ['thoughts'],
     queryFn: async () => {
-      if (!mobileNumber) {
-        return [];
-      }
+      if (!mobileNumber) return [];
       
       const { data, error } = await supabase
         .from('thoughts')
@@ -49,19 +45,7 @@ const BrainDump = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['thoughts'] });
-      toast({
-        title: "Thought captured",
-        description: "Your thought has been safely stored.",
-      });
       setThought("");
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to save thought. Please try again.",
-        variant: "destructive",
-      });
-      console.error('Error saving thought:', error);
     }
   });
 
