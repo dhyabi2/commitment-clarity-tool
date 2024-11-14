@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Check, Clock, X, Pencil, Save } from "lucide-react";
-import { supabase } from '@/lib/supabase';
+import { supabase, withMobileNumber, getMobileNumber } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
+import { CommitmentCard } from './CommitmentCard';
+import { CommitmentList } from './CommitmentList';
+import { EditCommitment } from './EditCommitment';
 
 interface Commitment {
   id: number;
@@ -23,6 +26,7 @@ interface EditingState {
 const ActiveCommitments = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const mobileNumber = getMobileNumber();
   const [editing, setEditing] = useState<EditingState>({
     id: null,
     field: null,
@@ -32,14 +36,18 @@ const ActiveCommitments = () => {
   const { data: commitments, isLoading } = useQuery({
     queryKey: ['commitments'],
     queryFn: async () => {
+      if (!mobileNumber) return [];
+      
       const { data, error } = await supabase
         .from('commitments')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .headers(withMobileNumber().headers);
       
       if (error) throw error;
       return data;
-    }
+    },
+    enabled: !!mobileNumber
   });
 
   const updateCommitmentMutation = useMutation({
@@ -47,7 +55,8 @@ const ActiveCommitments = () => {
       const { error } = await supabase
         .from('commitments')
         .update({ [field]: value })
-        .eq('id', id);
+        .eq('id', id)
+        .headers(withMobileNumber().headers);
       
       if (error) throw error;
     },
@@ -74,7 +83,8 @@ const ActiveCommitments = () => {
       const { error } = await supabase
         .from('commitments')
         .update({ completed: true })
-        .eq('id', id);
+        .eq('id', id)
+        .headers(withMobileNumber().headers);
       
       if (error) throw error;
     },
@@ -95,130 +105,20 @@ const ActiveCommitments = () => {
     }
   });
 
-  const handleEdit = (commitment: Commitment, field: 'outcome' | 'nextAction') => {
-    setEditing({
-      id: commitment.id,
-      field,
-      value: commitment[field],
-    });
-  };
-
-  const handleSave = () => {
-    if (editing.id && editing.field) {
-      updateCommitmentMutation.mutate({
-        id: editing.id,
-        field: editing.field === 'nextAction' ? 'nextaction' : 'outcome',
-        value: editing.value,
-      });
-    }
-  };
-
-  const handleCancel = () => {
-    setEditing({ id: null, field: null, value: '' });
-  };
-
   if (isLoading) {
     return <div className="p-4 text-center text-gray-600">Loading commitments...</div>;
   }
 
   return (
-    <div className="animate-fade-in p-4 sm:p-0">
-      <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Active Commitments</h2>
-      <div className="grid gap-3 sm:gap-4">
-        {commitments?.filter(c => !c.completed).map((commitment) => (
-          <Card key={commitment.id} className="commitment-card p-4 sm:p-6">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1 min-w-0 overflow-hidden">
-                <div className="flex items-start gap-2">
-                  {editing.id === commitment.id && editing.field === 'outcome' ? (
-                    <div className="flex-1">
-                      <Input
-                        value={editing.value}
-                        onChange={(e) => setEditing(prev => ({ ...prev, value: e.target.value }))}
-                        className="mb-2"
-                        autoFocus
-                      />
-                      <div className="flex gap-2">
-                        <button
-                          onClick={handleSave}
-                          className="p-1 hover:bg-sage-100 rounded-full transition-colors"
-                          disabled={updateCommitmentMutation.isPending}
-                        >
-                          <Save className="h-4 w-4 text-sage-500" />
-                        </button>
-                        <button
-                          onClick={handleCancel}
-                          className="p-1 hover:bg-red-100 rounded-full transition-colors"
-                        >
-                          <X className="h-4 w-4 text-red-500" />
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <h3 className="font-medium text-base sm:text-lg break-words flex-1">
-                        {commitment.outcome}
-                      </h3>
-                      <button
-                        onClick={() => handleEdit(commitment, 'outcome')}
-                        className="p-1 hover:bg-sage-100 rounded-full transition-colors"
-                      >
-                        <Pencil className="h-4 w-4 text-sage-500" />
-                      </button>
-                    </>
-                  )}
-                </div>
-                <div className="flex items-start mt-2 text-gray-600">
-                  <Clock className="h-4 w-4 mr-2 flex-shrink-0 mt-1" />
-                  {editing.id === commitment.id && editing.field === 'nextAction' ? (
-                    <div className="flex-1">
-                      <Input
-                        value={editing.value}
-                        onChange={(e) => setEditing(prev => ({ ...prev, value: e.target.value }))}
-                        className="mb-2"
-                        autoFocus
-                      />
-                      <div className="flex gap-2">
-                        <button
-                          onClick={handleSave}
-                          className="p-1 hover:bg-sage-100 rounded-full transition-colors"
-                          disabled={updateCommitmentMutation.isPending}
-                        >
-                          <Save className="h-4 w-4 text-sage-500" />
-                        </button>
-                        <button
-                          onClick={handleCancel}
-                          className="p-1 hover:bg-red-100 rounded-full transition-colors"
-                        >
-                          <X className="h-4 w-4 text-red-500" />
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-start gap-2 flex-1">
-                      <p className="text-sm sm:text-base break-words flex-1">{commitment.nextAction}</p>
-                      <button
-                        onClick={() => handleEdit(commitment, 'nextAction')}
-                        className="p-1 hover:bg-sage-100 rounded-full transition-colors"
-                      >
-                        <Pencil className="h-4 w-4 text-sage-500" />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <button 
-                className="p-2 hover:bg-sage-100 rounded-full transition-colors flex-shrink-0"
-                onClick={() => completeCommitmentMutation.mutate(commitment.id)}
-                disabled={completeCommitmentMutation.isPending}
-              >
-                <Check className="h-5 w-5 text-sage-500" />
-              </button>
-            </div>
-          </Card>
-        ))}
-      </div>
-    </div>
+    <CommitmentList
+      commitments={commitments?.filter(c => !c.completed) || []}
+      editing={editing}
+      setEditing={setEditing}
+      onUpdate={updateCommitmentMutation.mutate}
+      onComplete={completeCommitmentMutation.mutate}
+      isUpdating={updateCommitmentMutation.isPending}
+      isCompleting={completeCommitmentMutation.isPending}
+    />
   );
 };
 

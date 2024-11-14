@@ -3,45 +3,46 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from '@/lib/supabase';
+import { supabase, withMobileNumber, getMobileNumber } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getSessionHeaders } from '@/lib/session';
 
 const BrainDump = () => {
   const [thought, setThought] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const sessionHeaders = getSessionHeaders();
+  const mobileNumber = getMobileNumber();
 
   const { data: thoughts, isLoading } = useQuery({
     queryKey: ['thoughts'],
     queryFn: async () => {
-      if (!sessionHeaders) {
+      if (!mobileNumber) {
         return [];
       }
       
       const { data, error } = await supabase
         .from('thoughts')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .headers(withMobileNumber().headers);
       
       if (error) throw error;
       return data;
     },
-    enabled: !!sessionHeaders // Only run query if we have session headers
+    enabled: !!mobileNumber
   });
 
   const addThoughtMutation = useMutation({
     mutationFn: async (newThought: string) => {
-      if (!sessionHeaders) {
-        throw new Error('No session headers available');
+      if (!mobileNumber) {
+        throw new Error('No mobile number available');
       }
 
       const { data, error } = await supabase
         .from('thoughts')
         .insert([{ content: newThought }])
         .select()
-        .single();
+        .single()
+        .headers(withMobileNumber().headers);
       
       if (error) throw error;
       return data;
@@ -87,7 +88,7 @@ const BrainDump = () => {
         <Button 
           type="submit" 
           className="w-full sm:w-auto btn-primary"
-          disabled={addThoughtMutation.isPending || !sessionHeaders}
+          disabled={addThoughtMutation.isPending || !mobileNumber}
         >
           <Plus className="mr-2 h-4 w-4" />
           Capture Thought
