@@ -22,18 +22,17 @@ const Auth = () => {
       const sessionKey = generateSessionKey();
       
       // Check if user already exists
-      const { data: existingSession, error: fetchError } = await supabase
+      const { data: existingUser, error: fetchError } = await supabase
         .from('user_sessions')
         .select('*')
         .eq('email', email)
-        .single();
+        .maybeSingle();
 
       if (fetchError && fetchError.code !== 'PGRST116') {
-        // If error is not "no rows returned", throw it
         throw fetchError;
       }
 
-      if (existingSession) {
+      if (existingUser) {
         // If user exists, update their session key
         const { error: updateError } = await supabase
           .from('user_sessions')
