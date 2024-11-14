@@ -7,7 +7,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/lib/supabase';
 import { Mail } from "lucide-react";
 import { generateSessionKey } from '@/utils/session';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Auth = () => {
   const [email, setEmail] = useState('');
