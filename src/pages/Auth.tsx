@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/lib/supabase';
 import { Mail } from "lucide-react";
 import { generateSessionKey } from '@/utils/session';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -21,14 +22,41 @@ const Auth = () => {
     try {
       const sessionKey = generateSessionKey();
       
-      // Store the session in the database
-      const { error: dbError } = await supabase
+      // Check if user already exists
+      const { data: existingSession } = await supabase
         .from('user_sessions')
-        .insert([{ email, session_key: sessionKey }]);
+        .select('*')
+        .eq('email', email)
+        .single();
 
-      if (dbError) throw dbError;
+      if (existingSession) {
+        // If user exists, update their session key
+        const { error: updateError } = await supabase
+          .from('user_sessions')
+          .update({ session_key: sessionKey })
+          .eq('email', email);
 
-      // Send verification email
+        if (updateError) throw updateError;
+
+        toast({
+          title: "Access Restoration",
+          description: "We've sent a verification link to restore your access.",
+        });
+      } else {
+        // If new user, create new session
+        const { error: dbError } = await supabase
+          .from('user_sessions')
+          .insert([{ email, session_key: sessionKey }]);
+
+        if (dbError) throw dbError;
+
+        toast({
+          title: "Verification email sent",
+          description: "Please check your email to verify and access the app.",
+        });
+      }
+
+      // Send verification email in both cases
       const { error: emailError } = await supabase.auth.signInWithOtp({
         email,
         options: {
@@ -39,10 +67,6 @@ const Auth = () => {
 
       if (emailError) throw emailError;
 
-      toast({
-        title: "Verification email sent",
-        description: "Please check your email to verify and access the app.",
-      });
     } catch (error: any) {
       toast({
         title: "Error",
@@ -80,6 +104,10 @@ const Auth = () => {
             {isLoading ? "Sending..." : "Send Verification Link"}
           </Button>
         </form>
+
+        <div className="mt-4 text-sm text-center text-gray-500">
+          Whether you're a new or existing user, we'll help you access your account securely.
+        </div>
       </Card>
     </div>
   );
