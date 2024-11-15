@@ -17,28 +17,28 @@ const FAQ = () => {
       <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-sage-700">{t('faq.title')}</h2>
       <Accordion type="single" collapsible className="space-y-2">
         <AccordionItem value="item-1">
-          <AccordionTrigger>
+          <AccordionTrigger className={`text-${isRTL ? 'right' : 'left'}`}>
             {t('faq.q1')}
           </AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent className={`text-${isRTL ? 'right' : 'left'}`}>
             {t('faq.a1')}
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="item-2">
-          <AccordionTrigger>
+          <AccordionTrigger className={`text-${isRTL ? 'right' : 'left'}`}>
             {t('faq.q2')}
           </AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent className={`text-${isRTL ? 'right' : 'left'}`}>
             {t('faq.a2')}
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="item-3">
-          <AccordionTrigger>
+          <AccordionTrigger className={`text-${isRTL ? 'right' : 'left'}`}>
             {t('faq.q3')}
           </AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent className={`text-${isRTL ? 'right' : 'left'}`}>
             <ol className={`list-decimal ${isRTL ? 'pr-4' : 'pl-4'} space-y-2`}>
               <li>{t('faq.a3_1')}</li>
               <li>{t('faq.a3_2')}</li>
@@ -48,10 +48,10 @@ const FAQ = () => {
         </AccordionItem>
 
         <AccordionItem value="item-4">
-          <AccordionTrigger>
+          <AccordionTrigger className={`text-${isRTL ? 'right' : 'left'}`}>
             {t('faq.q4')}
           </AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent className={`text-${isRTL ? 'right' : 'left'}`}>
             {t('faq.a4')}
             <ol className={`list-decimal ${isRTL ? 'pr-4' : 'pl-4'} mt-2 space-y-2`}>
               <li>{t('faq.a4_1')}</li>
@@ -62,10 +62,10 @@ const FAQ = () => {
         </AccordionItem>
 
         <AccordionItem value="item-5">
-          <AccordionTrigger>
+          <AccordionTrigger className={`text-${isRTL ? 'right' : 'left'}`}>
             {t('faq.q5')}
           </AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent className={`text-${isRTL ? 'right' : 'left'}`}>
             {t('faq.a5')}
           </AccordionContent>
         </AccordionItem>
