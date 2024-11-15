@@ -17,31 +17,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-cream to-sage-50 relative px-4">
-        <div className="text-center max-w-3xl mx-auto animate-fade-in">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-sage-700 mb-6 tracking-tight leading-tight">
-            Welcome to Clear Mind
-          </h1>
-          <p className="text-lg sm:text-xl text-sage-600 mb-8 leading-relaxed max-w-2xl mx-auto">
-            Transform your thoughts into clear, actionable commitments and achieve peace of mind.
-          </p>
-          <Button 
-            onClick={scrollToContent}
-            className="bg-sage-500 hover:bg-sage-600 text-white px-8 py-6 rounded-xl text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300"
-          >
-            Get Started
-          </Button>
-        </div>
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ChevronDown className="w-8 h-8 text-sage-500" />
-        </div>
-      </div>
-
-      {/* Content Section */}
       <ScrollArea className="h-full bg-gradient-to-b from-cream to-sage-50">
         <div className="max-w-4xl mx-auto px-4 py-16 space-y-12">
-          {/* Steps Section */}
           <div className="space-y-8">
             {/* Step 1 */}
             <div className="relative">
@@ -55,7 +32,7 @@ const Index = () => {
                       <Brain className="h-6 w-6 text-sage-600" />
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-xl font-semibold mb-3 text-sage-700">Start Here: Brain Dump</h2>
+                      <h2 className="text-xl font-semibold mb-3 text-sage-700">Brain Dump</h2>
                       <p className="text-gray-600 mb-4 leading-relaxed text-sm">
                         Begin by capturing all your thoughts below. Don't worry about organizing them yet - just get them out of your head.
                       </p>

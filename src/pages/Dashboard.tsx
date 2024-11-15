@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import {
   Card,
   CardContent,
@@ -106,7 +106,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow duration-300">
+          <Card className="hover:shadow-lg transition-shadow duration-300 h-[400px]">
             <CardHeader className="p-4">
               <CardTitle className="text-lg md:text-xl">Completion Rate</CardTitle>
               <CardDescription>Percentage of completed commitments</CardDescription>
@@ -116,7 +116,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow duration-300">
+          <Card className="hover:shadow-lg transition-shadow duration-300 h-[400px]">
             <CardHeader className="p-4">
               <CardTitle className="text-lg md:text-xl">Daily Activity</CardTitle>
               <CardDescription>Number of items created per day</CardDescription>
