@@ -1,60 +1,47 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Brain, CheckSquare, BarChart, HelpCircle } from 'lucide-react';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Navigation = () => {
   const location = useLocation();
+  const { t } = useLanguage();
   
   const isActive = (path: string) => location.pathname === path;
   
+  const navItems = [
+    { path: '/', icon: Home, label: t('nav.home') },
+    { path: '/thoughts', icon: Brain, label: t('nav.thoughts') },
+    { path: '/completed-commitments', icon: CheckSquare, label: t('nav.completed') },
+    { path: '/dashboard', icon: BarChart, label: t('nav.stats') },
+    { path: '/faq', icon: HelpCircle, label: t('nav.faq') },
+  ];
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 md:top-0 md:bottom-auto shadow-lg">
       <div className="max-w-4xl mx-auto flex justify-around items-center">
-        <Link
-          to="/"
-          className={`p-2 ${
-            isActive('/') ? 'text-sage-600' : 'text-gray-600'
-          } hover:text-sage-500 transition-colors`}
-          title="Home"
-        >
-          <Home className="h-7 w-7" />
-        </Link>
-        <Link
-          to="/thoughts"
-          className={`p-2 ${
-            isActive('/thoughts') ? 'text-sage-600' : 'text-gray-600'
-          } hover:text-sage-500 transition-colors`}
-          title="Thoughts"
-        >
-          <Brain className="h-7 w-7" />
-        </Link>
-        <Link
-          to="/completed-commitments"
-          className={`p-2 ${
-            isActive('/completed-commitments') ? 'text-sage-600' : 'text-gray-600'
-          } hover:text-sage-500 transition-colors`}
-          title="Completed"
-        >
-          <CheckSquare className="h-7 w-7" />
-        </Link>
-        <Link
-          to="/dashboard"
-          className={`p-2 ${
-            isActive('/dashboard') ? 'text-sage-600' : 'text-gray-600'
-          } hover:text-sage-500 transition-colors`}
-          title="Stats"
-        >
-          <BarChart className="h-7 w-7" />
-        </Link>
-        <Link
-          to="/faq"
-          className={`p-2 ${
-            isActive('/faq') ? 'text-sage-600' : 'text-gray-600'
-          } hover:text-sage-500 transition-colors`}
-          title="FAQ"
-        >
-          <HelpCircle className="h-7 w-7" />
-        </Link>
+        {navItems.map(({ path, icon: Icon, label }) => (
+          <Tooltip key={path}>
+            <TooltipTrigger asChild>
+              <Link
+                to={path}
+                className={`p-2 ${
+                  isActive(path) ? 'text-sage-600' : 'text-gray-600'
+                } hover:text-sage-500 transition-colors`}
+              >
+                <Icon className="h-8 w-8" />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{label}</p>
+            </TooltipContent>
+          </Tooltip>
+        ))}
       </div>
     </nav>
   );
