@@ -12,8 +12,12 @@ import { Loader2 } from "lucide-react";
 import ActivityTimeline from "@/components/dashboard/ActivityTimeline";
 import CompletionRate from "@/components/dashboard/CompletionRate";
 import DailyActivity from "@/components/dashboard/DailyActivity";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const Dashboard = () => {
+  const { t, dir } = useLanguage();
+  const isRTL = dir() === 'rtl';
+
   const { data: thoughts, isLoading: thoughtsLoading } = useQuery({
     queryKey: ["thoughts-stats"],
     queryFn: async () => {
@@ -89,17 +93,17 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cream to-sage-50 p-2 md:p-4 pb-20 md:pb-4">
+    <div className="min-h-screen bg-gradient-to-b from-cream to-sage-50 p-2 md:p-4 pb-20 md:pb-4" dir={dir()}>
       <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
         <h1 className="text-2xl md:text-3xl font-bold text-sage-700 mb-4 md:mb-8 animate-fade-in px-2">
-          Performance Dashboard
+          {t('dashboard.title')}
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <Card className="col-span-1 md:col-span-2 hover:shadow-lg transition-shadow duration-300">
             <CardHeader className="p-4">
-              <CardTitle className="text-lg md:text-xl">Activity Timeline</CardTitle>
-              <CardDescription>Active Thoughts, Completed Thoughts, and Commitments over time</CardDescription>
+              <CardTitle className="text-lg md:text-xl">{t('dashboard.timeline')}</CardTitle>
+              <CardDescription>{t('dashboard.timelineDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="p-2 md:p-4">
               <ActivityTimeline data={processDataForTimeline()} />
@@ -108,8 +112,8 @@ const Dashboard = () => {
 
           <Card className="hover:shadow-lg transition-shadow duration-300 h-[400px]">
             <CardHeader className="p-4">
-              <CardTitle className="text-lg md:text-xl">Completion Rate</CardTitle>
-              <CardDescription>Percentage of completed commitments</CardDescription>
+              <CardTitle className="text-lg md:text-xl">{t('dashboard.completion')}</CardTitle>
+              <CardDescription>{t('dashboard.completionDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="p-2 md:p-4">
               <CompletionRate completionRate={calculateCompletionRate()} />
@@ -118,8 +122,8 @@ const Dashboard = () => {
 
           <Card className="hover:shadow-lg transition-shadow duration-300 h-[400px]">
             <CardHeader className="p-4">
-              <CardTitle className="text-lg md:text-xl">Daily Activity</CardTitle>
-              <CardDescription>Number of items created per day</CardDescription>
+              <CardTitle className="text-lg md:text-xl">{t('dashboard.daily')}</CardTitle>
+              <CardDescription>{t('dashboard.dailyDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="p-2 md:p-4">
               <DailyActivity data={processDataForTimeline()} />

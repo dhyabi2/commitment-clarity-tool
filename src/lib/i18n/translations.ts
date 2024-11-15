@@ -1,84 +1,14 @@
+import { commonTranslations } from './translations/common';
+import { dashboardTranslations } from './translations/dashboard';
+import { thoughtsTranslations } from './translations/thoughts';
+import { commitmentsTranslations } from './translations/commitments';
+
 export const translations = {
   en: {
-    nav: {
-      home: "Home",
-      thoughts: "Thoughts",
-      completed: "Completed",
-      stats: "Stats",
-      faq: "FAQ"
-    },
-    brainDump: {
-      title: "Brain Dump",
-      description: "Clear your mind by capturing any unfinished thoughts or tasks here.",
-      placeholder: "What's on your mind?",
-      addTags: "Add tags (optional) - press Enter to add",
-      capture: "Capture Thought",
-      thoughtCaptured: "Your thought has been safely stored."
-    },
-    thoughts: {
-      title: "Your Thoughts",
-      description: "Review and clarify your thoughts to turn them into actionable commitments",
-      export: "Export thoughts",
-      import: "Import thoughts",
-      noThoughts: "No thoughts found",
-      startCapturing: "Start by capturing your thoughts in the brain dump area",
-      completeToSee: "Complete some thoughts to see them here",
-      goToBrainDump: "Go to Brain Dump",
-      addTag: "Add a tag and press Enter"
-    },
-    dashboard: {
-      title: "Performance Dashboard",
-      timeline: "Activity Timeline",
-      timelineDesc: "Active Thoughts, Completed Thoughts, and Commitments over time",
-      completion: "Completion Rate",
-      completionDesc: "Percentage of completed commitments",
-      daily: "Daily Activity",
-      dailyDesc: "Number of items created per day"
-    },
-    commitments: {
-      back: "Back",
-      title: "Clarify Your Thought",
-      description: "Transform your thought into a clear commitment",
-      originalThought: "Original Thought",
-      outcome: "Desired Outcome",
-      outcomePlaceholder: "What's the specific outcome you want to achieve?",
-      nextAction: "Next Action",
-      nextActionPlaceholder: "What's the very next physical action you need to take?",
-      create: "Create Commitment",
-      created: "Commitment created",
-      clarified: "Your thought has been clarified into a commitment.",
-      error: "Error",
-      errorMessage: "Failed to create commitment. Please try again.",
-      activeTitle: "Active Commitments",
-      editOutcome: "Edit outcome",
-      editNextAction: "Edit next action",
-      complete: "Mark as complete",
-      updated: "Commitment updated",
-      updatedDesc: "Your changes have been saved successfully.",
-      completed: "Commitment completed",
-      completedDesc: "Great job completing your commitment!",
-      updateError: "Failed to update commitment. Please try again.",
-      completeError: "Failed to complete commitment. Please try again."
-    },
-    completed: {
-      title: "Completed Thoughts",
-      description: "Review your completed thoughts and their associated commitments",
-      thoughtDeleted: "Thought deleted",
-      thoughtDeletedDesc: "Your thought has been successfully removed.",
-      thoughtUpdated: "Thought updated",
-      thoughtUpdatedDesc: "The thought status has been updated."
-    },
-    common: {
-      back: "Back",
-      clarify: "Clarify",
-      delete: "Delete",
-      complete: "Complete",
-      addTag: "Add tag",
-      all: "All",
-      success: "Success",
-      error: "Error",
-      loading: "Loading..."
-    },
+    ...commonTranslations.en,
+    ...dashboardTranslations.en,
+    ...thoughtsTranslations.en,
+    ...commitmentsTranslations.en,
     faq: {
       title: "Frequently Asked Questions",
       q1: "What is Brain Dump?",
@@ -97,6 +27,14 @@ export const translations = {
       q5: "Can I organize my thoughts?",
       a5: "Yes, you can add tags to your thoughts and filter them later. This helps you group related thoughts together."
     },
+    brainDump: {
+      title: "Brain Dump",
+      description: "Clear your mind by capturing any unfinished thoughts or tasks here.",
+      placeholder: "What's on your mind?",
+      addTags: "Add tags (optional) - press Enter to add",
+      capture: "Capture Thought",
+      thoughtCaptured: "Your thought has been safely stored."
+    },
     index: {
       step1: {
         title: "Brain Dump",
@@ -109,85 +47,10 @@ export const translations = {
     }
   },
   ar: {
-    nav: {
-      home: "الرئيسية",
-      thoughts: "الأفكار",
-      completed: "المكتمل",
-      stats: "الإحصائيات",
-      faq: "الأسئلة الشائعة"
-    },
-    brainDump: {
-      title: "تفريغ الأفكار",
-      description: "صفِّ ذهنك من خلال تسجيل أي أفكار أو مهام غير مكتملة هنا",
-      placeholder: "ما الذي يدور في ذهنك؟",
-      addTags: "أضف وسوماً (اختياري) - اضغط Enter للإضافة",
-      capture: "تسجيل الفكرة",
-      thoughtCaptured: "تم حفظ فكرتك بأمان"
-    },
-    thoughts: {
-      title: "أفكارك",
-      description: "راجع وحدد أفكارك لتحويلها إلى التزامات قابلة للتنفيذ",
-      export: "تصدير الأفكار",
-      import: "استيراد الأفكار",
-      noThoughts: "لا توجد أفكار",
-      startCapturing: "ابدأ بتسجيل أفكارك في منطقة تفريغ الأفكار",
-      completeToSee: "أكمل بعض الأفكار لرؤيتها هنا",
-      goToBrainDump: "اذهب إلى تفريغ الأفكار",
-      addTag: "أضف وسماً واضغط Enter"
-    },
-    dashboard: {
-      title: "لوحة الأداء",
-      timeline: "الجدول الزمني للنشاط",
-      timelineDesc: "الأفكار النشطة والمكتملة والالتزامات عبر الزمن",
-      completion: "معدل الإكمال",
-      completionDesc: "نسبة الالتزامات المكتملة",
-      daily: "النشاط اليومي",
-      dailyDesc: "عدد العناصر المنشأة في اليوم"
-    },
-    commitments: {
-      back: "رجوع",
-      title: "توضيح فكرتك",
-      description: "حول فكرتك إلى التزام واضح",
-      originalThought: "الفكرة الأصلية",
-      outcome: "النتيجة المرجوة",
-      outcomePlaceholder: "ما هي النتيجة المحددة التي تريد تحقيقها؟",
-      nextAction: "الإجراء التالي",
-      nextActionPlaceholder: "ما هو الإجراء المادي التالي الذي تحتاج إلى اتخاذه؟",
-      create: "إنشاء التزام",
-      created: "تم إنشاء الالتزام",
-      clarified: "تم توضيح فكرتك وتحويلها إلى التزام",
-      error: "خطأ",
-      errorMessage: "فشل في إنشاء الالتزام. يرجى المحاولة مرة أخرى.",
-      activeTitle: "الالتزامات النشطة",
-      editOutcome: "تعديل النتيجة",
-      editNextAction: "تعديل الإجراء التالي",
-      complete: "وضع علامة مكتمل",
-      updated: "تم تحديث الالتزام",
-      updatedDesc: "تم حفظ تغييراتك بنجاح",
-      completed: "تم إكمال الالتزام",
-      completedDesc: "عمل رائع في إكمال التزامك!",
-      updateError: "فشل في تحديث الالتزام. يرجى المحاولة مرة أخرى.",
-      completeError: "فشل في إكمال الالتزام. يرجى المحاولة مرة أخرى."
-    },
-    completed: {
-      title: "الأفكار المكتملة",
-      description: "راجع أفكارك المكتملة والالتزامات المرتبطة بها",
-      thoughtDeleted: "تم حذف الفكرة",
-      thoughtDeletedDesc: "تم حذف فكرتك بنجاح",
-      thoughtUpdated: "تم تحديث الفكرة",
-      thoughtUpdatedDesc: "تم تحديث حالة الفكرة"
-    },
-    common: {
-      back: "رجوع",
-      clarify: "توضيح",
-      delete: "حذف",
-      complete: "إكمال",
-      addTag: "إضافة وسم",
-      all: "الكل",
-      success: "نجاح",
-      error: "خطأ",
-      loading: "جارٍ التحميل..."
-    },
+    ...commonTranslations.ar,
+    ...dashboardTranslations.ar,
+    ...thoughtsTranslations.ar,
+    ...commitmentsTranslations.ar,
     faq: {
       title: "الأسئلة الشائعة",
       q1: "ما هو تفريغ الأفكار؟",
@@ -196,24 +59,32 @@ export const translations = {
       a2: "فقط اكتب ما يدور في ذهنك دون القلق بشأن التنظيم. يمكنك لاحقاً مراجعة وتوضيح هذه الأفكار وتحويلها إلى التزامات قابلة للتنفيذ",
       q3: "ماذا يحدث بعد تسجيل أفكاري؟",
       a3_1: "راجع أفكارك بانتظام",
-      a3_2: "وضحها وحولها إلى التزامات محددة",
+      a3_2: "وضحها وتحولها إلى التزامات محددة",
       a3_3: "تتبع حالة إكمالها",
       q4: "كيف أحول الأفكار إلى التزامات؟",
       a4: "عندما تكون مستعداً للعمل على فكرة ما:",
       a4_1: "انقر على زر 'توضيح' على أي فكرة",
       a4_2: "حدد النتيجة المحددة والإجراء التالي",
-      a4_desc: "هذا يساعد في تحويل الأفكار الغامضة إلى خطوات ملموسة وقابلة للتنفيذ",
+      a4_desc: "هذا يساعد في تحويل الأفكار الغامضة إلى خطوات ملموسة وقابلة للتنفيذ.",
       q5: "هل يمكنني تنظيم أفكاري؟",
-      a5: "نعم، يمكنك إضافة وسوم لأفكارك وتصفيتها لاحقاً. هذا يساعدك في تجميع الأفكار المرتبطة معاً"
+      a5: "نعم، يمكنك إضافة وسوم لأفكارك وتصفيتها لاحقاً. هذا يساعدك في تجميع الأفكار المرتبطة معاً."
+    },
+    brainDump: {
+      title: "تفريغ الأفكار",
+      description: "صفِّ ذهنك من خلال تسجيل أي أفكار أو مهام غير مكتملة هنا",
+      placeholder: "ما الذي يدور في ذهنك؟",
+      addTags: "أضف وسوماً (اختياري) - اضغط Enter للإضافة",
+      capture: "تسجيل الفكرة",
+      thoughtCaptured: "تم حفظ فكرتك بأمان."
     },
     index: {
       step1: {
         title: "تفريغ الأفكار",
-        description: "ابدأ بتسجيل جميع أفكارك أدناه. لا تقلق بشأن تنظيمها الآن - فقط أخرجها من رأسك"
+        description: "ابدأ بتسجيل جميع أفكارك أدناه. لا تقلق بشأن تنظيمها الآن - فقط أخرجها من رأسك."
       },
       step2: {
         title: "مراجعة التزاماتك النشطة",
-        description: "تتبع وإدارة التزاماتك المستمرة"
+        description: "تتبع وإدارة التزاماتك المستمرة."
       }
     }
   }
