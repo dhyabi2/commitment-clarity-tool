@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tag as TagIcon } from 'lucide-react';
