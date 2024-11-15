@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/components/ui/use-toast";
@@ -11,7 +11,7 @@ const Thoughts = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const { data: thoughts, isLoading } = useQuery({
     queryKey: ['thoughts', 'active', selectedTag],
@@ -49,16 +49,30 @@ const Thoughts = () => {
     }
   });
 
-  const { data: commitments } = useQuery({
-    queryKey: ['commitments'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('commitments')
-        .select('*')
-        .order('created_at', { ascending: false });
+  const addTagMutation = useMutation({
+    mutationFn: async ({ thoughtId, tagName }: { thoughtId: number; tagName: string }) => {
+      // First, insert or get the tag
+      const { data: tagData, error: tagError } = await supabase
+        .from('tags')
+        .upsert({ name: tagName }, { onConflict: 'name' })
+        .select()
+        .single();
       
-      if (error) throw error;
-      return data;
+      if (tagError) throw tagError;
+
+      // Then create the relationship
+      const { error: relationError } = await supabase
+        .from('thought_tags')
+        .insert({ thought_id: thoughtId, tag_id: tagData.id });
+
+      if (relationError) throw relationError;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['thoughts'] });
+      toast({
+        title: "Tag added",
+        description: "The tag has been added to your thought.",
+      });
     }
   });
 

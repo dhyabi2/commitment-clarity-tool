@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRightCircle, Trash2, CheckCircle } from 'lucide-react';
+import { ArrowRightCircle, Trash2, CheckCircle, Tag as TagIcon } from 'lucide-react';
+import { Input } from "@/components/ui/input";
 
 interface Tag {
   id: number;
@@ -24,11 +25,13 @@ interface ThoughtsListProps {
   onDelete: (id: number) => void;
   onToggleComplete: (id: number, completed: boolean) => void;
   selectedTag: string | null;
-  onTagClick: (tag: string) => void;
+  onTagClick: (tag: string | null) => void;
 }
 
 const ThoughtsList = ({ thoughts, onDelete, onToggleComplete, selectedTag, onTagClick }: ThoughtsListProps) => {
   const navigate = useNavigate();
+  const [tagInput, setTagInput] = useState<string>("");
+  const [editingThoughtId, setEditingThoughtId] = useState<number | null>(null);
 
   if (thoughts.length === 0) {
     return (
@@ -53,6 +56,21 @@ const ThoughtsList = ({ thoughts, onDelete, onToggleComplete, selectedTag, onTag
 
   // Get unique tags from all thoughts
   const allTags = Array.from(new Set(thoughts.flatMap(thought => thought.tags?.map(tag => tag.name) || []))).sort();
+
+  const handleTagAdd = async (thoughtId: number) => {
+    if (tagInput.trim()) {
+      // Add tag logic will be handled by the parent component
+      setTagInput("");
+      setEditingThoughtId(null);
+    }
+  };
+
+  const handleTagInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, thoughtId: number) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleTagAdd(thoughtId);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -92,6 +110,14 @@ const ThoughtsList = ({ thoughts, onDelete, onToggleComplete, selectedTag, onTag
                 <Button
                   variant="ghost"
                   size="sm"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  onClick={() => setEditingThoughtId(editingThoughtId === thought.id ? null : thought.id)}
+                >
+                  <TagIcon className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:text-red-600"
                   onClick={() => onDelete(thought.id)}
                 >
@@ -121,6 +147,17 @@ const ThoughtsList = ({ thoughts, onDelete, onToggleComplete, selectedTag, onTag
               <p className={`text-gray-800 text-left ${thought.completed ? 'line-through text-gray-500' : ''}`}>
                 {thought.content}
               </p>
+              {editingThoughtId === thought.id && (
+                <div className="mt-2 flex items-center gap-2">
+                  <Input
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={(e) => handleTagInputKeyDown(e, thought.id)}
+                    placeholder="Add a tag and press Enter"
+                    className="flex-1"
+                  />
+                </div>
+              )}
               {thought.tags && thought.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-3">
                   {thought.tags.map(tag => (
