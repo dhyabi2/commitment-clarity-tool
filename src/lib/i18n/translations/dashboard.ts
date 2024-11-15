@@ -1,32 +1,40 @@
 export const dashboardTranslations = {
   en: {
     dashboard: {
-      title: "Performance Dashboard",
+      title: "Dashboard",
       timeline: "Activity Timeline",
-      timelineDesc: "Active Thoughts, Completed Thoughts, and Commitments over time",
+      timelineDesc: "Track your progress over time",
       completion: "Completion Rate",
-      completionDesc: "Percentage of completed commitments",
+      completionDesc: "Your commitment completion rate",
       daily: "Daily Activity",
-      dailyDesc: "Number of items created per day",
-      activeThoughts: "Active Thoughts",
-      completedThoughts: "Completed Thoughts",
-      commitments: "Commitments",
-      noData: "No data available for the selected period"
+      dailyDesc: "Your activity in the last 7 days",
+      charts: {
+        thoughts: "Thoughts",
+        activeThoughts: "Active Thoughts",
+        completedThoughts: "Completed Thoughts",
+        commitments: "Commitments",
+        completed: "Completed",
+        pending: "Pending"
+      }
     }
   },
   ar: {
     dashboard: {
-      title: "لوحة الأداء",
+      title: "لوحة المعلومات",
       timeline: "الجدول الزمني للنشاط",
-      timelineDesc: "الأفكار النشطة والمكتملة والالتزامات عبر الزمن",
-      completion: "معدل الإكمال",
-      completionDesc: "نسبة الالتزامات المكتملة",
+      timelineDesc: "تتبع تقدمك مع مرور الوقت",
+      completion: "معدل الإنجاز",
+      completionDesc: "معدل إنجاز التزاماتك",
       daily: "النشاط اليومي",
-      dailyDesc: "عدد العناصر المنشأة في اليوم",
-      activeThoughts: "الأفكار النشطة",
-      completedThoughts: "الأفكار المكتملة",
-      commitments: "الالتزامات",
-      noData: "لا توجد بيانات متاحة للفترة المحددة"
+      dailyDesc: "نشاطك في آخر 7 أيام",
+      charts: {
+        thoughts: "الأفكار",
+        activeThoughts: "الأفكار النشطة",
+        completedThoughts: "الأفكار المكتملة",
+        commitments: "الالتزامات",
+        completed: "مكتمل",
+        pending: "قيد الانتظار"
+      }
     }
   }
 };

@@ -1,23 +1,26 @@
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { PieChart, Pie, Cell } from "recharts";
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 const COLORS = ["#84a98c", "#e6ebe7"];
 
-const chartConfig = {
-  completed: {
-    label: "Completed",
-    color: "#84a98c",
-  },
-  pending: {
-    label: "Pending",
-    color: "#e6ebe7",
-  },
-};
-
 const CompletionRate = ({ completionRate }: { completionRate: number }) => {
+  const { t } = useLanguage();
+
+  const chartConfig = {
+    completed: {
+      label: t('dashboard.charts.completed'),
+      color: "#84a98c",
+    },
+    pending: {
+      label: t('dashboard.charts.pending'),
+      color: "#e6ebe7",
+    },
+  };
+
   const data = [
-    { name: "Completed", value: completionRate },
-    { name: "Pending", value: 100 - completionRate },
+    { name: t('dashboard.charts.completed'), value: completionRate },
+    { name: t('dashboard.charts.pending'), value: 100 - completionRate },
   ];
 
   return (
