@@ -8,7 +8,8 @@ import {
 } from "@/components/ui/tooltip";
 
 const LanguageSwitcher = () => {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, dir } = useLanguage();
+  const isRTL = dir() === 'rtl';
 
   const toggleLanguage = () => {
     setLanguage(language === 'en' ? 'ar' : 'en');
@@ -21,12 +22,12 @@ const LanguageSwitcher = () => {
           variant="ghost"
           size="icon"
           onClick={toggleLanguage}
-          className="fixed top-4 right-4 z-50"
+          className={`fixed top-4 ${isRTL ? 'left-4' : 'right-4'} z-50`}
         >
           <Languages className="h-5 w-5" />
         </Button>
       </TooltipTrigger>
-      <TooltipContent>
+      <TooltipContent dir={isRTL ? 'ltr' : 'rtl'}>
         <p>{language === 'en' ? 'Switch to Arabic' : 'Switch to English'}</p>
       </TooltipContent>
     </Tooltip>
