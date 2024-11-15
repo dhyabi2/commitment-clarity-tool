@@ -13,32 +13,30 @@ interface TagInputProps {
 export const TagInput = ({ 
   onTagAdd, 
   placeholder = "Add a tag and press Enter",
-  existingTags = [] // Default to empty array
+  existingTags = [] 
 }: TagInputProps) => {
   const [tagInput, setTagInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [filteredTags, setFilteredTags] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Reset filtered tags when existingTags changes
-  useEffect(() => {
-    if (!Array.isArray(existingTags)) {
-      setFilteredTags([]);
-      return;
-    }
-  }, [existingTags]);
-
   // Filter tags based on input
   useEffect(() => {
-    // Reset if no input or invalid existingTags
-    if (!tagInput.trim() || !Array.isArray(existingTags)) {
+    // Reset if no input
+    if (!tagInput.trim()) {
       setShowSuggestions(false);
       setFilteredTags([]);
       return;
     }
 
-    // Filter valid tags
-    const validTags = existingTags.filter(tag => tag && typeof tag === 'string');
+    // Ensure existingTags is an array and contains only valid strings
+    const validTags = Array.isArray(existingTags) 
+      ? existingTags.filter((tag): tag is string => 
+          typeof tag === 'string' && tag.trim().length > 0
+        )
+      : [];
+
+    // Filter matching tags
     const filtered = validTags.filter(tag => 
       tag.toLowerCase().includes(tagInput.toLowerCase()) &&
       tag.toLowerCase() !== tagInput.toLowerCase()
@@ -58,7 +56,7 @@ export const TagInput = ({
   };
 
   const handleSuggestionClick = (tag: string) => {
-    if (tag && typeof tag === 'string') {
+    if (typeof tag === 'string' && tag.trim()) {
       onTagAdd(tag.trim());
       setTagInput("");
       setShowSuggestions(false);
@@ -72,7 +70,7 @@ export const TagInput = ({
   };
 
   const handleFocus = () => {
-    if (tagInput.trim() && Array.isArray(existingTags) && existingTags.length > 0) {
+    if (tagInput.trim() && filteredTags.length > 0) {
       setShowSuggestions(true);
     }
   };
@@ -92,23 +90,21 @@ export const TagInput = ({
           className="flex-1"
         />
       </div>
-      {showSuggestions && Array.isArray(filteredTags) && filteredTags.length > 0 && (
+      {showSuggestions && filteredTags.length > 0 && (
         <div className="absolute z-50 w-full mt-1">
           <Command className="border rounded-lg shadow-md bg-white">
             <CommandGroup>
               {filteredTags.map((tag, index) => (
-                tag && (
-                  <CommandItem
-                    key={`${tag}-${index}`}
-                    onSelect={() => handleSuggestionClick(tag)}
-                    className={cn(
-                      "flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100",
-                    )}
-                  >
-                    <TagIcon className="h-3 w-3" />
-                    {tag}
-                  </CommandItem>
-                )
+                <CommandItem
+                  key={`${tag}-${index}`}
+                  onSelect={() => handleSuggestionClick(tag)}
+                  className={cn(
+                    "flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100",
+                  )}
+                >
+                  <TagIcon className="h-3 w-3" />
+                  {tag}
+                </CommandItem>
               ))}
             </CommandGroup>
           </Command>
