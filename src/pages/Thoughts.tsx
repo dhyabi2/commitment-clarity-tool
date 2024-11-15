@@ -137,10 +137,25 @@ const Thoughts = () => {
     reader.onload = async (e) => {
       try {
         const xmlContent = e.target?.result as string;
-        const { thoughts } = parseXMLData(xmlContent);
+        const { thoughts: importedThoughts } = parseXMLData(xmlContent);
+        let importCount = 0;
+        let skipCount = 0;
 
         // Import thoughts
-        for (const thought of thoughts) {
+        for (const thought of importedThoughts) {
+          // Check if thought with same content exists
+          const { data: existingThought } = await supabase
+            .from('thoughts')
+            .select('id')
+            .eq('content', thought.content)
+            .single();
+
+          if (existingThought) {
+            skipCount++;
+            continue; // Skip this thought as it already exists
+          }
+
+          // Insert new thought
           const { data: thoughtData, error: thoughtError } = await supabase
             .from('thoughts')
             .insert([{ content: thought.content, completed: thought.completed }])
@@ -151,6 +166,7 @@ const Thoughts = () => {
 
           // Import tags for the thought
           if (thought.tags && thought.tags.length > 0) {
+            // Upsert tags (this will ignore duplicates due to UNIQUE constraint)
             const { data: tagData, error: tagError } = await supabase
               .from('tags')
               .upsert(
@@ -161,11 +177,19 @@ const Thoughts = () => {
 
             if (tagError) throw tagError;
 
+            // Get the existing tags that match our names
+            const { data: existingTags, error: existingTagsError } = await supabase
+              .from('tags')
+              .select('*')
+              .in('name', thought.tags.map(t => t.name));
+
+            if (existingTagsError) throw existingTagsError;
+
             // Create thought-tag relationships
             const { error: relationError } = await supabase
               .from('thought_tags')
               .insert(
-                tagData.map(tag => ({
+                existingTags.map(tag => ({
                   thought_id: thoughtData.id,
                   tag_id: tag.id
                 }))
@@ -173,12 +197,13 @@ const Thoughts = () => {
 
             if (relationError) throw relationError;
           }
+          importCount++;
         }
 
         queryClient.invalidateQueries();
         toast({
           title: "Import successful",
-          description: "Your data has been imported successfully.",
+          description: `Imported ${importCount} new thoughts. Skipped ${skipCount} duplicate thoughts.`,
         });
       } catch (error) {
         toast({
