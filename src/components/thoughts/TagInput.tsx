@@ -21,8 +21,7 @@ export const TagInput = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Only filter and show suggestions if we have a non-empty input and existing tags
-    if (tagInput.trim() && Array.isArray(existingTags) && existingTags.length > 0) {
+    if (tagInput.trim() && Array.isArray(existingTags)) {
       const filtered = existingTags.filter(tag => 
         tag.toLowerCase().includes(tagInput.toLowerCase()) &&
         tag.toLowerCase() !== tagInput.toLowerCase()
@@ -51,6 +50,11 @@ export const TagInput = ({
     inputRef.current?.focus();
   };
 
+  const handleBlur = () => {
+    // Use setTimeout to allow click events on suggestions to fire before hiding
+    setTimeout(() => setShowSuggestions(false), 200);
+  };
+
   return (
     <div className="relative">
       <div className="flex items-center gap-2">
@@ -60,29 +64,35 @@ export const TagInput = ({
           value={tagInput}
           onChange={(e) => setTagInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          onFocus={() => tagInput.trim() && Array.isArray(existingTags) && existingTags.length > 0 && setShowSuggestions(true)}
-          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+          onFocus={() => {
+            if (tagInput.trim() && Array.isArray(existingTags) && existingTags.length > 0) {
+              setShowSuggestions(true);
+            }
+          }}
+          onBlur={handleBlur}
           placeholder={placeholder}
           className="flex-1"
         />
       </div>
       {showSuggestions && filteredTags.length > 0 && (
-        <Command className="absolute z-50 w-full mt-1 border rounded-lg shadow-md bg-white">
-          <CommandGroup>
-            {filteredTags.map(tag => (
-              <CommandItem
-                key={tag}
-                onSelect={() => handleSuggestionClick(tag)}
-                className={cn(
-                  "flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100",
-                )}
-              >
-                <TagIcon className="h-3 w-3" />
-                {tag}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </Command>
+        <div className="absolute z-50 w-full mt-1">
+          <Command className="border rounded-lg shadow-md bg-white">
+            <CommandGroup>
+              {filteredTags.map(tag => (
+                <CommandItem
+                  key={tag}
+                  onSelect={() => handleSuggestionClick(tag)}
+                  className={cn(
+                    "flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100",
+                  )}
+                >
+                  <TagIcon className="h-3 w-3" />
+                  {tag}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </Command>
+        </div>
       )}
     </div>
   );
