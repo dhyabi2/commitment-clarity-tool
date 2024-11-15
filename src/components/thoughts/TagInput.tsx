@@ -21,7 +21,8 @@ export const TagInput = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (tagInput.trim() && existingTags.length > 0) {
+    // Only filter and show suggestions if we have a non-empty input and existing tags
+    if (tagInput.trim() && Array.isArray(existingTags) && existingTags.length > 0) {
       const filtered = existingTags.filter(tag => 
         tag.toLowerCase().includes(tagInput.toLowerCase()) &&
         tag.toLowerCase() !== tagInput.toLowerCase()
@@ -30,6 +31,7 @@ export const TagInput = ({
       setShowSuggestions(filtered.length > 0);
     } else {
       setShowSuggestions(false);
+      setFilteredTags([]);
     }
   }, [tagInput, existingTags]);
 
@@ -58,7 +60,7 @@ export const TagInput = ({
           value={tagInput}
           onChange={(e) => setTagInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          onFocus={() => tagInput.trim() && existingTags.length > 0 && setShowSuggestions(true)}
+          onFocus={() => tagInput.trim() && Array.isArray(existingTags) && existingTags.length > 0 && setShowSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           placeholder={placeholder}
           className="flex-1"
