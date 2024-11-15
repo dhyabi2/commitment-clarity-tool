@@ -1,40 +1,32 @@
 export const commitmentsTranslations = {
   en: {
-    commitments: {
+    clarifier: {
       title: "Clarify Your Commitment",
-      description: "Transform your thought into a clear commitment",
-      outcome: "Desired Outcome",
-      outcomePlaceholder: "What's the specific outcome you want to achieve?",
-      nextAction: "Next Action",
-      nextActionPlaceholder: "What's the very next physical action you need to take?",
-      save: "Save Commitment",
-      activeTitle: "Active Commitments",
-      noCommitments: "No active commitments",
-      startClarifying: "Start clarifying your thoughts to create commitments",
-      editOutcome: "Edit outcome",
-      editNextAction: "Edit next action",
-      complete: "Mark as complete",
-      completed: "Completed",
-      active: "Active"
+      outcomeQuestion: "What would need to happen for this to be complete?",
+      outcomePlaceholder: "Describe the successful outcome...",
+      nextActionQuestion: "What's the very next physical action required?",
+      nextActionPlaceholder: "What's the next action?",
+      nextButton: "Next",
+      saveButton: "Save Commitment",
+      successTitle: "Commitment saved",
+      successDescription: "Your commitment has been successfully recorded.",
+      errorTitle: "Error",
+      errorDescription: "Failed to save commitment. Please try again."
     }
   },
   ar: {
-    commitments: {
-      title: "توضيح التزامك",
-      description: "حول فكرتك إلى التزام واضح",
-      outcome: "النتيجة المرجوة",
-      outcomePlaceholder: "ما هي النتيجة المحددة التي تريد تحقيقها؟",
-      nextAction: "الإجراء التالي",
-      nextActionPlaceholder: "ما هو الإجراء المادي التالي الذي تحتاج إلى اتخاذه؟",
-      save: "حفظ الالتزام",
-      activeTitle: "الالتزامات النشطة",
-      noCommitments: "لا توجد التزامات نشطة",
-      startClarifying: "ابدأ بتوضيح أفكارك لإنشاء التزامات",
-      editOutcome: "تعديل النتيجة",
-      editNextAction: "تعديل الإجراء التالي",
-      complete: "وضع علامة مكتمل",
-      completed: "مكتمل",
-      active: "نشط"
+    clarifier: {
+      title: "وضّح التزامك",
+      outcomeQuestion: "ما الذي يجب أن يحدث ليكتمل هذا؟",
+      outcomePlaceholder: "صف النتيجة الناجحة...",
+      nextActionQuestion: "ما هو الإجراء المادي التالي المطلوب؟",
+      nextActionPlaceholder: "ما هو الإجراء التالي؟",
+      nextButton: "التالي",
+      saveButton: "حفظ الالتزام",
+      successTitle: "تم حفظ الالتزام",
+      successDescription: "تم تسجيل التزامك بنجاح.",
+      errorTitle: "خطأ",
+      errorDescription: "فشل في حفظ الالتزام. يرجى المحاولة مرة أخرى."
     }
   }
 };
