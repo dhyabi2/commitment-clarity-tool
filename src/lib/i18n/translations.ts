@@ -12,7 +12,8 @@ export const translations = {
       description: "Clear your mind by capturing any unfinished thoughts or tasks here.",
       placeholder: "What's on your mind?",
       addTags: "Add tags (optional) - press Enter to add",
-      capture: "Capture Thought"
+      capture: "Capture Thought",
+      thoughtCaptured: "Your thought has been safely stored."
     },
     thoughts: {
       title: "Your Thoughts",
@@ -59,7 +60,8 @@ export const translations = {
       delete: "Delete",
       complete: "Complete",
       addTag: "Add tag",
-      all: "All"
+      all: "All",
+      success: "Success"
     }
   },
   ar: {
@@ -75,7 +77,8 @@ export const translations = {
       description: "صفِّ ذهنك من خلال تسجيل أي أفكار أو مهام غير مكتملة هنا",
       placeholder: "ما الذي يدور في ذهنك؟",
       addTags: "أضف وسوماً (اختياري) - اضغط Enter للإضافة",
-      capture: "تسجيل الفكرة"
+      capture: "تسجيل الفكرة",
+      thoughtCaptured: "تم حفظ فكرتك بأمان"
     },
     thoughts: {
       title: "أفكارك",
@@ -122,7 +125,8 @@ export const translations = {
       delete: "حذف",
       complete: "إكمال",
       addTag: "إضافة وسم",
-      all: "الكل"
+      all: "الكل",
+      success: "نجاح"
     }
   }
 };
