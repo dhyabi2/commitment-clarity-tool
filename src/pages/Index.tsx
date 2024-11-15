@@ -16,6 +16,9 @@ const Index = () => {
     <div className="min-h-screen">
       <ScrollArea className="h-full bg-gradient-to-b from-cream to-sage-50">
         <div className="max-w-4xl mx-auto px-4 py-16 space-y-12">
+          <h1 className={`text-2xl font-bold text-sage-700 ${isRTL ? 'text-right' : 'text-left'}`}>
+            {t('index.step1.title')}
+          </h1>
           <div className="space-y-8">
             {/* Step 1 */}
             <div className="relative">
