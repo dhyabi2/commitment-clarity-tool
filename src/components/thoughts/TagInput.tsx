@@ -12,8 +12,8 @@ interface TagInputProps {
 
 export const TagInput = ({ 
   onTagAdd, 
-  placeholder = "Add a tag and press Enter", 
-  existingTags = [] 
+  placeholder = "Add a tag and press Enter",
+  existingTags = [] // Default to empty array
 }: TagInputProps) => {
   const [tagInput, setTagInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -21,17 +21,19 @@ export const TagInput = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (tagInput.trim() && Array.isArray(existingTags)) {
-      const filtered = existingTags.filter(tag => 
-        tag.toLowerCase().includes(tagInput.toLowerCase()) &&
-        tag.toLowerCase() !== tagInput.toLowerCase()
-      );
-      setFilteredTags(filtered);
-      setShowSuggestions(filtered.length > 0);
-    } else {
+    if (!tagInput.trim() || !Array.isArray(existingTags)) {
       setShowSuggestions(false);
       setFilteredTags([]);
+      return;
     }
+
+    const filtered = existingTags.filter(tag => 
+      tag?.toLowerCase().includes(tagInput.toLowerCase()) &&
+      tag?.toLowerCase() !== tagInput.toLowerCase()
+    );
+    
+    setFilteredTags(filtered);
+    setShowSuggestions(filtered.length > 0);
   }, [tagInput, existingTags]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -44,10 +46,12 @@ export const TagInput = ({
   };
 
   const handleSuggestionClick = (tag: string) => {
-    onTagAdd(tag);
-    setTagInput("");
-    setShowSuggestions(false);
-    inputRef.current?.focus();
+    if (tag) {
+      onTagAdd(tag);
+      setTagInput("");
+      setShowSuggestions(false);
+      inputRef.current?.focus();
+    }
   };
 
   const handleBlur = () => {
@@ -74,13 +78,13 @@ export const TagInput = ({
           className="flex-1"
         />
       </div>
-      {showSuggestions && filteredTags.length > 0 && (
+      {showSuggestions && Array.isArray(filteredTags) && filteredTags.length > 0 && (
         <div className="absolute z-50 w-full mt-1">
           <Command className="border rounded-lg shadow-md bg-white">
             <CommandGroup>
-              {filteredTags.map(tag => (
+              {filteredTags.map((tag, index) => (
                 <CommandItem
-                  key={tag}
+                  key={`${tag}-${index}`}
                   onSelect={() => handleSuggestionClick(tag)}
                   className={cn(
                     "flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100",
