@@ -45,18 +45,25 @@ const ThoughtCard = ({
 
   return (
     <Card className="group hover:shadow-md transition-all duration-300 bg-white/80 backdrop-blur-sm" dir={dir()}>
-      <CardHeader className="flex flex-row items-center justify-between p-4">
-        <div className="flex items-center gap-2">
-          <CheckCircle className={`h-5 w-5 ${thought.completed ? 'text-green-500' : 'text-gray-300'}`} />
-          <time className="text-sm text-sage-500" dir="ltr">
-            {format(new Date(thought.created_at), 'MMM d, yyyy h:mm a')}
-          </time>
-        </div>
-        <div className="flex items-center gap-2">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4">
+        <div className="flex items-center space-x-2 rtl:space-x-reverse">
           <Button
             variant="ghost"
             size="sm"
-            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            className="h-8 w-8 p-0"
+            onClick={() => onToggleComplete(thought.id, !thought.completed)}
+          >
+            <CheckCircle className={`h-5 w-5 ${thought.completed ? 'text-green-500' : 'text-gray-300'}`} />
+          </Button>
+          <time className="text-sm text-sage-500 whitespace-nowrap" dir="ltr">
+            {format(new Date(thought.created_at), 'MMM d, yyyy h:mm a')}
+          </time>
+        </div>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 p-0"
             onClick={() => setShowTagInput(!showTagInput)}
           >
             <TagIcon className="h-4 w-4" />
@@ -64,27 +71,20 @@ const ThoughtCard = ({
           <Button
             variant="ghost"
             size="sm"
-            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:text-red-600"
+            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:text-red-600 h-8 w-8 p-0"
             onClick={() => onDelete(thought.id)}
           >
             <Trash2 className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-            onClick={() => onToggleComplete(thought.id, !thought.completed)}
-          >
-            <CheckCircle className={`h-4 w-4 ${thought.completed ? 'text-green-500' : ''}`} />
           </Button>
           {!thought.completed && (
             <Button
               variant="ghost"
               size="sm"
-              className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 px-2"
               onClick={() => navigate('/commitment-clarifier', { state: { thought: thought.content } })}
             >
-              {t('thoughts.clarify')} <ArrowRightCircle className="mx-2 h-4 w-4" />
+              <span className="hidden sm:inline mr-2">{t('thoughts.clarify')}</span>
+              <ArrowRightCircle className="h-4 w-4" />
             </Button>
           )}
         </div>
