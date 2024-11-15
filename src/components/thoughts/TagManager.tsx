@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tag as TagIcon } from 'lucide-react';
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface TagManagerProps {
   allTags: string[];
@@ -10,6 +11,8 @@ interface TagManagerProps {
 }
 
 export const TagManager = ({ allTags, selectedTag, onTagClick }: TagManagerProps) => {
+  const { t } = useLanguage();
+  
   if (allTags.length === 0) return null;
 
   return (
@@ -19,7 +22,7 @@ export const TagManager = ({ allTags, selectedTag, onTagClick }: TagManagerProps
         className="cursor-pointer"
         onClick={() => onTagClick(null)}
       >
-        All
+        {t('thoughts.allTags')}
       </Badge>
       {allTags.map(tag => (
         <Badge
