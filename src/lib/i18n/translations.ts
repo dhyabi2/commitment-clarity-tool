@@ -1,11 +1,11 @@
-import { commonTranslations } from './translations/common';
+import { common } from './translations/common';
 import { dashboardTranslations } from './translations/dashboard';
 import { thoughtsTranslations } from './translations/thoughts';
 import { commitmentsTranslations } from './translations/commitments';
 
 export const translations = {
   en: {
-    ...commonTranslations.en,
+    ...common.en,
     ...dashboardTranslations.en,
     ...thoughtsTranslations.en,
     ...commitmentsTranslations.en,
@@ -47,7 +47,7 @@ export const translations = {
     }
   },
   ar: {
-    ...commonTranslations.ar,
+    ...common.ar,
     ...dashboardTranslations.ar,
     ...thoughtsTranslations.ar,
     ...commitmentsTranslations.ar,

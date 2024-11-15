@@ -17,11 +17,11 @@ export const useBrainDumpMutation = ({ onSuccess }: UseBrainDumpMutationProps) =
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { t } = useLanguage();
-  const { session } = useSession();
+  const session = useSession();
 
   const addThoughtMutation = useMutation({
     mutationFn: async ({ content, tags }: AddThoughtParams) => {
-      if (!session?.user.id) throw new Error('Not authenticated');
+      if (!session?.user?.id) throw new Error('Not authenticated');
 
       const { data: thoughtData, error: thoughtError } = await supabase
         .from('thoughts')

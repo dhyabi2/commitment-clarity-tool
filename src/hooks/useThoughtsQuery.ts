@@ -3,12 +3,12 @@ import { supabase } from '@/lib/supabase';
 import { useSession } from '@supabase/auth-helpers-react';
 
 export const useThoughtsQuery = (selectedTag: string | null) => {
-  const { session } = useSession();
+  const session = useSession();
 
   return useQuery({
-    queryKey: ['thoughts', 'active', selectedTag, session?.user.id],
+    queryKey: ['thoughts', 'active', selectedTag, session?.user?.id],
     queryFn: async () => {
-      if (!session?.user.id) throw new Error('Not authenticated');
+      if (!session?.user?.id) throw new Error('Not authenticated');
 
       let query = supabase
         .from('thoughts')
@@ -42,6 +42,6 @@ export const useThoughtsQuery = (selectedTag: string | null) => {
 
       return transformedData;
     },
-    enabled: !!session?.user.id
+    enabled: !!session?.user?.id
   });
 };
