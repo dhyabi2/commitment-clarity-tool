@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRightCircle, Trash2, CheckCircle, Tag as TagIcon } from 'lucide-react';
+import { Trash2, CheckCircle, Tag as TagIcon } from 'lucide-react';
 import { TagInput } from './TagInput';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 
@@ -76,23 +76,22 @@ const ThoughtCard = ({
           >
             <Trash2 className="h-4 w-4" />
           </Button>
-          {!thought.completed && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 px-2"
-              onClick={() => navigate('/commitment-clarifier', { state: { thought: thought.content } })}
-            >
-              <span className="hidden sm:inline mr-2">{t('thoughts.clarify')}</span>
-              <ArrowRightCircle className="h-4 w-4" />
-            </Button>
-          )}
         </div>
       </CardHeader>
-      <CardContent className="p-4 pt-0">
+      <CardContent className="p-4 pt-0 space-y-3">
         <p className={`text-gray-800 ${isRTL ? 'text-right' : 'text-left'} ${thought.completed ? 'line-through text-gray-500' : ''}`}>
           {thought.content}
         </p>
+        {!thought.completed && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full bg-sage-50 hover:bg-sage-100 border-sage-200 text-sage-700"
+            onClick={() => navigate('/commitment-clarifier', { state: { thought: thought.content } })}
+          >
+            {t('thoughts.clarify')}
+          </Button>
+        )}
         {showTagInput && (
           <div className="mt-2">
             <TagInput 
@@ -103,7 +102,7 @@ const ThoughtCard = ({
           </div>
         )}
         {thought.tags && thought.tags.length > 0 && (
-          <div className={`flex flex-wrap gap-2 mt-3 ${isRTL ? 'justify-end' : 'justify-start'}`}>
+          <div className={`flex flex-wrap gap-2 ${isRTL ? 'justify-end' : 'justify-start'}`}>
             {thought.tags.map(tag => (
               <Badge key={tag.id} variant="secondary" className="text-xs">
                 {tag.name}
