@@ -1,23 +1,36 @@
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
-import { Toaster } from "@/components/ui/toaster";
-import { LanguageProvider } from "@/lib/i18n/LanguageContext";
+import Navigation from "./components/Navigation";
+import LanguageSwitcher from "./components/LanguageSwitcher";
 import Routes from "./Routes";
-import "./App.css";
 
-const queryClient = new QueryClient();
+const AppContent = () => {
+  return (
+    <div className="md:pt-16">
+      <LanguageSwitcher />
+      <Routes />
+      <Navigation />
+    </div>
+  );
+};
 
-function App() {
+const AppWrapper = () => {
+  const queryClient = new QueryClient();
+
   return (
     <QueryClientProvider client={queryClient}>
-      <LanguageProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
         <BrowserRouter>
-          <Routes />
-          <Toaster />
+          <AppContent />
         </BrowserRouter>
-      </LanguageProvider>
+      </TooltipProvider>
     </QueryClientProvider>
   );
-}
+};
 
-export default App;
+export default AppWrapper;

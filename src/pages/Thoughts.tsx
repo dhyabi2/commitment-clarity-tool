@@ -10,18 +10,6 @@ import { ThoughtsHeader } from '@/components/thoughts/ThoughtsHeader';
 import { useThoughtsMutations } from '@/hooks/useThoughtsMutations';
 import { useThoughtsQuery } from '@/hooks/useThoughtsQuery';
 
-interface ImportedThought {
-  content: string;
-  completed: boolean;
-  device_id: string;
-  created_at: string;
-  tags: { name: string }[];
-}
-
-interface ParsedXMLData {
-  thoughts: ImportedThought[];
-}
-
 const Thoughts = () => {
   const { toast } = useToast();
   const { dir } = useLanguage();
@@ -54,7 +42,7 @@ const Thoughts = () => {
     reader.onload = async (e) => {
       try {
         const xmlContent = e.target?.result as string;
-        const { thoughts: importedThoughts } = parseXMLData(xmlContent) as ParsedXMLData;
+        const { thoughts: importedThoughts } = parseXMLData(xmlContent);
         let importCount = 0;
 
         for (const thought of importedThoughts) {
