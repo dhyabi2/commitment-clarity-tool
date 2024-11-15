@@ -26,20 +26,31 @@ interface ThoughtCardProps {
   existingTags?: string[];
 }
 
-const ThoughtCard = ({ thought, onDelete, onToggleComplete, onAddTag, existingTags = [] }: ThoughtCardProps) => {
+const ThoughtCard = ({ 
+  thought, 
+  onDelete, 
+  onToggleComplete, 
+  onAddTag,
+  existingTags = [] 
+}: ThoughtCardProps) => {
   const navigate = useNavigate();
   const [showTagInput, setShowTagInput] = useState(false);
 
+  // Ensure existingTags is always an array of strings
+  const validExistingTags = Array.isArray(existingTags) 
+    ? existingTags.filter((tag): tag is string => typeof tag === 'string')
+    : [];
+
   return (
     <Card className="group hover:shadow-md transition-all duration-300 bg-white/80 backdrop-blur-sm">
-      <CardHeader className="flex flex-row items-center justify-between p-3">
+      <CardHeader className="flex flex-row items-center justify-between p-4">
         <div className="flex items-center gap-2">
           <CheckCircle className={`h-5 w-5 ${thought.completed ? 'text-green-500' : 'text-gray-300'}`} />
-          <time className="text-xs text-sage-500">
-            {format(new Date(thought.created_at), 'MMM d, h:mm a')}
+          <time className="text-sm text-sage-500">
+            {format(new Date(thought.created_at), 'MMM d, yyyy h:mm a')}
           </time>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="sm"
@@ -71,12 +82,12 @@ const ThoughtCard = ({ thought, onDelete, onToggleComplete, onAddTag, existingTa
               className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
               onClick={() => navigate('/commitment-clarifier', { state: { thought: thought.content } })}
             >
-              <ArrowRightCircle className="h-4 w-4" />
+              Clarify <ArrowRightCircle className="ml-2 h-4 w-4" />
             </Button>
           )}
         </div>
       </CardHeader>
-      <CardContent className="p-3 pt-0">
+      <CardContent className="p-4 pt-0">
         <p className={`text-gray-800 text-left ${thought.completed ? 'line-through text-gray-500' : ''}`}>
           {thought.content}
         </p>
@@ -84,12 +95,12 @@ const ThoughtCard = ({ thought, onDelete, onToggleComplete, onAddTag, existingTa
           <div className="mt-2">
             <TagInput 
               onTagAdd={(tag) => onAddTag(thought.id, tag)}
-              existingTags={existingTags}
+              existingTags={validExistingTags}
             />
           </div>
         )}
         {thought.tags && thought.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-2">
+          <div className="flex flex-wrap gap-2 mt-3">
             {thought.tags.map(tag => (
               <Badge key={tag.id} variant="secondary" className="text-xs">
                 {tag.name}

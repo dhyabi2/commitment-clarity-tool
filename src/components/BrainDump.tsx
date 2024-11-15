@@ -29,6 +29,7 @@ const BrainDump = () => {
 
   const addThoughtMutation = useMutation({
     mutationFn: async ({ content, tags }: { content: string; tags: string[] }) => {
+      // First, insert the thought
       const { data: thoughtData, error: thoughtError } = await supabase
         .from('thoughts')
         .insert([{ content }])
@@ -37,7 +38,9 @@ const BrainDump = () => {
       
       if (thoughtError) throw thoughtError;
 
+      // If there are tags, process them
       if (tags.length > 0) {
+        // Insert tags and get their IDs
         const { data: tagData, error: tagError } = await supabase
           .from('tags')
           .upsert(
@@ -48,6 +51,7 @@ const BrainDump = () => {
 
         if (tagError) throw tagError;
 
+        // Get the existing tags that match our names
         const { data: existingTags, error: existingTagsError } = await supabase
           .from('tags')
           .select('*')
@@ -55,6 +59,7 @@ const BrainDump = () => {
 
         if (existingTagsError) throw existingTagsError;
 
+        // Create thought-tag relationships
         const { error: relationError } = await supabase
           .from('thought_tags')
           .insert(
@@ -71,7 +76,10 @@ const BrainDump = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['thoughts'] });
-      toast({ description: "Thought captured" });
+      toast({
+        title: "Thought captured",
+        description: "Your thought has been safely stored.",
+      });
       setThought("");
       setTags([]);
       setTagInput("");
@@ -101,6 +109,10 @@ const BrainDump = () => {
 
   return (
     <div className="animate-fade-in p-4 sm:p-0">
+      <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Brain Dump</h2>
+      <p className="text-gray-600 text-sm sm:text-base mb-4">
+        Clear your mind by capturing any unfinished thoughts or tasks here.
+      </p>
       <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
         <Textarea
           value={thought}
@@ -115,7 +127,7 @@ const BrainDump = () => {
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
               onKeyDown={handleAddTag}
-              placeholder="Add tags (press Enter)"
+              placeholder="Add tags (optional) - press Enter to add"
               className="flex-1"
             />
           </div>
@@ -145,7 +157,7 @@ const BrainDump = () => {
           disabled={addThoughtMutation.isPending}
         >
           <Plus className="mr-2 h-4 w-4" />
-          Capture
+          Capture Thought
         </Button>
       </form>
     </div>

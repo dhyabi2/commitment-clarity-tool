@@ -244,13 +244,12 @@ const Thoughts = () => {
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-sage-600">Thoughts</h1>
+            <h1 className="text-3xl font-bold text-sage-600">Your Thoughts</h1>
             <div className="flex gap-2">
               <Button
                 onClick={handleExport}
                 variant="outline"
-                size="sm"
-                className="flex items-center gap-1"
+                className="flex items-center gap-2"
               >
                 <Download className="h-4 w-4" />
                 Export
@@ -258,8 +257,7 @@ const Thoughts = () => {
               <Button
                 onClick={() => fileInputRef.current?.click()}
                 variant="outline"
-                size="sm"
-                className="flex items-center gap-1"
+                className="flex items-center gap-2"
               >
                 <Upload className="h-4 w-4" />
                 Import
@@ -273,6 +271,9 @@ const Thoughts = () => {
               />
             </div>
           </div>
+          <p className="text-sage-500 mb-6">
+            Review and clarify your thoughts to turn them into actionable commitments
+          </p>
           <TagManager 
             allTags={allTags}
             selectedTag={selectedTag}
