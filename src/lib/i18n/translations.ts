@@ -25,7 +25,12 @@ export const translations = {
       a4_2: "Define the specific outcome and next action",
       a4_desc: "This helps turn vague ideas into concrete, actionable steps.",
       q5: "Can I organize my thoughts?",
-      a5: "Yes, you can add tags to your thoughts and filter them later. This helps you group related thoughts together."
+      a5: "Yes, you can add tags to your thoughts and filter them later. This helps you group related thoughts together.",
+      q6: "What is my Device UUID and how does it secure my data?",
+      a6: "Your Device UUID (Universally Unique Identifier) is a secure way to keep your data private:",
+      a6_1: "Each device gets its own unique identifier that's automatically generated and stored locally",
+      a6_2: "Your thoughts and commitments are only accessible from the device where they were created",
+      a6_3: "This ensures your data remains private and separate from other users without requiring an account"
     },
     brainDump: {
       title: "Brain Dump",
@@ -67,7 +72,12 @@ export const translations = {
       a4_2: "حدد النتيجة المحددة والإجراء التالي",
       a4_desc: "هذا يساعد في تحويل الأفكار الغامضة إلى خطوات ملموسة وقابلة للتنفيذ.",
       q5: "هل يمكنني تنظيم أفكاري؟",
-      a5: "نعم، يمكنك إضافة وسوم لأفكارك وتصفيتها لاحقاً. هذا يساعدك في تجميع الأفكار المرتبطة معاً."
+      a5: "نعم، يمكنك إضافة وسوم لأفكارك وتصفيتها لاحقاً. هذا يساعدك في تجميع الأفكار المرتبطة معاً.",
+      q6: "ما هو معرف جهازي الفريد وكيف يؤمن بياناتي؟",
+      a6: "معرف جهازك الفريد (UUID) هو طريقة آمنة للحفاظ على خصوصية بياناتك:",
+      a6_1: "يحصل كل جهاز على معرف فريد خاص به يتم إنشاؤه تلقائياً وتخزينه محلياً",
+      a6_2: "لا يمكن الوصول إلى أفكارك والتزاماتك إلا من الجهاز الذي تم إنشاؤها فيه",
+      a6_3: "هذا يضمن بقاء بياناتك خاصة ومنفصلة عن المستخدمين الآخرين دون الحاجة إلى حساب"
     },
     brainDump: {
       title: "تفريغ الأفكار",

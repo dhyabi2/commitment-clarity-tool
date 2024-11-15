@@ -73,6 +73,20 @@ const FAQ = () => {
               {t('faq.a5')}
             </AccordionContent>
           </AccordionItem>
+
+          <AccordionItem value="item-6">
+            <AccordionTrigger className={`${isRTL ? 'text-right' : 'text-left'} w-full`} dir={dir()}>
+              {t('faq.q6')}
+            </AccordionTrigger>
+            <AccordionContent className={`${isRTL ? 'text-right' : 'text-left'}`}>
+              {t('faq.a6')}
+              <ul className={`list-disc ${isRTL ? 'mr-4' : 'ml-4'} mt-2 space-y-2`}>
+                <li>{t('faq.a6_1')}</li>
+                <li>{t('faq.a6_2')}</li>
+                <li>{t('faq.a6_3')}</li>
+              </ul>
+            </AccordionContent>
+          </AccordionItem>
         </Accordion>
       </ScrollArea>
     </Card>
