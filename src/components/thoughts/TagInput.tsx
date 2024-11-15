@@ -113,8 +113,12 @@ export const TagInput = ({
       {showSuggestions && filteredTags.length > 0 && (
         <div 
           ref={suggestionsRef}
-          className="absolute z-50 w-full mt-1 bg-white border rounded-lg shadow-lg"
-          style={{ zIndex: 9999 }}
+          className="fixed w-[inherit] mt-1 bg-white border rounded-lg shadow-lg"
+          style={{ 
+            zIndex: 99999,
+            position: 'absolute',
+            width: '100%'
+          }}
         >
           <div className="py-1">
             {filteredTags.map((tag, index) => (
