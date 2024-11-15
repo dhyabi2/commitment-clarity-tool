@@ -30,11 +30,16 @@ const ThoughtCard = ({
   thought, 
   onDelete, 
   onToggleComplete, 
-  onAddTag, 
+  onAddTag,
   existingTags = [] 
 }: ThoughtCardProps) => {
   const navigate = useNavigate();
   const [showTagInput, setShowTagInput] = useState(false);
+
+  // Ensure existingTags is always an array of strings
+  const validExistingTags = Array.isArray(existingTags) 
+    ? existingTags.filter((tag): tag is string => typeof tag === 'string')
+    : [];
 
   return (
     <Card className="group hover:shadow-md transition-all duration-300 bg-white/80 backdrop-blur-sm">
@@ -89,8 +94,8 @@ const ThoughtCard = ({
         {showTagInput && (
           <div className="mt-2">
             <TagInput 
-              onTagAdd={(tag) => onAddTag(thought.id, tag)} 
-              existingTags={existingTags}
+              onTagAdd={(tag) => onAddTag(thought.id, tag)}
+              existingTags={validExistingTags}
             />
           </div>
         )}

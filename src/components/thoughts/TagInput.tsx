@@ -20,31 +20,30 @@ export const TagInput = ({
   const [filteredTags, setFilteredTags] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Initialize and validate existingTags
+  const validExistingTags = Array.isArray(existingTags) 
+    ? existingTags.filter((tag): tag is string => 
+        typeof tag === 'string' && tag.trim().length > 0
+      )
+    : [];
+
   // Filter tags based on input
   useEffect(() => {
-    // Reset if no input
     if (!tagInput.trim()) {
       setShowSuggestions(false);
       setFilteredTags([]);
       return;
     }
 
-    // Ensure existingTags is an array and contains only valid strings
-    const validTags = Array.isArray(existingTags) 
-      ? existingTags.filter((tag): tag is string => 
-          typeof tag === 'string' && tag.trim().length > 0
-        )
-      : [];
-
     // Filter matching tags
-    const filtered = validTags.filter(tag => 
+    const filtered = validExistingTags.filter(tag => 
       tag.toLowerCase().includes(tagInput.toLowerCase()) &&
       tag.toLowerCase() !== tagInput.toLowerCase()
     );
     
     setFilteredTags(filtered);
     setShowSuggestions(filtered.length > 0);
-  }, [tagInput, existingTags]);
+  }, [tagInput, validExistingTags]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && tagInput.trim()) {
@@ -70,7 +69,8 @@ export const TagInput = ({
   };
 
   const handleFocus = () => {
-    if (tagInput.trim() && filteredTags.length > 0) {
+    const hasValidSuggestions = filteredTags.length > 0;
+    if (tagInput.trim() && hasValidSuggestions) {
       setShowSuggestions(true);
     }
   };
