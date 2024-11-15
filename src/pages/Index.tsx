@@ -15,11 +15,11 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <ScrollArea className="h-full bg-gradient-to-b from-cream to-sage-50">
-        <div className="max-w-4xl mx-auto px-4 py-16 space-y-12">
-          <h1 className={`text-2xl font-bold text-sage-700 ${isRTL ? 'text-right' : 'text-left'}`}>
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <h1 className={`text-2xl font-bold text-sage-700 mb-6 ${isRTL ? 'text-right' : 'text-left'}`}>
             {t('index.step1.title')}
           </h1>
-          <div className="space-y-8">
+          <div className="space-y-6">
             {/* Step 1 */}
             <div className="relative">
               <div className={`absolute ${isRTL ? '-right-4 sm:-right-8' : '-left-4 sm:-left-8'} top-6 flex items-center justify-center w-8 h-8 bg-sage-500 text-white rounded-full font-bold shadow-lg transform transition-transform hover:scale-110`}>
