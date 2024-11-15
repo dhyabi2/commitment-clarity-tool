@@ -37,23 +37,26 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 md:top-0 md:bottom-auto shadow-lg" dir={dir()}>
-      <div className="max-w-4xl mx-auto flex justify-around items-center">
-        {navItems.map(({ path, icon: Icon, label }) => (
-          <Tooltip key={path}>
-            <TooltipTrigger asChild>
-              <Link
-                to={path}
-                className={`p-2 ${getIconColor(path)} hover:text-sage-500 transition-colors`}
-              >
-                <Icon className={`${getIconSize(path)} transition-all duration-300`} />
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{label}</p>
-            </TooltipContent>
-          </Tooltip>
-        ))}
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:top-0 md:bottom-auto shadow-lg" dir={dir()}>
+      <div className="max-w-4xl mx-auto px-4">
+        <div className="hidden md:block text-xl font-semibold py-3 text-sage-700">{t('index.step1.title')}</div>
+        <div className="flex justify-around items-center py-3">
+          {navItems.map(({ path, icon: Icon, label }) => (
+            <Tooltip key={path}>
+              <TooltipTrigger asChild>
+                <Link
+                  to={path}
+                  className={`p-2 ${getIconColor(path)} hover:text-sage-500 transition-colors`}
+                >
+                  <Icon className={`${getIconSize(path)} transition-all duration-300`} />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{label}</p>
+              </TooltipContent>
+            </Tooltip>
+          ))}
+        </div>
       </div>
     </nav>
   );

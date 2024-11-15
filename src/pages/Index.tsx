@@ -29,7 +29,6 @@ const Index = () => {
                       <Brain className="h-6 w-6 text-sage-600" />
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-xl font-semibold mb-3 text-sage-700">{t('index.step1.title')}</h2>
                       <p className="text-gray-600 mb-4 leading-relaxed text-sm">
                         {t('index.step1.description')}
                       </p>
