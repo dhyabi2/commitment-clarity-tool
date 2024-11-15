@@ -33,7 +33,7 @@ export const translations = {
       a6_3: "This ensures your data remains private and separate from other users without requiring an account"
     },
     brainDump: {
-      title: "Brain Dump",
+      title: "Capture Your Thoughts",
       description: "Clear your mind by capturing any unfinished thoughts or tasks here.",
       placeholder: "What's on your mind?",
       addTags: "Add tags (optional) - press Enter to add",
@@ -80,7 +80,7 @@ export const translations = {
       a6_3: "هذا يضمن بقاء بياناتك خاصة ومنفصلة عن المستخدمين الآخرين دون الحاجة إلى حساب"
     },
     brainDump: {
-      title: "تفريغ الأفكار",
+      title: "سجل أفكارك",
       description: "صفِّ ذهنك من خلال تسجيل أي أفكار أو مهام غير مكتملة هنا",
       placeholder: "ما الذي يدور في ذهنك؟",
       addTags: "أضف وسوماً (اختياري) - اضغط Enter للإضافة",
