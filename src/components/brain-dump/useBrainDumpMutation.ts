@@ -2,7 +2,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
-import { useSession } from '@supabase/auth-helpers-react';
 
 interface AddThoughtParams {
   content: string;
@@ -17,18 +16,12 @@ export const useBrainDumpMutation = ({ onSuccess }: UseBrainDumpMutationProps) =
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { t } = useLanguage();
-  const session = useSession();
 
   const addThoughtMutation = useMutation({
     mutationFn: async ({ content, tags }: AddThoughtParams) => {
-      if (!session?.user?.id) throw new Error('Not authenticated');
-
       const { data: thoughtData, error: thoughtError } = await supabase
         .from('thoughts')
-        .insert([{ 
-          content,
-          user_id: session.user.id 
-        }])
+        .insert([{ content }])
         .select()
         .single();
       
