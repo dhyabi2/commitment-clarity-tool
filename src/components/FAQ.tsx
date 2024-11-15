@@ -15,22 +15,6 @@ const FAQ = () => {
   return (
     <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm" dir={dir()}>
       <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-sage-700">{t('faq.title')}</h2>
-      
-      {/* Flow Diagram Section */}
-      <div className="mb-6">
-        <h3 className="text-lg font-medium mb-3">{t('faq.flowDiagram.title')}</h3>
-        <div className="bg-white p-4 rounded-lg shadow-sm">
-          <img 
-            src="/workflow-diagram.png" 
-            alt="App Workflow Diagram"
-            className="max-w-full h-auto mx-auto"
-          />
-          <p className="mt-3 text-sm text-gray-600">
-            {t('faq.flowDiagram.description')}
-          </p>
-        </div>
-      </div>
-
       <Accordion type="single" collapsible className="space-y-2">
         <AccordionItem value="item-1">
           <AccordionTrigger>
