@@ -37,13 +37,14 @@ const ThoughtCard = ({
   const navigate = useNavigate();
   const [showTagInput, setShowTagInput] = useState(false);
   const { t, dir } = useLanguage();
+  const isRTL = dir() === 'rtl';
 
   const validExistingTags = Array.isArray(existingTags) 
     ? existingTags.filter((tag): tag is string => typeof tag === 'string')
     : [];
 
   return (
-    <Card className="group hover:shadow-md transition-all duration-300 bg-white/80 backdrop-blur-sm">
+    <Card className="group hover:shadow-md transition-all duration-300 bg-white/80 backdrop-blur-sm" dir={dir()}>
       <CardHeader className="flex flex-row items-center justify-between p-4">
         <div className="flex items-center gap-2">
           <CheckCircle className={`h-5 w-5 ${thought.completed ? 'text-green-500' : 'text-gray-300'}`} />
@@ -89,7 +90,7 @@ const ThoughtCard = ({
         </div>
       </CardHeader>
       <CardContent className="p-4 pt-0">
-        <p className={`text-gray-800 text-left ${thought.completed ? 'line-through text-gray-500' : ''}`}>
+        <p className={`text-gray-800 ${isRTL ? 'text-right' : 'text-left'} ${thought.completed ? 'line-through text-gray-500' : ''}`}>
           {thought.content}
         </p>
         {showTagInput && (
@@ -102,7 +103,7 @@ const ThoughtCard = ({
           </div>
         )}
         {thought.tags && thought.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-3">
+          <div className={`flex flex-wrap gap-2 mt-3 ${isRTL ? 'justify-end' : 'justify-start'}`}>
             {thought.tags.map(tag => (
               <Badge key={tag.id} variant="secondary" className="text-xs">
                 {tag.name}
