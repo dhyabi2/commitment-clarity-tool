@@ -44,23 +44,28 @@ const Thoughts = () => {
         const xmlContent = e.target?.result as string;
         const { thoughts: importedThoughts } = parseXMLData(xmlContent);
         let importCount = 0;
-        let skipCount = 0;
 
         for (const thought of importedThoughts) {
+          // Check for exact duplicate (same content AND device_id)
           const { data: existingThought } = await supabase
             .from('thoughts')
             .select('id')
             .eq('content', thought.content)
+            .eq('device_id', thought.device_id)
             .single();
 
           if (existingThought) {
-            skipCount++;
-            continue;
+            continue; // Skip only if exact duplicate
           }
 
           const { data: thoughtData, error: thoughtError } = await supabase
             .from('thoughts')
-            .insert([{ content: thought.content, completed: thought.completed }])
+            .insert([{ 
+              content: thought.content, 
+              completed: thought.completed,
+              device_id: thought.device_id, // Preserve the original device_id
+              created_at: thought.created_at // Preserve the original timestamp
+            }])
             .select()
             .single();
 
@@ -99,7 +104,7 @@ const Thoughts = () => {
 
         toast({
           title: "Import successful",
-          description: `Imported ${importCount} new thoughts. Skipped ${skipCount} duplicate thoughts.`,
+          description: `Imported ${importCount} thoughts.`,
         });
       } catch (error) {
         toast({

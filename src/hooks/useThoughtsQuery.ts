@@ -1,13 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { getDeviceId } from '@/utils/deviceId';
 
 export const useThoughtsQuery = (selectedTag: string | null) => {
   return useQuery({
     queryKey: ['thoughts', 'active', selectedTag],
     queryFn: async () => {
-      const deviceId = getDeviceId();
-      
       let query = supabase
         .from('thoughts')
         .select(`
@@ -17,7 +14,6 @@ export const useThoughtsQuery = (selectedTag: string | null) => {
           )
         `)
         .eq('completed', false)
-        .eq('device_id', deviceId)
         .order('created_at', { ascending: false });
       
       const { data, error } = await query;
