@@ -58,8 +58,12 @@ const CommitmentClarifier = () => {
 
         <Card className="bg-white/80 backdrop-blur-sm">
           <CardHeader>
-            <h1 className="text-2xl font-bold text-sage-600">{t('commitments.clarifier.pageTitle')}</h1>
-            <p className="text-sage-500">{t('commitments.clarifier.pageDescription')}</p>
+            <h1 className="text-2xl font-bold text-sage-600">
+              {t('commitments.clarifier.title')}
+            </h1>
+            <p className="text-sage-500">
+              {t('commitments.clarifier.description')}
+            </p>
           </CardHeader>
           
           <CardContent>
