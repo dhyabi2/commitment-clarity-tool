@@ -3,15 +3,31 @@ import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ArrowRightCircle, Trash2, CheckCircle } from 'lucide-react';
 
-interface ThoughtsListProps {
-  thoughts: any[];
-  onDelete: (id: number) => void;
-  onToggleComplete: (id: number, completed: boolean) => void;
+interface Tag {
+  id: number;
+  name: string;
 }
 
-const ThoughtsList = ({ thoughts, onDelete, onToggleComplete }: ThoughtsListProps) => {
+interface Thought {
+  id: number;
+  content: string;
+  completed: boolean;
+  created_at: string;
+  tags?: Tag[];
+}
+
+interface ThoughtsListProps {
+  thoughts: Thought[];
+  onDelete: (id: number) => void;
+  onToggleComplete: (id: number, completed: boolean) => void;
+  selectedTag: string | null;
+  onTagClick: (tag: string) => void;
+}
+
+const ThoughtsList = ({ thoughts, onDelete, onToggleComplete, selectedTag, onTagClick }: ThoughtsListProps) => {
   const navigate = useNavigate();
 
   if (thoughts.length === 0) {
@@ -35,53 +51,89 @@ const ThoughtsList = ({ thoughts, onDelete, onToggleComplete }: ThoughtsListProp
     );
   }
 
+  // Get unique tags from all thoughts
+  const allTags = Array.from(new Set(thoughts.flatMap(thought => thought.tags?.map(tag => tag.name) || []))).sort();
+
   return (
-    <div className="grid gap-4">
-      {thoughts.map((thought) => (
-        <Card key={thought.id} className="group hover:shadow-md transition-all duration-300 bg-white/80 backdrop-blur-sm">
-          <CardHeader className="flex flex-row items-center justify-between p-4">
-            <div className="flex items-center gap-2">
-              <CheckCircle className={`h-5 w-5 ${thought.completed ? 'text-green-500' : 'text-gray-300'}`} />
-              <time className="text-sm text-sage-500">
-                {format(new Date(thought.created_at), 'MMM d, yyyy h:mm a')}
-              </time>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:text-red-600"
-                onClick={() => onDelete(thought.id)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                onClick={() => onToggleComplete(thought.id, !thought.completed)}
-              >
-                <CheckCircle className={`h-4 w-4 ${thought.completed ? 'text-green-500' : ''}`} />
-              </Button>
-              {!thought.completed && (
+    <div className="space-y-6">
+      {allTags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-4">
+          <Badge
+            variant={selectedTag === null ? "secondary" : "outline"}
+            className="cursor-pointer"
+            onClick={() => onTagClick(null)}
+          >
+            All
+          </Badge>
+          {allTags.map(tag => (
+            <Badge
+              key={tag}
+              variant={selectedTag === tag ? "secondary" : "outline"}
+              className="cursor-pointer"
+              onClick={() => onTagClick(tag)}
+            >
+              {tag}
+            </Badge>
+          ))}
+        </div>
+      )}
+      
+      <div className="grid gap-4">
+        {thoughts.map((thought) => (
+          <Card key={thought.id} className="group hover:shadow-md transition-all duration-300 bg-white/80 backdrop-blur-sm">
+            <CardHeader className="flex flex-row items-center justify-between p-4">
+              <div className="flex items-center gap-2">
+                <CheckCircle className={`h-5 w-5 ${thought.completed ? 'text-green-500' : 'text-gray-300'}`} />
+                <time className="text-sm text-sage-500">
+                  {format(new Date(thought.created_at), 'MMM d, yyyy h:mm a')}
+                </time>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:text-red-600"
+                  onClick={() => onDelete(thought.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
                 <Button
                   variant="ghost"
                   size="sm"
                   className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                  onClick={() => navigate('/commitment-clarifier', { state: { thought: thought.content } })}
+                  onClick={() => onToggleComplete(thought.id, !thought.completed)}
                 >
-                  Clarify <ArrowRightCircle className="ml-2 h-4 w-4" />
+                  <CheckCircle className={`h-4 w-4 ${thought.completed ? 'text-green-500' : ''}`} />
                 </Button>
+                {!thought.completed && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    onClick={() => navigate('/commitment-clarifier', { state: { thought: thought.content } })}
+                  >
+                    Clarify <ArrowRightCircle className="ml-2 h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="p-4 pt-0">
+              <p className={`text-gray-800 text-left ${thought.completed ? 'line-through text-gray-500' : ''}`}>
+                {thought.content}
+              </p>
+              {thought.tags && thought.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {thought.tags.map(tag => (
+                    <Badge key={tag.id} variant="secondary" className="text-xs">
+                      {tag.name}
+                    </Badge>
+                  ))}
+                </div>
               )}
-            </div>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <p className={`text-gray-800 text-left ${thought.completed ? 'line-through text-gray-500' : ''}`}>
-              {thought.content}
-            </p>
-          </CardContent>
-        </Card>
-      ))}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };

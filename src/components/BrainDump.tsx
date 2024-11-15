@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Plus, Tag as TagIcon } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 const BrainDump = () => {
   const [thought, setThought] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -25,15 +28,51 @@ const BrainDump = () => {
   });
 
   const addThoughtMutation = useMutation({
-    mutationFn: async (newThought: string) => {
-      const { data, error } = await supabase
+    mutationFn: async ({ content, tags }: { content: string; tags: string[] }) => {
+      // First, insert the thought
+      const { data: thoughtData, error: thoughtError } = await supabase
         .from('thoughts')
-        .insert([{ content: newThought }])
+        .insert([{ content }])
         .select()
         .single();
       
-      if (error) throw error;
-      return data;
+      if (thoughtError) throw thoughtError;
+
+      // If there are tags, process them
+      if (tags.length > 0) {
+        // Insert tags and get their IDs
+        const { data: tagData, error: tagError } = await supabase
+          .from('tags')
+          .upsert(
+            tags.map(name => ({ name })),
+            { onConflict: 'name' }
+          )
+          .select();
+
+        if (tagError) throw tagError;
+
+        // Get the existing tags that match our names
+        const { data: existingTags, error: existingTagsError } = await supabase
+          .from('tags')
+          .select('*')
+          .in('name', tags);
+
+        if (existingTagsError) throw existingTagsError;
+
+        // Create thought-tag relationships
+        const { error: relationError } = await supabase
+          .from('thought_tags')
+          .insert(
+            existingTags.map(tag => ({
+              thought_id: thoughtData.id,
+              tag_id: tag.id
+            }))
+          );
+
+        if (relationError) throw relationError;
+      }
+
+      return thoughtData;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['thoughts'] });
@@ -42,13 +81,29 @@ const BrainDump = () => {
         description: "Your thought has been safely stored.",
       });
       setThought("");
+      setTags([]);
+      setTagInput("");
     }
   });
+
+  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && tagInput.trim()) {
+      e.preventDefault();
+      if (!tags.includes(tagInput.trim())) {
+        setTags([...tags, tagInput.trim()]);
+      }
+      setTagInput("");
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    setTags(tags.filter(tag => tag !== tagToRemove));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (thought.trim()) {
-      addThoughtMutation.mutate(thought);
+      addThoughtMutation.mutate({ content: thought, tags });
     }
   };
 
@@ -65,6 +120,37 @@ const BrainDump = () => {
           placeholder="What's on your mind?"
           className="min-h-[120px] sm:min-h-[150px] input-field text-sm sm:text-base"
         />
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <TagIcon className="h-4 w-4 text-gray-500" />
+            <Input
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleAddTag}
+              placeholder="Add tags (optional) - press Enter to add"
+              className="flex-1"
+            />
+          </div>
+          {tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {tags.map(tag => (
+                <span
+                  key={tag}
+                  className="bg-sage-100 text-sage-700 px-2 py-1 rounded-md text-sm flex items-center gap-1"
+                >
+                  {tag}
+                  <button
+                    type="button"
+                    onClick={() => removeTag(tag)}
+                    className="hover:text-sage-900"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
         <Button 
           type="submit" 
           className="w-full sm:w-auto btn-primary"
