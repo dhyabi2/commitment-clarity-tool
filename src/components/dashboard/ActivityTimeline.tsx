@@ -17,9 +17,12 @@ const chartConfig = {
 };
 
 const ActivityTimeline = ({ data }: { data: any[] }) => (
-  <div className="h-[250px] md:h-[300px] w-full">
+  <div className="h-[300px] w-full">
     <ChartContainer config={chartConfig}>
-      <LineChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+      <LineChart 
+        data={data} 
+        margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+      >
         <XAxis
           dataKey="date"
           stroke="#5b8363"
@@ -30,7 +33,12 @@ const ActivityTimeline = ({ data }: { data: any[] }) => (
             return `${date.getMonth() + 1}/${date.getDate()}`;
           }}
         />
-        <YAxis stroke="#5b8363" fontSize={10} tickMargin={8} />
+        <YAxis 
+          stroke="#5b8363" 
+          fontSize={10} 
+          tickMargin={8}
+          width={40}
+        />
         <ChartTooltip />
         <Line
           type="monotone"
