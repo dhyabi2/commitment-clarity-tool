@@ -52,7 +52,6 @@ const Thoughts = () => {
 
   const addTagMutation = useMutation({
     mutationFn: async ({ thoughtId, tagName }: { thoughtId: number; tagName: string }) => {
-      // First, insert or get the tag
       const { data: tagData, error: tagError } = await supabase
         .from('tags')
         .upsert({ name: tagName }, { onConflict: 'name' })
@@ -61,7 +60,6 @@ const Thoughts = () => {
       
       if (tagError) throw tagError;
 
-      // Then create the relationship
       const { error: relationError } = await supabase
         .from('thought_tags')
         .insert({ thought_id: thoughtId, tag_id: tagData.id });
@@ -141,9 +139,7 @@ const Thoughts = () => {
         let importCount = 0;
         let skipCount = 0;
 
-        // Import thoughts
         for (const thought of importedThoughts) {
-          // Check if thought with same content exists
           const { data: existingThought } = await supabase
             .from('thoughts')
             .select('id')
@@ -152,10 +148,9 @@ const Thoughts = () => {
 
           if (existingThought) {
             skipCount++;
-            continue; // Skip this thought as it already exists
+            continue;
           }
 
-          // Insert new thought
           const { data: thoughtData, error: thoughtError } = await supabase
             .from('thoughts')
             .insert([{ content: thought.content, completed: thought.completed }])
@@ -164,9 +159,7 @@ const Thoughts = () => {
 
           if (thoughtError) throw thoughtError;
 
-          // Import tags for the thought
           if (thought.tags && thought.tags.length > 0) {
-            // Upsert tags (this will ignore duplicates due to UNIQUE constraint)
             const { data: tagData, error: tagError } = await supabase
               .from('tags')
               .upsert(
@@ -177,7 +170,6 @@ const Thoughts = () => {
 
             if (tagError) throw tagError;
 
-            // Get the existing tags that match our names
             const { data: existingTags, error: existingTagsError } = await supabase
               .from('tags')
               .select('*')
@@ -185,7 +177,6 @@ const Thoughts = () => {
 
             if (existingTagsError) throw existingTagsError;
 
-            // Create thought-tag relationships
             const { error: relationError } = await supabase
               .from('thought_tags')
               .insert(
@@ -234,7 +225,6 @@ const Thoughts = () => {
     );
   }
 
-  // Get unique tags from all thoughts
   const allTags = Array.from(
     new Set(thoughts?.flatMap(thought => thought.tags?.map(tag => tag.name) || []))
   ).sort();
@@ -249,18 +239,20 @@ const Thoughts = () => {
               <Button
                 onClick={handleExport}
                 variant="outline"
-                className="flex items-center gap-2"
+                size="icon"
+                className="h-10 w-10"
+                title="Export thoughts"
               >
-                <Download className="h-4 w-4" />
-                Export
+                <Download className="h-5 w-5" />
               </Button>
               <Button
                 onClick={() => fileInputRef.current?.click()}
                 variant="outline"
-                className="flex items-center gap-2"
+                size="icon"
+                className="h-10 w-10"
+                title="Import thoughts"
               >
-                <Upload className="h-4 w-4" />
-                Import
+                <Upload className="h-5 w-5" />
               </Button>
               <input
                 type="file"

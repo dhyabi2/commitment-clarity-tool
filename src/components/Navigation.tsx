@@ -8,52 +8,52 @@ const Navigation = () => {
   const isActive = (path: string) => location.pathname === path;
   
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 md:top-0 md:bottom-auto shadow-lg">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 md:top-0 md:bottom-auto shadow-lg">
       <div className="max-w-4xl mx-auto flex justify-around items-center">
         <Link
           to="/"
-          className={`flex flex-col items-center p-2 ${
+          className={`p-2 ${
             isActive('/') ? 'text-sage-600' : 'text-gray-600'
-          }`}
+          } hover:text-sage-500 transition-colors`}
+          title="Home"
         >
-          <Home className="h-5 w-5" />
-          <span className="text-xs mt-1">Home</span>
+          <Home className="h-7 w-7" />
         </Link>
         <Link
           to="/thoughts"
-          className={`flex flex-col items-center p-2 ${
+          className={`p-2 ${
             isActive('/thoughts') ? 'text-sage-600' : 'text-gray-600'
-          }`}
+          } hover:text-sage-500 transition-colors`}
+          title="Thoughts"
         >
-          <Brain className="h-5 w-5" />
-          <span className="text-xs mt-1">Thoughts</span>
+          <Brain className="h-7 w-7" />
         </Link>
         <Link
           to="/completed-commitments"
-          className={`flex flex-col items-center p-2 ${
+          className={`p-2 ${
             isActive('/completed-commitments') ? 'text-sage-600' : 'text-gray-600'
-          }`}
+          } hover:text-sage-500 transition-colors`}
+          title="Completed"
         >
-          <CheckSquare className="h-5 w-5" />
-          <span className="text-xs mt-1">Completed</span>
+          <CheckSquare className="h-7 w-7" />
         </Link>
         <Link
           to="/dashboard"
-          className={`flex flex-col items-center p-2 ${
+          className={`p-2 ${
             isActive('/dashboard') ? 'text-sage-600' : 'text-gray-600'
-          }`}
+          } hover:text-sage-500 transition-colors`}
+          title="Stats"
         >
-          <BarChart className="h-5 w-5" />
-          <span className="text-xs mt-1">Stats</span>
+          <BarChart className="h-7 w-7" />
         </Link>
         <Link
           to="/faq"
-          className={`flex flex-col items-center p-2 ${
+          className={`p-2 ${
             isActive('/faq') ? 'text-sage-600' : 'text-gray-600'
-          }`}
+          } hover:text-sage-500 transition-colors`}
+          title="FAQ"
         >
-          <HelpCircle className="h-5 w-5" />
-          <span className="text-xs mt-1">FAQ</span>
+          <HelpCircle className="h-7 w-7" />
         </Link>
       </div>
     </nav>
