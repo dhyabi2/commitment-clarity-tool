@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Input } from "@/components/ui/input";
 import { Tag as TagIcon } from 'lucide-react';
-import { Command, CommandGroup, CommandItem } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 
 interface TagInputProps {
@@ -18,24 +17,24 @@ export const TagInput = ({
   const [tagInput, setTagInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [filteredTags, setFilteredTags] = useState<string[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
 
   // Initialize and validate existingTags
-  const validExistingTags = Array.isArray(existingTags) 
-    ? existingTags.filter((tag): tag is string => 
-        typeof tag === 'string' && tag.trim().length > 0
-      )
-    : [];
+  const validExistingTags = (existingTags || []).filter(tag => 
+    typeof tag === 'string' && tag.trim().length > 0
+  );
 
   // Filter tags based on input
   useEffect(() => {
     if (!tagInput.trim()) {
       setShowSuggestions(false);
       setFilteredTags([]);
+      setSelectedIndex(-1);
       return;
     }
 
-    // Filter matching tags
     const filtered = validExistingTags.filter(tag => 
       tag.toLowerCase().includes(tagInput.toLowerCase()) &&
       tag.toLowerCase() !== tagInput.toLowerCase()
@@ -43,34 +42,56 @@ export const TagInput = ({
     
     setFilteredTags(filtered);
     setShowSuggestions(filtered.length > 0);
+    setSelectedIndex(-1);
   }, [tagInput, validExistingTags]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && tagInput.trim()) {
+    if (e.key === 'Enter') {
       e.preventDefault();
-      onTagAdd(tagInput.trim());
+      if (selectedIndex >= 0 && selectedIndex < filteredTags.length) {
+        onTagAdd(filteredTags[selectedIndex]);
+      } else if (tagInput.trim()) {
+        onTagAdd(tagInput.trim());
+      }
       setTagInput("");
       setShowSuggestions(false);
+      setSelectedIndex(-1);
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedIndex(prev => 
+        prev < filteredTags.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedIndex(prev => prev > -1 ? prev - 1 : -1);
+    } else if (e.key === 'Escape') {
+      setShowSuggestions(false);
+      setSelectedIndex(-1);
     }
   };
 
   const handleSuggestionClick = (tag: string) => {
-    if (typeof tag === 'string' && tag.trim()) {
+    if (tag.trim()) {
       onTagAdd(tag.trim());
       setTagInput("");
       setShowSuggestions(false);
+      setSelectedIndex(-1);
       inputRef.current?.focus();
     }
   };
 
-  const handleBlur = () => {
-    // Use setTimeout to allow click events on suggestions to fire before hiding
-    setTimeout(() => setShowSuggestions(false), 200);
+  const handleBlur = (e: React.FocusEvent) => {
+    // Check if the related target is within the suggestions list
+    if (!suggestionsRef.current?.contains(e.relatedTarget as Node)) {
+      setTimeout(() => {
+        setShowSuggestions(false);
+        setSelectedIndex(-1);
+      }, 200);
+    }
   };
 
   const handleFocus = () => {
-    const hasValidSuggestions = filteredTags.length > 0;
-    if (tagInput.trim() && hasValidSuggestions) {
+    if (tagInput.trim() && filteredTags.length > 0) {
       setShowSuggestions(true);
     }
   };
@@ -91,23 +112,27 @@ export const TagInput = ({
         />
       </div>
       {showSuggestions && filteredTags.length > 0 && (
-        <div className="absolute z-50 w-full mt-1">
-          <Command className="border rounded-lg shadow-md bg-white">
-            <CommandGroup>
-              {filteredTags.map((tag, index) => (
-                <CommandItem
-                  key={`${tag}-${index}`}
-                  onSelect={() => handleSuggestionClick(tag)}
-                  className={cn(
-                    "flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100",
-                  )}
-                >
-                  <TagIcon className="h-3 w-3" />
-                  {tag}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </Command>
+        <div 
+          ref={suggestionsRef}
+          className="absolute z-50 w-full mt-1 bg-white border rounded-lg shadow-md"
+        >
+          <div className="py-1">
+            {filteredTags.map((tag, index) => (
+              <button
+                key={tag}
+                onClick={() => handleSuggestionClick(tag)}
+                className={cn(
+                  "w-full text-left px-3 py-2 text-sm",
+                  "hover:bg-gray-100 focus:bg-gray-100 outline-none",
+                  "flex items-center gap-2",
+                  index === selectedIndex && "bg-gray-100"
+                )}
+              >
+                <TagIcon className="h-3 w-3" />
+                {tag}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>
