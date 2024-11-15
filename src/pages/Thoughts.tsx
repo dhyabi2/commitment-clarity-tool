@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/components/ui/use-toast";
 import ThoughtsList from '@/components/thoughts/ThoughtsList';
+import { Button } from "@/components/ui/button";
+import { Download, Upload } from "lucide-react";
+import { convertToXML, parseXMLData } from '@/utils/xmlUtils';
 
 const Thoughts = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: thoughts, isLoading } = useQuery({
     queryKey: ['thoughts', 'active', selectedTag],
@@ -27,7 +31,6 @@ const Thoughts = () => {
       
       if (error) throw error;
 
-      // Transform the nested tags data structure
       const transformedData = data.map(thought => ({
         ...thought,
         tags: thought.tags
@@ -36,7 +39,6 @@ const Thoughts = () => {
           .sort((a, b) => a.name.localeCompare(b.name))
       }));
 
-      // Filter by selected tag if one is selected
       if (selectedTag) {
         return transformedData.filter(thought => 
           thought.tags?.some(tag => tag.name === selectedTag)
@@ -44,6 +46,19 @@ const Thoughts = () => {
       }
 
       return transformedData;
+    }
+  });
+
+  const { data: commitments } = useQuery({
+    queryKey: ['commitments'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('commitments')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data;
     }
   });
 
@@ -61,13 +76,6 @@ const Thoughts = () => {
       toast({
         title: "Thought deleted",
         description: "Your thought has been successfully removed.",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to delete thought. Please try again.",
-        variant: "destructive",
       });
     }
   });
@@ -88,15 +96,98 @@ const Thoughts = () => {
         title: "Thought updated",
         description: "The thought status has been updated.",
       });
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to update thought status. Please try again.",
-        variant: "destructive",
-      });
     }
   });
+
+  const handleExport = () => {
+    if (!thoughts || !commitments) return;
+    
+    const xmlContent = convertToXML(thoughts, commitments);
+    const blob = new Blob([xmlContent], { type: 'text/xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'thoughts-and-commitments.xml';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const xmlContent = e.target?.result as string;
+        const { thoughts, commitments } = parseXMLData(xmlContent);
+
+        // Import thoughts
+        for (const thought of thoughts) {
+          const { data: thoughtData, error: thoughtError } = await supabase
+            .from('thoughts')
+            .insert([{ content: thought.content, completed: thought.completed }])
+            .select()
+            .single();
+
+          if (thoughtError) throw thoughtError;
+
+          // Import tags for the thought
+          if (thought.tags && thought.tags.length > 0) {
+            const { data: tagData, error: tagError } = await supabase
+              .from('tags')
+              .upsert(
+                thought.tags.map(tag => ({ name: tag.name })),
+                { onConflict: 'name' }
+              )
+              .select();
+
+            if (tagError) throw tagError;
+
+            // Create thought-tag relationships
+            const { error: relationError } = await supabase
+              .from('thought_tags')
+              .insert(
+                tagData.map(tag => ({
+                  thought_id: thoughtData.id,
+                  tag_id: tag.id
+                }))
+              );
+
+            if (relationError) throw relationError;
+          }
+        }
+
+        // Import commitments
+        for (const commitment of commitments) {
+          const { error: commitmentError } = await supabase
+            .from('commitments')
+            .insert([{
+              outcome: commitment.outcome,
+              nextaction: commitment.nextaction,
+              completed: commitment.completed
+            }]);
+
+          if (commitmentError) throw commitmentError;
+        }
+
+        queryClient.invalidateQueries();
+        toast({
+          title: "Import successful",
+          description: "Your data has been imported successfully.",
+        });
+      } catch (error) {
+        toast({
+          title: "Import failed",
+          description: "There was an error importing your data. Please try again.",
+          variant: "destructive",
+        });
+      }
+    };
+    reader.readAsText(file);
+  };
 
   const handleTagClick = (tag: string | null) => {
     setSelectedTag(tag);
@@ -120,7 +211,34 @@ const Thoughts = () => {
     <div className="min-h-screen bg-cream p-4 pb-20 md:pb-4">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-sage-600 mb-2">Your Thoughts</h1>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-3xl font-bold text-sage-600">Your Thoughts</h1>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleExport}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Export
+              </Button>
+              <Button
+                onClick={() => fileInputRef.current?.click()}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <Upload className="h-4 w-4" />
+                Import
+              </Button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImport}
+                accept=".xml"
+                className="hidden"
+              />
+            </div>
+          </div>
           <p className="text-sage-500 mb-6">
             Review and clarify your thoughts to turn them into actionable commitments
           </p>

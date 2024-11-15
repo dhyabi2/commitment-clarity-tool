@@ -1,110 +1,121 @@
-import React from 'react';
-import { Card } from "@/components/ui/card";
-import { Check, Clock } from "lucide-react";
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { useQuery } from '@tanstack/react-query';
-import { format } from 'date-fns';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useToast } from "@/components/ui/use-toast";
 import ThoughtsList from '@/components/thoughts/ThoughtsList';
 
 const CompletedCommitments = () => {
-  const { data: commitments, isLoading: commitmentsLoading } = useQuery({
-    queryKey: ['completed-commitments'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('commitments')
-        .select('*')
-        .eq('completed', true)
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data;
-    }
-  });
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
-  const { data: thoughts, isLoading: thoughtsLoading } = useQuery({
-    queryKey: ['completed-thoughts'],
+  const { data: thoughts, isLoading } = useQuery({
+    queryKey: ['completed-thoughts', selectedTag],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('thoughts')
-        .select('*')
+        .select(`
+          *,
+          tags:thought_tags(
+            tag:tags(*)
+          )
+        `)
         .eq('completed', true)
         .order('created_at', { ascending: false });
       
+      const { data, error } = await query;
+      
       if (error) throw error;
-      return data;
+
+      const transformedData = data.map(thought => ({
+        ...thought,
+        tags: thought.tags
+          ?.map(t => t.tag)
+          .filter(Boolean)
+          .sort((a, b) => a.name.localeCompare(b.name))
+      }));
+
+      if (selectedTag) {
+        return transformedData.filter(thought => 
+          thought.tags?.some(tag => tag.name === selectedTag)
+        );
+      }
+
+      return transformedData;
     }
   });
 
-  if (commitmentsLoading || thoughtsLoading) {
-    return <div className="p-4 text-center text-gray-600">Loading completed items...</div>;
+  const deleteThoughtMutation = useMutation({
+    mutationFn: async (thoughtId: number) => {
+      const { error } = await supabase
+        .from('thoughts')
+        .delete()
+        .eq('id', thoughtId);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['thoughts'] });
+      toast({
+        title: "Thought deleted",
+        description: "Your thought has been successfully removed.",
+      });
+    }
+  });
+
+  const toggleCompleteMutation = useMutation({
+    mutationFn: async ({ thoughtId, completed }: { thoughtId: number; completed: boolean }) => {
+      const { error } = await supabase
+        .from('thoughts')
+        .update({ completed })
+        .eq('id', thoughtId);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['thoughts'] });
+      queryClient.invalidateQueries({ queryKey: ['completed-thoughts'] });
+      toast({
+        title: "Thought updated",
+        description: "The thought status has been updated.",
+      });
+    }
+  });
+
+  const handleTagClick = (tag: string | null) => {
+    setSelectedTag(tag);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-cream p-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="animate-pulse space-y-4">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="h-32 bg-sage-100 rounded-lg" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-cream p-4 pb-20 md:pb-4">
       <div className="max-w-4xl mx-auto">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-sage-600 mb-2">Completed Items</h1>
-          <p className="text-sage-500">Track your accomplished commitments and thoughts</p>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-sage-600 mb-2">Completed Thoughts</h1>
+          <p className="text-sage-500 mb-6">
+            Review your completed thoughts and their associated commitments
+          </p>
+          <ThoughtsList 
+            thoughts={thoughts || []}
+            onDelete={(id) => deleteThoughtMutation.mutate(id)}
+            onToggleComplete={(id, completed) => toggleCompleteMutation.mutate({ thoughtId: id, completed })}
+            selectedTag={selectedTag}
+            onTagClick={handleTagClick}
+          />
         </div>
-
-        <Tabs defaultValue="commitments" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger 
-              value="commitments" 
-              className="text-lg data-[state=active]:bg-sage-100 data-[state=active]:text-sage-700"
-            >
-              Commitments
-            </TabsTrigger>
-            <TabsTrigger 
-              value="thoughts" 
-              className="text-lg data-[state=active]:bg-sage-100 data-[state=active]:text-sage-700"
-            >
-              Thoughts
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="commitments" className="mt-0">
-            <div className="grid gap-4">
-              {commitments?.map((commitment) => (
-                <Card key={commitment.id} className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm hover:shadow-md transition-all duration-300">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-sage-100 p-2 rounded-full">
-                      <Check className="h-5 w-5 text-sage-600" />
-                    </div>
-                    <div className="flex-1 min-w-0 overflow-hidden">
-                      <h3 className="font-medium text-base sm:text-lg break-words">{commitment.outcome}</h3>
-                      <div className="flex items-start mt-2 text-gray-600">
-                        <Clock className="h-4 w-4 mr-2 flex-shrink-0 mt-1" />
-                        <p className="text-sm sm:text-base break-words">{commitment.nextAction}</p>
-                      </div>
-                      <p className="text-sm text-sage-500 mt-2">
-                        Completed on {format(new Date(commitment.created_at), 'MMM d, yyyy')}
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-
-              {commitments?.length === 0 && (
-                <div className="text-center p-8 bg-white/50 rounded-lg backdrop-blur-sm">
-                  <h2 className="text-xl font-semibold text-sage-600 mb-2">No completed commitments yet</h2>
-                  <p className="text-sage-500">
-                    As you complete your commitments, they will appear here.
-                  </p>
-                </div>
-              )}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="thoughts" className="mt-0">
-            <ThoughtsList 
-              thoughts={thoughts || []}
-              onDelete={() => {}} // Completed thoughts cannot be deleted
-              onToggleComplete={() => {}} // Completed thoughts cannot be toggled
-            />
-          </TabsContent>
-        </Tabs>
       </div>
     </div>
   );
