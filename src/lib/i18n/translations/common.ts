@@ -1,42 +1,18 @@
-export const commonTranslations = {
+export const common = {
   en: {
-    nav: {
-      home: "Home",
-      thoughts: "Thoughts",
-      completed: "Completed",
-      stats: "Stats",
-      faq: "FAQ"
-    },
-    common: {
-      back: "Back",
-      clarify: "Clarify",
-      delete: "Delete",
-      complete: "Complete",
-      addTag: "Add tag",
-      all: "All",
-      success: "Success",
-      error: "Error",
-      loading: "Loading..."
+    auth: {
+      welcome: "Welcome to Mind Garden",
+      signIn: "Sign In",
+      signUp: "Sign Up",
+      signOut: "Sign Out",
     }
   },
   ar: {
-    nav: {
-      home: "الرئيسية",
-      thoughts: "الأفكار",
-      completed: "المكتمل",
-      stats: "الإحصائيات",
-      faq: "الأسئلة الشائعة"
-    },
-    common: {
-      back: "رجوع",
-      clarify: "توضيح",
-      delete: "حذف",
-      complete: "إكمال",
-      addTag: "إضافة وسم",
-      all: "الكل",
-      success: "نجاح",
-      error: "خطأ",
-      loading: "جارٍ التحميل..."
+    auth: {
+      welcome: "مرحباً بك في حديقة العقل",
+      signIn: "تسجيل الدخول",
+      signUp: "إنشاء حساب",
+      signOut: "تسجيل الخروج",
     }
   }
 };
