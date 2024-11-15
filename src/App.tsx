@@ -7,6 +7,21 @@ import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import Navigation from "./components/Navigation";
 import LanguageSwitcher from "./components/LanguageSwitcher";
 import Routes from "./Routes";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+
+const AppContent = () => {
+  const { dir } = useLanguage();
+  
+  return (
+    <div dir={dir()}>
+      <div className="md:pt-16">
+        <LanguageSwitcher />
+        <Routes />
+      </div>
+      <Navigation />
+    </div>
+  );
+};
 
 const queryClient = new QueryClient();
 
@@ -17,11 +32,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <div className="md:pt-16">
-            <LanguageSwitcher />
-            <Routes />
-          </div>
-          <Navigation />
+          <AppContent />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

@@ -8,7 +8,7 @@ import { BrainDumpForm } from './brain-dump/BrainDumpForm';
 import { useBrainDumpMutation } from './brain-dump/useBrainDumpMutation';
 
 const BrainDump = () => {
-  const { t } = useLanguage();
+  const { t, dir } = useLanguage();
   const [thought, setThought] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
@@ -29,7 +29,7 @@ const BrainDump = () => {
   };
 
   return (
-    <div className="animate-fade-in p-4 sm:p-0">
+    <div className="animate-fade-in p-4 sm:p-0" dir={dir()}>
       <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">
         {t('brainDump.title')}
       </h2>
