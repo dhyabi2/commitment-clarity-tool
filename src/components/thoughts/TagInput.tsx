@@ -81,7 +81,6 @@ export const TagInput = ({
   };
 
   const handleBlur = (e: React.FocusEvent) => {
-    // Check if the related target is within the suggestions list
     if (!suggestionsRef.current?.contains(e.relatedTarget as Node)) {
       setTimeout(() => {
         setShowSuggestions(false);
@@ -114,7 +113,8 @@ export const TagInput = ({
       {showSuggestions && filteredTags.length > 0 && (
         <div 
           ref={suggestionsRef}
-          className="absolute z-50 w-full mt-1 bg-white border rounded-lg shadow-md"
+          className="absolute z-50 w-full mt-1 bg-white border rounded-lg shadow-lg"
+          style={{ zIndex: 9999 }}
         >
           <div className="py-1">
             {filteredTags.map((tag, index) => (
