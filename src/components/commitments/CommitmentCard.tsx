@@ -25,7 +25,7 @@ interface CommitmentCardProps {
   onSave: () => void;
   onCancel: () => void;
   onComplete: (id: number) => void;
-  setEditing: (editing: EditingState) => void;
+  setEditing: React.Dispatch<React.SetStateAction<EditingState>>;
   isPending: boolean;
 }
 
@@ -41,6 +41,13 @@ const CommitmentCard = ({
 }: CommitmentCardProps) => {
   const { t } = useLanguage();
 
+  const handleInputChange = (value: string) => {
+    setEditing(prev => ({
+      ...prev,
+      value
+    }));
+  };
+
   return (
     <Card className="commitment-card p-4 sm:p-6">
       <div className="flex items-start justify-between gap-4">
@@ -50,7 +57,7 @@ const CommitmentCard = ({
               <div className="flex-1">
                 <Input
                   value={editing.value}
-                  onChange={(e) => setEditing(prev => ({ ...prev, value: e.target.value }))}
+                  onChange={(e) => handleInputChange(e.target.value)}
                   className="mb-2"
                   autoFocus
                 />
@@ -91,7 +98,7 @@ const CommitmentCard = ({
               <div className="flex-1">
                 <Input
                   value={editing.value}
-                  onChange={(e) => setEditing(prev => ({ ...prev, value: e.target.value }))}
+                  onChange={(e) => handleInputChange(e.target.value)}
                   className="mb-2"
                   autoFocus
                 />
