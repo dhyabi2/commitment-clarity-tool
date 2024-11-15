@@ -10,6 +10,14 @@ import { ThoughtsHeader } from '@/components/thoughts/ThoughtsHeader';
 import { useThoughtsMutations } from '@/hooks/useThoughtsMutations';
 import { useThoughtsQuery } from '@/hooks/useThoughtsQuery';
 
+interface ImportedThought {
+  content: string;
+  completed: boolean;
+  device_id: string;
+  created_at: string;
+  tags: { name: string; }[];
+}
+
 const Thoughts = () => {
   const { toast } = useToast();
   const { dir } = useLanguage();
@@ -42,7 +50,7 @@ const Thoughts = () => {
     reader.onload = async (e) => {
       try {
         const xmlContent = e.target?.result as string;
-        const { thoughts: importedThoughts } = parseXMLData(xmlContent);
+        const { thoughts: importedThoughts } = parseXMLData(xmlContent) as { thoughts: ImportedThought[] };
         let importCount = 0;
 
         for (const thought of importedThoughts) {
@@ -130,10 +138,6 @@ const Thoughts = () => {
       </div>
     );
   }
-
-  const allTags = Array.from(
-    new Set(thoughts?.flatMap(thought => thought.tags?.map(tag => tag.name) || []))
-  ).sort();
 
   return (
     <div className="min-h-screen bg-cream p-4 pb-20 md:pb-4" dir={dir()}>
