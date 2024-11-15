@@ -27,6 +27,15 @@ const Thoughts = () => {
   const { data: thoughts, isLoading } = useThoughtsQuery(selectedTag);
   const { addTagMutation, deleteThoughtMutation, toggleCompleteMutation } = useThoughtsMutations();
 
+  // Extract unique tags from thoughts
+  const uniqueTags = React.useMemo(() => {
+    if (!thoughts) return [];
+    const tags = thoughts.flatMap(thought => 
+      thought.tags?.map(tag => tag.name) || []
+    );
+    return Array.from(new Set(tags)).sort();
+  }, [thoughts]);
+
   const handleExport = () => {
     if (!thoughts) return;
     
@@ -154,7 +163,7 @@ const Thoughts = () => {
           className="hidden"
         />
         <TagManager 
-          allTags={allTags}
+          allTags={uniqueTags}
           selectedTag={selectedTag}
           onTagClick={setSelectedTag}
         />
@@ -166,7 +175,7 @@ const Thoughts = () => {
               onDelete={(id) => deleteThoughtMutation.mutate(id)}
               onToggleComplete={(id, completed) => toggleCompleteMutation.mutate({ thoughtId: id, completed })}
               onAddTag={(thoughtId, tag) => addTagMutation.mutate({ thoughtId, tagName: tag })}
-              existingTags={allTags}
+              existingTags={uniqueTags}
             />
           ))}
         </div>
