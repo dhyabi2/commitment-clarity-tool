@@ -2,18 +2,14 @@ import React from 'react';
 import BrainDump from '@/components/BrainDump';
 import ActiveCommitments from '@/components/ActiveCommitments';
 import { Card } from "@/components/ui/card";
-import { Brain, ListTodo, ChevronDown } from "lucide-react";
+import { Brain, ListTodo } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 const Index = () => {
-  const scrollToContent = () => {
-    window.scrollTo({
-      top: window.innerHeight,
-      behavior: 'smooth'
-    });
-  };
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-screen">
@@ -32,9 +28,9 @@ const Index = () => {
                       <Brain className="h-6 w-6 text-sage-600" />
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-xl font-semibold mb-3 text-sage-700">Brain Dump</h2>
+                      <h2 className="text-xl font-semibold mb-3 text-sage-700">{t('index.step1.title')}</h2>
                       <p className="text-gray-600 mb-4 leading-relaxed text-sm">
-                        Begin by capturing all your thoughts below. Don't worry about organizing them yet - just get them out of your head.
+                        {t('index.step1.description')}
                       </p>
                       <BrainDump />
                     </div>
@@ -50,7 +46,7 @@ const Index = () => {
               </div>
               <div className="ml-6 sm:ml-4">
                 <Card className="bg-white/80 backdrop-blur-sm p-6 sm:p-8 border-sage-200 shadow-lg hover:shadow-xl transition-all duration-300">
-                  <h2 className="text-xl font-semibold mb-4 text-sage-700">Review Your Active Commitments</h2>
+                  <h2 className="text-xl font-semibold mb-4 text-sage-700">{t('index.step2.title')}</h2>
                   <ActiveCommitments />
                 </Card>
               </div>
@@ -64,7 +60,7 @@ const Index = () => {
         <Link to="/thoughts">
           <Button className="bg-sage-500 hover:bg-sage-600 shadow-lg hover:shadow-xl transition-all duration-300 px-4 py-2 rounded-xl text-base font-medium">
             <Brain className="mr-2 h-4 w-4" />
-            View All Thoughts
+            {t('thoughts.title')}
           </Button>
         </Link>
       </div>
