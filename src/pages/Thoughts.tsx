@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/components/ui/use-toast";
-import ThoughtsList from '@/components/thoughts/ThoughtsList';
+import ThoughtCard from '@/components/thoughts/ThoughtCard';
+import { TagManager } from '@/components/thoughts/TagManager';
 import { Button } from "@/components/ui/button";
 import { Download, Upload } from "lucide-react";
 import { convertToXML, parseXMLData } from '@/utils/xmlUtils';
@@ -114,14 +115,14 @@ const Thoughts = () => {
   });
 
   const handleExport = () => {
-    if (!thoughts || !commitments) return;
+    if (!thoughts) return;
     
-    const xmlContent = convertToXML(thoughts, commitments);
+    const xmlContent = convertToXML(thoughts);
     const blob = new Blob([xmlContent], { type: 'text/xml' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'thoughts-and-commitments.xml';
+    a.download = 'thoughts.xml';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -136,7 +137,7 @@ const Thoughts = () => {
     reader.onload = async (e) => {
       try {
         const xmlContent = e.target?.result as string;
-        const { thoughts, commitments } = parseXMLData(xmlContent);
+        const { thoughts } = parseXMLData(xmlContent);
 
         // Import thoughts
         for (const thought of thoughts) {
@@ -174,19 +175,6 @@ const Thoughts = () => {
           }
         }
 
-        // Import commitments
-        for (const commitment of commitments) {
-          const { error: commitmentError } = await supabase
-            .from('commitments')
-            .insert([{
-              outcome: commitment.outcome,
-              nextaction: commitment.nextaction,
-              completed: commitment.completed
-            }]);
-
-          if (commitmentError) throw commitmentError;
-        }
-
         queryClient.invalidateQueries();
         toast({
           title: "Import successful",
@@ -220,6 +208,11 @@ const Thoughts = () => {
       </div>
     );
   }
+
+  // Get unique tags from all thoughts
+  const allTags = Array.from(
+    new Set(thoughts?.flatMap(thought => thought.tags?.map(tag => tag.name) || []))
+  ).sort();
 
   return (
     <div className="min-h-screen bg-cream p-4 pb-20 md:pb-4">
@@ -256,13 +249,22 @@ const Thoughts = () => {
           <p className="text-sage-500 mb-6">
             Review and clarify your thoughts to turn them into actionable commitments
           </p>
-          <ThoughtsList 
-            thoughts={thoughts || []}
-            onDelete={(id) => deleteThoughtMutation.mutate(id)}
-            onToggleComplete={(id, completed) => toggleCompleteMutation.mutate({ thoughtId: id, completed })}
+          <TagManager 
+            allTags={allTags}
             selectedTag={selectedTag}
             onTagClick={handleTagClick}
           />
+          <div className="space-y-4">
+            {thoughts?.map(thought => (
+              <ThoughtCard
+                key={thought.id}
+                thought={thought}
+                onDelete={(id) => deleteThoughtMutation.mutate(id)}
+                onToggleComplete={(id, completed) => toggleCompleteMutation.mutate({ thoughtId: id, completed })}
+                onAddTag={(thoughtId, tag) => addTagMutation.mutate({ thoughtId, tagName: tag })}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>
