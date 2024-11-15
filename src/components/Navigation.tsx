@@ -13,6 +13,20 @@ const Navigation = () => {
   const { t, dir } = useLanguage();
   
   const isActive = (path: string) => location.pathname === path;
+
+  const getIconSize = (path: string) => {
+    if (path === '/thoughts') {
+      return 'h-9 w-9'; // Slightly larger for thoughts icon
+    }
+    return 'h-7 w-7'; // Default size for other icons
+  };
+  
+  const getIconColor = (path: string) => {
+    if (path === '/thoughts') {
+      return isActive(path) ? 'text-sage-700' : 'text-sage-500';
+    }
+    return isActive(path) ? 'text-sage-600' : 'text-gray-600';
+  };
   
   const navItems = [
     { path: '/', icon: Home, label: t('nav.home') },
@@ -30,11 +44,9 @@ const Navigation = () => {
             <TooltipTrigger asChild>
               <Link
                 to={path}
-                className={`p-2 ${
-                  isActive(path) ? 'text-sage-600' : 'text-gray-600'
-                } hover:text-sage-500 transition-colors`}
+                className={`p-2 ${getIconColor(path)} hover:text-sage-500 transition-colors`}
               >
-                <Icon className="h-8 w-8" />
+                <Icon className={`${getIconSize(path)} transition-all duration-300`} />
               </Link>
             </TooltipTrigger>
             <TooltipContent>
