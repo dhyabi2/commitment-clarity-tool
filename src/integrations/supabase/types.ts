@@ -33,6 +33,51 @@ export type Database = {
         }
         Relationships: []
       }
+      tags: {
+        Row: {
+          id: number
+          name: string
+        }
+        Insert: {
+          id?: number
+          name: string
+        }
+        Update: {
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
+      thought_tags: {
+        Row: {
+          tag_id: number
+          thought_id: number
+        }
+        Insert: {
+          tag_id: number
+          thought_id: number
+        }
+        Update: {
+          tag_id?: number
+          thought_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "thought_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "thought_tags_thought_id_fkey"
+            columns: ["thought_id"]
+            isOneToOne: false
+            referencedRelation: "thoughts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       thoughts: {
         Row: {
           completed: boolean
