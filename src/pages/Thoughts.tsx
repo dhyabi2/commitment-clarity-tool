@@ -1,118 +1,23 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/components/ui/use-toast";
 import ThoughtCard from '@/components/thoughts/ThoughtCard';
 import { TagManager } from '@/components/thoughts/TagManager';
-import { Button } from "@/components/ui/button";
-import { Download, Upload } from "lucide-react";
 import { convertToXML, parseXMLData } from '@/utils/xmlUtils';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { ThoughtsHeader } from '@/components/thoughts/ThoughtsHeader';
+import { useThoughtsMutations } from '@/hooks/useThoughtsMutations';
+import { useThoughtsQuery } from '@/hooks/useThoughtsQuery';
 
 const Thoughts = () => {
   const { toast } = useToast();
-  const { t, dir } = useLanguage();
-  const queryClient = useQueryClient();
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const { dir } = useLanguage();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedTag, setSelectedTag] = React.useState<string | null>(null);
 
-  const { data: thoughts, isLoading } = useQuery({
-    queryKey: ['thoughts', 'active', selectedTag],
-    queryFn: async () => {
-      let query = supabase
-        .from('thoughts')
-        .select(`
-          *,
-          tags:thought_tags(
-            tag:tags(*)
-          )
-        `)
-        .eq('completed', false)
-        .order('created_at', { ascending: false });
-      
-      const { data, error } = await query;
-      
-      if (error) throw error;
-
-      const transformedData = data.map(thought => ({
-        ...thought,
-        tags: thought.tags
-          ?.map(t => t.tag)
-          .filter(Boolean)
-          .sort((a, b) => a.name.localeCompare(b.name))
-      }));
-
-      if (selectedTag) {
-        return transformedData.filter(thought => 
-          thought.tags?.some(tag => tag.name === selectedTag)
-        );
-      }
-
-      return transformedData;
-    }
-  });
-
-  const addTagMutation = useMutation({
-    mutationFn: async ({ thoughtId, tagName }: { thoughtId: number; tagName: string }) => {
-      const { data: tagData, error: tagError } = await supabase
-        .from('tags')
-        .upsert({ name: tagName }, { onConflict: 'name' })
-        .select()
-        .single();
-      
-      if (tagError) throw tagError;
-
-      const { error: relationError } = await supabase
-        .from('thought_tags')
-        .insert({ thought_id: thoughtId, tag_id: tagData.id });
-
-      if (relationError) throw relationError;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['thoughts'] });
-      toast({
-        title: "Tag added",
-        description: "The tag has been added to your thought.",
-      });
-    }
-  });
-
-  const deleteThoughtMutation = useMutation({
-    mutationFn: async (thoughtId: number) => {
-      const { error } = await supabase
-        .from('thoughts')
-        .delete()
-        .eq('id', thoughtId);
-      
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['thoughts'] });
-      toast({
-        title: "Thought deleted",
-        description: "Your thought has been successfully removed.",
-      });
-    }
-  });
-
-  const toggleCompleteMutation = useMutation({
-    mutationFn: async ({ thoughtId, completed }: { thoughtId: number; completed: boolean }) => {
-      const { error } = await supabase
-        .from('thoughts')
-        .update({ completed })
-        .eq('id', thoughtId);
-      
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['thoughts'] });
-      queryClient.invalidateQueries({ queryKey: ['completed-thoughts'] });
-      toast({
-        title: "Thought updated",
-        description: "The thought status has been updated.",
-      });
-    }
-  });
+  const { data: thoughts, isLoading } = useThoughtsQuery(selectedTag);
+  const { addTagMutation, deleteThoughtMutation, toggleCompleteMutation } = useThoughtsMutations();
 
   const handleExport = () => {
     if (!thoughts) return;
@@ -162,13 +67,12 @@ const Thoughts = () => {
           if (thoughtError) throw thoughtError;
 
           if (thought.tags && thought.tags.length > 0) {
-            const { data: tagData, error: tagError } = await supabase
+            const { error: tagError } = await supabase
               .from('tags')
               .upsert(
                 thought.tags.map(tag => ({ name: tag.name })),
                 { onConflict: 'name' }
-              )
-              .select();
+              );
 
             if (tagError) throw tagError;
 
@@ -193,7 +97,6 @@ const Thoughts = () => {
           importCount++;
         }
 
-        queryClient.invalidateQueries();
         toast({
           title: "Import successful",
           description: `Imported ${importCount} new thoughts. Skipped ${skipCount} duplicate thoughts.`,
@@ -207,10 +110,6 @@ const Thoughts = () => {
       }
     };
     reader.readAsText(file);
-  };
-
-  const handleTagClick = (tag: string | null) => {
-    setSelectedTag(tag);
   };
 
   if (isLoading) {
@@ -234,57 +133,33 @@ const Thoughts = () => {
   return (
     <div className="min-h-screen bg-cream p-4 pb-20 md:pb-4" dir={dir()}>
       <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-3xl font-bold text-sage-600">{t('thoughts.title')}</h1>
-            <div className="flex gap-2">
-              <Button
-                onClick={handleExport}
-                variant="outline"
-                size="icon"
-                className="h-10 w-10"
-                title={t('thoughts.export')}
-              >
-                <Download className="h-5 w-5" />
-              </Button>
-              <Button
-                onClick={() => fileInputRef.current?.click()}
-                variant="outline"
-                size="icon"
-                className="h-10 w-10"
-                title={t('thoughts.import')}
-              >
-                <Upload className="h-5 w-5" />
-              </Button>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImport}
-                accept=".xml"
-                className="hidden"
-              />
-            </div>
-          </div>
-          <p className="text-sage-500 mb-6">
-            {t('thoughts.description')}
-          </p>
-          <TagManager 
-            allTags={allTags}
-            selectedTag={selectedTag}
-            onTagClick={handleTagClick}
-          />
-          <div className="space-y-4">
-            {thoughts?.map(thought => (
-              <ThoughtCard
-                key={thought.id}
-                thought={thought}
-                onDelete={(id) => deleteThoughtMutation.mutate(id)}
-                onToggleComplete={(id, completed) => toggleCompleteMutation.mutate({ thoughtId: id, completed })}
-                onAddTag={(thoughtId, tag) => addTagMutation.mutate({ thoughtId, tagName: tag })}
-                existingTags={allTags}
-              />
-            ))}
-          </div>
+        <ThoughtsHeader 
+          onExport={handleExport}
+          onImportClick={() => fileInputRef.current?.click()}
+        />
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleImport}
+          accept=".xml"
+          className="hidden"
+        />
+        <TagManager 
+          allTags={allTags}
+          selectedTag={selectedTag}
+          onTagClick={setSelectedTag}
+        />
+        <div className="space-y-4">
+          {thoughts?.map(thought => (
+            <ThoughtCard
+              key={thought.id}
+              thought={thought}
+              onDelete={(id) => deleteThoughtMutation.mutate(id)}
+              onToggleComplete={(id, completed) => toggleCompleteMutation.mutate({ thoughtId: id, completed })}
+              onAddTag={(thoughtId, tag) => addTagMutation.mutate({ thoughtId, tagName: tag })}
+              existingTags={allTags}
+            />
+          ))}
         </div>
       </div>
     </div>
