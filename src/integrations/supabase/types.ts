@@ -13,6 +13,7 @@ export type Database = {
         Row: {
           completed: boolean
           created_at: string
+          device_id: string | null
           id: number
           nextaction: string
           outcome: string
@@ -20,6 +21,7 @@ export type Database = {
         Insert: {
           completed?: boolean
           created_at?: string
+          device_id?: string | null
           id?: number
           nextaction: string
           outcome: string
@@ -27,6 +29,7 @@ export type Database = {
         Update: {
           completed?: boolean
           created_at?: string
+          device_id?: string | null
           id?: number
           nextaction?: string
           outcome?: string
@@ -83,18 +86,21 @@ export type Database = {
           completed: boolean
           content: string
           created_at: string
+          device_id: string | null
           id: number
         }
         Insert: {
           completed?: boolean
           content: string
           created_at?: string
+          device_id?: string | null
           id?: number
         }
         Update: {
           completed?: boolean
           content?: string
           created_at?: string
+          device_id?: string | null
           id?: number
         }
         Relationships: []

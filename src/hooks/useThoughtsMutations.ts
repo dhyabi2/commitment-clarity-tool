@@ -1,10 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/components/ui/use-toast";
+import { getDeviceId } from '@/utils/deviceId';
 
 export const useThoughtsMutations = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const deviceId = getDeviceId();
 
   const addTagMutation = useMutation({
     mutationFn: async ({ thoughtId, tagName }: { thoughtId: number; tagName: string }) => {
@@ -36,7 +38,8 @@ export const useThoughtsMutations = () => {
       const { error } = await supabase
         .from('thoughts')
         .delete()
-        .eq('id', thoughtId);
+        .eq('id', thoughtId)
+        .eq('device_id', deviceId);
       
       if (error) throw error;
     },
@@ -54,7 +57,8 @@ export const useThoughtsMutations = () => {
       const { error } = await supabase
         .from('thoughts')
         .update({ completed })
-        .eq('id', thoughtId);
+        .eq('id', thoughtId)
+        .eq('device_id', deviceId);
       
       if (error) throw error;
     },

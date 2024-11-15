@@ -2,6 +2,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { getDeviceId } from '@/utils/deviceId';
 
 interface AddThoughtParams {
   content: string;
@@ -16,12 +17,13 @@ export const useBrainDumpMutation = ({ onSuccess }: UseBrainDumpMutationProps) =
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { t } = useLanguage();
+  const deviceId = getDeviceId();
 
   const addThoughtMutation = useMutation({
     mutationFn: async ({ content, tags }: AddThoughtParams) => {
       const { data: thoughtData, error: thoughtError } = await supabase
         .from('thoughts')
-        .insert([{ content }])
+        .insert([{ content, device_id: deviceId }])
         .select()
         .single();
       
