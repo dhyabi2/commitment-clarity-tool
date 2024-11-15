@@ -14,7 +14,9 @@ export const thoughtsTranslations = {
       thoughtDeleted: "Thought deleted successfully",
       thoughtUpdated: "Thought updated successfully",
       importSuccess: "Thoughts imported successfully",
-      importError: "Error importing thoughts"
+      importError: "Error importing thoughts",
+      allTags: "All",
+      clarify: "Clarify"
     }
   },
   ar: {
@@ -32,7 +34,9 @@ export const thoughtsTranslations = {
       thoughtDeleted: "تم حذف الفكرة بنجاح",
       thoughtUpdated: "تم تحديث الفكرة بنجاح",
       importSuccess: "تم استيراد الأفكار بنجاح",
-      importError: "خطأ في استيراد الأفكار"
+      importError: "خطأ في استيراد الأفكار",
+      allTags: "الكل",
+      clarify: "توضيح"
     }
   }
 };

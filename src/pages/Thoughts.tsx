@@ -7,9 +7,11 @@ import { TagManager } from '@/components/thoughts/TagManager';
 import { Button } from "@/components/ui/button";
 import { Download, Upload } from "lucide-react";
 import { convertToXML, parseXMLData } from '@/utils/xmlUtils';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 const Thoughts = () => {
   const { toast } = useToast();
+  const { t, dir } = useLanguage();
   const queryClient = useQueryClient();
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -213,7 +215,7 @@ const Thoughts = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-cream p-4">
+      <div className="min-h-screen bg-cream p-4" dir={dir()}>
         <div className="max-w-4xl mx-auto">
           <div className="animate-pulse space-y-4">
             {[1, 2, 3].map((n) => (
@@ -230,18 +232,18 @@ const Thoughts = () => {
   ).sort();
 
   return (
-    <div className="min-h-screen bg-cream p-4 pb-20 md:pb-4">
+    <div className="min-h-screen bg-cream p-4 pb-20 md:pb-4" dir={dir()}>
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-3xl font-bold text-sage-600">Your Thoughts</h1>
+            <h1 className="text-3xl font-bold text-sage-600">{t('thoughts.title')}</h1>
             <div className="flex gap-2">
               <Button
                 onClick={handleExport}
                 variant="outline"
                 size="icon"
                 className="h-10 w-10"
-                title="Export thoughts"
+                title={t('thoughts.export')}
               >
                 <Download className="h-5 w-5" />
               </Button>
@@ -250,7 +252,7 @@ const Thoughts = () => {
                 variant="outline"
                 size="icon"
                 className="h-10 w-10"
-                title="Import thoughts"
+                title={t('thoughts.import')}
               >
                 <Upload className="h-5 w-5" />
               </Button>
@@ -264,7 +266,7 @@ const Thoughts = () => {
             </div>
           </div>
           <p className="text-sage-500 mb-6">
-            Review and clarify your thoughts to turn them into actionable commitments
+            {t('thoughts.description')}
           </p>
           <TagManager 
             allTags={allTags}

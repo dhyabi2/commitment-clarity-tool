@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRightCircle, Trash2, CheckCircle, Tag as TagIcon } from 'lucide-react';
 import { TagInput } from './TagInput';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 interface Tag {
   id: number;
@@ -35,8 +36,8 @@ const ThoughtCard = ({
 }: ThoughtCardProps) => {
   const navigate = useNavigate();
   const [showTagInput, setShowTagInput] = useState(false);
+  const { t, dir } = useLanguage();
 
-  // Ensure existingTags is always an array of strings
   const validExistingTags = Array.isArray(existingTags) 
     ? existingTags.filter((tag): tag is string => typeof tag === 'string')
     : [];
@@ -46,7 +47,7 @@ const ThoughtCard = ({
       <CardHeader className="flex flex-row items-center justify-between p-4">
         <div className="flex items-center gap-2">
           <CheckCircle className={`h-5 w-5 ${thought.completed ? 'text-green-500' : 'text-gray-300'}`} />
-          <time className="text-sm text-sage-500">
+          <time className="text-sm text-sage-500" dir="ltr">
             {format(new Date(thought.created_at), 'MMM d, yyyy h:mm a')}
           </time>
         </div>
@@ -82,7 +83,7 @@ const ThoughtCard = ({
               className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
               onClick={() => navigate('/commitment-clarifier', { state: { thought: thought.content } })}
             >
-              Clarify <ArrowRightCircle className="ml-2 h-4 w-4" />
+              {t('thoughts.clarify')} <ArrowRightCircle className="mx-2 h-4 w-4" />
             </Button>
           )}
         </div>
@@ -96,6 +97,7 @@ const ThoughtCard = ({
             <TagInput 
               onTagAdd={(tag) => onAddTag(thought.id, tag)}
               existingTags={validExistingTags}
+              placeholder={t('thoughts.addTag')}
             />
           </div>
         )}
