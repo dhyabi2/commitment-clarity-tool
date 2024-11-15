@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Trash2, CheckCircle, Tag as TagIcon } from 'lucide-react';
 import { TagInput } from './TagInput';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { useToast } from "@/components/ui/use-toast";
 
 interface Tag {
   id: number;
@@ -37,7 +38,18 @@ const ThoughtCard = ({
   const navigate = useNavigate();
   const [showTagInput, setShowTagInput] = useState(false);
   const { t, dir } = useLanguage();
+  const { toast } = useToast();
   const isRTL = dir() === 'rtl';
+
+  const handleTagClick = () => {
+    setShowTagInput(!showTagInput);
+    if (!showTagInput) {
+      toast({
+        title: t('thoughts.addTagPrompt') || 'Add a tag',
+        duration: 2000,
+      });
+    }
+  };
 
   const validExistingTags = Array.isArray(existingTags) 
     ? existingTags.filter((tag): tag is string => typeof tag === 'string')
@@ -64,9 +76,9 @@ const ThoughtCard = ({
             variant="ghost"
             size="sm"
             className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 p-0"
-            onClick={() => setShowTagInput(!showTagInput)}
+            onClick={handleTagClick}
           >
-            <TagIcon className="h-4 w-4" />
+            <TagIcon className="h-4 w-4 hover:text-sage-600" />
           </Button>
           <Button
             variant="ghost"
@@ -95,7 +107,13 @@ const ThoughtCard = ({
         {showTagInput && (
           <div className="mt-2">
             <TagInput 
-              onTagAdd={(tag) => onAddTag(thought.id, tag)}
+              onTagAdd={(tag) => {
+                onAddTag(thought.id, tag);
+                toast({
+                  title: t('thoughts.tagAdded') || 'Tag added successfully',
+                  duration: 2000,
+                });
+              }}
               existingTags={validExistingTags}
               placeholder={t('thoughts.addTag')}
             />
