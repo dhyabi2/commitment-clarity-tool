@@ -5,7 +5,7 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRightCircle, Trash2, CheckCircle, Tag as TagIcon } from 'lucide-react';
-import { TagInput } from './TagManager';
+import { TagInput } from './TagInput';
 
 interface Tag {
   id: number;
@@ -23,9 +23,10 @@ interface ThoughtCardProps {
   onDelete: (id: number) => void;
   onToggleComplete: (id: number, completed: boolean) => void;
   onAddTag: (thoughtId: number, tag: string) => void;
+  existingTags: string[];
 }
 
-const ThoughtCard = ({ thought, onDelete, onToggleComplete, onAddTag }: ThoughtCardProps) => {
+const ThoughtCard = ({ thought, onDelete, onToggleComplete, onAddTag, existingTags }: ThoughtCardProps) => {
   const navigate = useNavigate();
   const [showTagInput, setShowTagInput] = useState(false);
 
@@ -81,7 +82,10 @@ const ThoughtCard = ({ thought, onDelete, onToggleComplete, onAddTag }: ThoughtC
         </p>
         {showTagInput && (
           <div className="mt-2">
-            <TagInput onTagAdd={(tag) => onAddTag(thought.id, tag)} />
+            <TagInput 
+              onTagAdd={(tag) => onAddTag(thought.id, tag)} 
+              existingTags={existingTags}
+            />
           </div>
         )}
         {thought.tags && thought.tags.length > 0 && (

@@ -262,6 +262,7 @@ const Thoughts = () => {
                 onDelete={(id) => deleteThoughtMutation.mutate(id)}
                 onToggleComplete={(id, completed) => toggleCompleteMutation.mutate({ thoughtId: id, completed })}
                 onAddTag={(thoughtId, tag) => addTagMutation.mutate({ thoughtId, tagName: tag })}
+                existingTags={allTags}
               />
             ))}
           </div>
