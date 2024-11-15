@@ -20,16 +20,28 @@ export const TagInput = ({
   const [filteredTags, setFilteredTags] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Reset filtered tags when existingTags changes
   useEffect(() => {
+    if (!Array.isArray(existingTags)) {
+      setFilteredTags([]);
+      return;
+    }
+  }, [existingTags]);
+
+  // Filter tags based on input
+  useEffect(() => {
+    // Reset if no input or invalid existingTags
     if (!tagInput.trim() || !Array.isArray(existingTags)) {
       setShowSuggestions(false);
       setFilteredTags([]);
       return;
     }
 
-    const filtered = existingTags.filter(tag => 
-      tag?.toLowerCase().includes(tagInput.toLowerCase()) &&
-      tag?.toLowerCase() !== tagInput.toLowerCase()
+    // Filter valid tags
+    const validTags = existingTags.filter(tag => tag && typeof tag === 'string');
+    const filtered = validTags.filter(tag => 
+      tag.toLowerCase().includes(tagInput.toLowerCase()) &&
+      tag.toLowerCase() !== tagInput.toLowerCase()
     );
     
     setFilteredTags(filtered);
@@ -46,8 +58,8 @@ export const TagInput = ({
   };
 
   const handleSuggestionClick = (tag: string) => {
-    if (tag) {
-      onTagAdd(tag);
+    if (tag && typeof tag === 'string') {
+      onTagAdd(tag.trim());
       setTagInput("");
       setShowSuggestions(false);
       inputRef.current?.focus();
@@ -59,6 +71,12 @@ export const TagInput = ({
     setTimeout(() => setShowSuggestions(false), 200);
   };
 
+  const handleFocus = () => {
+    if (tagInput.trim() && Array.isArray(existingTags) && existingTags.length > 0) {
+      setShowSuggestions(true);
+    }
+  };
+
   return (
     <div className="relative">
       <div className="flex items-center gap-2">
@@ -68,11 +86,7 @@ export const TagInput = ({
           value={tagInput}
           onChange={(e) => setTagInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          onFocus={() => {
-            if (tagInput.trim() && Array.isArray(existingTags) && existingTags.length > 0) {
-              setShowSuggestions(true);
-            }
-          }}
+          onFocus={handleFocus}
           onBlur={handleBlur}
           placeholder={placeholder}
           className="flex-1"
@@ -83,16 +97,18 @@ export const TagInput = ({
           <Command className="border rounded-lg shadow-md bg-white">
             <CommandGroup>
               {filteredTags.map((tag, index) => (
-                <CommandItem
-                  key={`${tag}-${index}`}
-                  onSelect={() => handleSuggestionClick(tag)}
-                  className={cn(
-                    "flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100",
-                  )}
-                >
-                  <TagIcon className="h-3 w-3" />
-                  {tag}
-                </CommandItem>
+                tag && (
+                  <CommandItem
+                    key={`${tag}-${index}`}
+                    onSelect={() => handleSuggestionClick(tag)}
+                    className={cn(
+                      "flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100",
+                    )}
+                  >
+                    <TagIcon className="h-3 w-3" />
+                    {tag}
+                  </CommandItem>
+                )
               ))}
             </CommandGroup>
           </Command>
