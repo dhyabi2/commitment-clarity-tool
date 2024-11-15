@@ -7,17 +7,21 @@ import { cn } from "@/lib/utils";
 interface TagInputProps {
   onTagAdd: (tag: string) => void;
   placeholder?: string;
-  existingTags: string[];
+  existingTags?: string[];
 }
 
-export const TagInput = ({ onTagAdd, placeholder = "Add a tag and press Enter", existingTags }: TagInputProps) => {
+export const TagInput = ({ 
+  onTagAdd, 
+  placeholder = "Add a tag and press Enter", 
+  existingTags = [] 
+}: TagInputProps) => {
   const [tagInput, setTagInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [filteredTags, setFilteredTags] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (tagInput.trim()) {
+    if (tagInput.trim() && existingTags.length > 0) {
       const filtered = existingTags.filter(tag => 
         tag.toLowerCase().includes(tagInput.toLowerCase()) &&
         tag.toLowerCase() !== tagInput.toLowerCase()
@@ -54,13 +58,13 @@ export const TagInput = ({ onTagAdd, placeholder = "Add a tag and press Enter", 
           value={tagInput}
           onChange={(e) => setTagInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          onFocus={() => tagInput.trim() && setShowSuggestions(true)}
+          onFocus={() => tagInput.trim() && existingTags.length > 0 && setShowSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           placeholder={placeholder}
           className="flex-1"
         />
       </div>
-      {showSuggestions && (
+      {showSuggestions && filteredTags.length > 0 && (
         <Command className="absolute z-50 w-full mt-1 border rounded-lg shadow-md bg-white">
           <CommandGroup>
             {filteredTags.map(tag => (

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,10 +22,16 @@ interface ThoughtCardProps {
   onDelete: (id: number) => void;
   onToggleComplete: (id: number, completed: boolean) => void;
   onAddTag: (thoughtId: number, tag: string) => void;
-  existingTags: string[];
+  existingTags?: string[];
 }
 
-const ThoughtCard = ({ thought, onDelete, onToggleComplete, onAddTag, existingTags }: ThoughtCardProps) => {
+const ThoughtCard = ({ 
+  thought, 
+  onDelete, 
+  onToggleComplete, 
+  onAddTag, 
+  existingTags = [] 
+}: ThoughtCardProps) => {
   const navigate = useNavigate();
   const [showTagInput, setShowTagInput] = useState(false);
 
