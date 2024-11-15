@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Card } from "@/components/ui/card";
-import { Check, Clock, X, Pencil, Save } from "lucide-react";
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from "@/components/ui/use-toast";
-import { Input } from "@/components/ui/input";
+import { useLanguage } from '@/lib/i18n/LanguageContext';
+import CommitmentCard from './commitments/CommitmentCard';
 
 interface Commitment {
   id: number;
@@ -21,6 +20,7 @@ interface EditingState {
 }
 
 const ActiveCommitments = () => {
+  const { t } = useLanguage();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState<EditingState>({
@@ -54,15 +54,15 @@ const ActiveCommitments = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['commitments'] });
       toast({
-        title: "Commitment updated",
-        description: "Your changes have been saved successfully.",
+        title: t('commitments.updated'),
+        description: t('commitments.updatedDesc'),
       });
       setEditing({ id: null, field: null, value: '' });
     },
     onError: (error) => {
       toast({
-        title: "Error",
-        description: "Failed to update commitment. Please try again.",
+        title: t('common.error'),
+        description: t('commitments.updateError'),
         variant: "destructive",
       });
       console.error('Error updating commitment:', error);
@@ -81,14 +81,14 @@ const ActiveCommitments = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['commitments'] });
       toast({
-        title: "Commitment completed",
-        description: "Great job completing your commitment!",
+        title: t('commitments.completed'),
+        description: t('commitments.completedDesc'),
       });
     },
     onError: (error) => {
       toast({
-        title: "Error",
-        description: "Failed to complete commitment. Please try again.",
+        title: t('common.error'),
+        description: t('commitments.completeError'),
         variant: "destructive",
       });
       console.error('Error completing commitment:', error);
@@ -118,104 +118,27 @@ const ActiveCommitments = () => {
   };
 
   if (isLoading) {
-    return <div className="p-4 text-center text-gray-600">Loading commitments...</div>;
+    return <div className="p-4 text-center text-gray-600">{t('common.loading')}</div>;
   }
 
   return (
     <div className="animate-fade-in p-4 sm:p-0">
-      <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Active Commitments</h2>
+      <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">
+        {t('commitments.activeTitle')}
+      </h2>
       <div className="grid gap-3 sm:gap-4">
         {commitments?.filter(c => !c.completed).map((commitment) => (
-          <Card key={commitment.id} className="commitment-card p-4 sm:p-6">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1 min-w-0 overflow-hidden">
-                <div className="flex items-start gap-2">
-                  {editing.id === commitment.id && editing.field === 'outcome' ? (
-                    <div className="flex-1">
-                      <Input
-                        value={editing.value}
-                        onChange={(e) => setEditing(prev => ({ ...prev, value: e.target.value }))}
-                        className="mb-2"
-                        autoFocus
-                      />
-                      <div className="flex gap-2">
-                        <button
-                          onClick={handleSave}
-                          className="p-1 hover:bg-sage-100 rounded-full transition-colors"
-                          disabled={updateCommitmentMutation.isPending}
-                        >
-                          <Save className="h-4 w-4 text-sage-500" />
-                        </button>
-                        <button
-                          onClick={handleCancel}
-                          className="p-1 hover:bg-red-100 rounded-full transition-colors"
-                        >
-                          <X className="h-4 w-4 text-red-500" />
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <h3 className="font-medium text-base sm:text-lg break-words flex-1">
-                        {commitment.outcome}
-                      </h3>
-                      <button
-                        onClick={() => handleEdit(commitment, 'outcome')}
-                        className="p-1 hover:bg-sage-100 rounded-full transition-colors"
-                      >
-                        <Pencil className="h-4 w-4 text-sage-500" />
-                      </button>
-                    </>
-                  )}
-                </div>
-                <div className="flex items-start mt-2 text-gray-600">
-                  <Clock className="h-4 w-4 mr-2 flex-shrink-0 mt-1" />
-                  {editing.id === commitment.id && editing.field === 'nextAction' ? (
-                    <div className="flex-1">
-                      <Input
-                        value={editing.value}
-                        onChange={(e) => setEditing(prev => ({ ...prev, value: e.target.value }))}
-                        className="mb-2"
-                        autoFocus
-                      />
-                      <div className="flex gap-2">
-                        <button
-                          onClick={handleSave}
-                          className="p-1 hover:bg-sage-100 rounded-full transition-colors"
-                          disabled={updateCommitmentMutation.isPending}
-                        >
-                          <Save className="h-4 w-4 text-sage-500" />
-                        </button>
-                        <button
-                          onClick={handleCancel}
-                          className="p-1 hover:bg-red-100 rounded-full transition-colors"
-                        >
-                          <X className="h-4 w-4 text-red-500" />
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-start gap-2 flex-1">
-                      <p className="text-sm sm:text-base break-words flex-1">{commitment.nextAction}</p>
-                      <button
-                        onClick={() => handleEdit(commitment, 'nextAction')}
-                        className="p-1 hover:bg-sage-100 rounded-full transition-colors"
-                      >
-                        <Pencil className="h-4 w-4 text-sage-500" />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <button 
-                className="p-2 hover:bg-sage-100 rounded-full transition-colors flex-shrink-0"
-                onClick={() => completeCommitmentMutation.mutate(commitment.id)}
-                disabled={completeCommitmentMutation.isPending}
-              >
-                <Check className="h-5 w-5 text-sage-500" />
-              </button>
-            </div>
-          </Card>
+          <CommitmentCard
+            key={commitment.id}
+            commitment={commitment}
+            editing={editing}
+            onEdit={handleEdit}
+            onSave={handleSave}
+            onCancel={handleCancel}
+            onComplete={(id) => completeCommitmentMutation.mutate(id)}
+            setEditing={setEditing}
+            isPending={updateCommitmentMutation.isPending || completeCommitmentMutation.isPending}
+          />
         ))}
       </div>
     </div>

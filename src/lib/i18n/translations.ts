@@ -48,7 +48,17 @@ export const translations = {
       created: "Commitment created",
       clarified: "Your thought has been clarified into a commitment.",
       error: "Error",
-      errorMessage: "Failed to create commitment. Please try again."
+      errorMessage: "Failed to create commitment. Please try again.",
+      activeTitle: "Active Commitments",
+      editOutcome: "Edit outcome",
+      editNextAction: "Edit next action",
+      complete: "Mark as complete",
+      updated: "Commitment updated",
+      updatedDesc: "Your changes have been saved successfully.",
+      completed: "Commitment completed",
+      completedDesc: "Great job completing your commitment!",
+      updateError: "Failed to update commitment. Please try again.",
+      completeError: "Failed to complete commitment. Please try again."
     },
     completed: {
       title: "Completed Thoughts",
@@ -66,7 +76,8 @@ export const translations = {
       addTag: "Add tag",
       all: "All",
       success: "Success",
-      error: "Error"
+      error: "Error",
+      loading: "Loading..."
     },
     faq: {
       title: "Frequently Asked Questions",
@@ -146,7 +157,17 @@ export const translations = {
       created: "تم إنشاء الالتزام",
       clarified: "تم توضيح فكرتك وتحويلها إلى التزام",
       error: "خطأ",
-      errorMessage: "فشل في إنشاء الالتزام. يرجى المحاولة مرة أخرى"
+      errorMessage: "فشل في إنشاء الالتزام. يرجى المحاولة مرة أخرى.",
+      activeTitle: "الالتزامات النشطة",
+      editOutcome: "تعديل النتيجة",
+      editNextAction: "تعديل الإجراء التالي",
+      complete: "وضع علامة مكتمل",
+      updated: "تم تحديث الالتزام",
+      updatedDesc: "تم حفظ تغييراتك بنجاح",
+      completed: "تم إكمال الالتزام",
+      completedDesc: "عمل رائع في إكمال التزامك!",
+      updateError: "فشل في تحديث الالتزام. يرجى المحاولة مرة أخرى.",
+      completeError: "فشل في إكمال الالتزام. يرجى المحاولة مرة أخرى."
     },
     completed: {
       title: "الأفكار المكتملة",
@@ -164,7 +185,8 @@ export const translations = {
       addTag: "إضافة وسم",
       all: "الكل",
       success: "نجاح",
-      error: "خطأ"
+      error: "خطأ",
+      loading: "جارٍ التحميل..."
     },
     faq: {
       title: "الأسئلة الشائعة",
