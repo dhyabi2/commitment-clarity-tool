@@ -43,37 +43,59 @@ const Auth = () => {
         return;
       }
 
-      // Try to sign up first (this is important for first-time users)
-      const { error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: window.location.origin,
-        }
-      });
-
-      if (signUpError && signUpError.message !== "User already registered") {
-        toast({
-          variant: "destructive",
-          title: "Sign up failed",
-          description: signUpError.message,
-        });
-        return;
-      }
-
-      // Now try to sign in
+      // First try to sign in
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (signInError) {
+      // If sign in fails because user doesn't exist, try to sign up
+      if (signInError && signInError.message === "Invalid login credentials") {
+        const { error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: window.location.origin,
+          }
+        });
+
+        if (signUpError) {
+          toast({
+            variant: "destructive",
+            title: "Sign up failed",
+            description: signUpError.message,
+          });
+          return;
+        }
+
+        // Try signing in again after successful signup
+        const { error: finalSignInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (finalSignInError) {
+          toast({
+            variant: "destructive",
+            title: "Login failed",
+            description: finalSignInError.message,
+          });
+          return;
+        }
+      } else if (signInError) {
         toast({
           variant: "destructive",
           title: "Login failed",
           description: signInError.message,
         });
+        return;
       }
+
+      toast({
+        title: "Success",
+        description: "You have been logged in successfully",
+      });
+
     } catch (error) {
       toast({
         variant: "destructive",
