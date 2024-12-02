@@ -11,8 +11,9 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (password !== 'd995179620') {
@@ -79,7 +80,7 @@ const Auth = () => {
 
       toast({
         title: "Success",
-        description: "You have been logged in successfully",
+        description: isSignUp ? "Account created successfully" : "You have been logged in successfully",
       });
 
     } catch (error) {
@@ -100,7 +101,7 @@ const Auth = () => {
           {t('auth.welcome')}
         </h1>
         <div className="bg-white p-8 rounded-lg shadow-md">
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleAuth} className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email
@@ -134,9 +135,17 @@ const Auth = () => {
               className="w-full bg-sage-600 hover:bg-sage-700"
               disabled={loading}
             >
-              {loading ? 'Loading...' : 'Sign In'}
+              {loading ? 'Loading...' : (isSignUp ? 'Sign Up' : 'Sign In')}
             </Button>
           </form>
+          <div className="mt-4 text-center">
+            <button
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="text-sage-600 hover:text-sage-700 text-sm"
+            >
+              {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
