@@ -26,59 +26,48 @@ const Auth = () => {
 
     try {
       setLoading(true);
-      
-      // First try to sign in
+
+      // Check if user exists in allowed_users table
+      const { data: allowedUser } = await supabase
+        .from('allowed_users')
+        .select('email')
+        .eq('email', email)
+        .single();
+
+      if (!allowedUser) {
+        toast({
+          variant: "destructive",
+          title: "Unauthorized",
+          description: "This email is not authorized to access the system",
+        });
+        return;
+      }
+
+      // Try to sign up first (this is important for first-time users)
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: window.location.origin,
+        }
+      });
+
+      if (signUpError && signUpError.message !== "User already registered") {
+        toast({
+          variant: "destructive",
+          title: "Sign up failed",
+          description: signUpError.message,
+        });
+        return;
+      }
+
+      // Now try to sign in
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      // If sign in fails due to no account, create one
-      if (signInError?.message === "Invalid login credentials") {
-        const { data: allowedUser } = await supabase
-          .from('allowed_users')
-          .select('email')
-          .eq('email', email)
-          .single();
-
-        if (!allowedUser) {
-          toast({
-            variant: "destructive",
-            title: "Unauthorized",
-            description: "This email is not authorized to access the system",
-          });
-          return;
-        }
-
-        // Create the user account
-        const { error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-        });
-
-        if (signUpError) {
-          toast({
-            variant: "destructive",
-            title: "Sign up failed",
-            description: signUpError.message,
-          });
-          return;
-        }
-
-        // Try signing in again after creating the account
-        const { error: finalSignInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (finalSignInError) {
-          toast({
-            variant: "destructive",
-            title: "Login failed",
-            description: finalSignInError.message,
-          });
-        }
-      } else if (signInError) {
+      if (signInError) {
         toast({
           variant: "destructive",
           title: "Login failed",
