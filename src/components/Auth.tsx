@@ -44,26 +44,27 @@ const Auth = () => {
         return;
       }
 
-      // Try to sign up first
-      const { error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: window.location.origin,
-        }
-      });
-
-      // If there's an error other than "User already registered", show it
-      if (signUpError && !signUpError.message.includes("already registered")) {
-        toast({
-          variant: "destructive",
-          title: "Sign up failed",
-          description: signUpError.message,
+      if (isSignUp) {
+        // Try to sign up
+        const { error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: window.location.origin,
+          }
         });
-        return;
+
+        if (signUpError) {
+          toast({
+            variant: "destructive",
+            title: "Sign up failed",
+            description: signUpError.message,
+          });
+          return;
+        }
       }
 
-      // Now try to sign in
+      // Try to sign in
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
