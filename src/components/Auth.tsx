@@ -26,16 +26,63 @@ const Auth = () => {
 
     try {
       setLoading(true);
-      const { error } = await supabase.auth.signInWithPassword({
+      
+      // First try to sign in
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) {
+      // If sign in fails due to no account, create one
+      if (signInError?.message === "Invalid login credentials") {
+        const { data: allowedUser } = await supabase
+          .from('allowed_users')
+          .select('email')
+          .eq('email', email)
+          .single();
+
+        if (!allowedUser) {
+          toast({
+            variant: "destructive",
+            title: "Unauthorized",
+            description: "This email is not authorized to access the system",
+          });
+          return;
+        }
+
+        // Create the user account
+        const { error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+
+        if (signUpError) {
+          toast({
+            variant: "destructive",
+            title: "Sign up failed",
+            description: signUpError.message,
+          });
+          return;
+        }
+
+        // Try signing in again after creating the account
+        const { error: finalSignInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (finalSignInError) {
+          toast({
+            variant: "destructive",
+            title: "Login failed",
+            description: finalSignInError.message,
+          });
+        }
+      } else if (signInError) {
         toast({
           variant: "destructive",
           title: "Login failed",
-          description: error.message,
+          description: signInError.message,
         });
       }
     } catch (error) {
