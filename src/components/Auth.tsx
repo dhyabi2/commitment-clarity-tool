@@ -62,9 +62,20 @@ const Auth = () => {
           });
           return;
         }
+
+        // Show success message for sign up
+        toast({
+          title: "Sign up successful",
+          description: "Please check your email to confirm your account before signing in.",
+        });
+        // Reset form and switch to sign in mode
+        setEmail('');
+        setPassword('');
+        setIsSignUp(false);
+        return;
       }
 
-      // Try to sign in
+      // Only attempt sign in if not in signup mode
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -81,7 +92,7 @@ const Auth = () => {
 
       toast({
         title: "Success",
-        description: isSignUp ? "Account created successfully" : "You have been logged in successfully",
+        description: "You have been logged in successfully",
       });
 
     } catch (error) {
