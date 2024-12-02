@@ -43,46 +43,32 @@ const Auth = () => {
         return;
       }
 
-      // First try to sign in
+      // Try to sign up first
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: window.location.origin,
+        }
+      });
+
+      // If there's an error other than "User already registered", show it
+      if (signUpError && !signUpError.message.includes("already registered")) {
+        toast({
+          variant: "destructive",
+          title: "Sign up failed",
+          description: signUpError.message,
+        });
+        return;
+      }
+
+      // Now try to sign in
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      // If sign in fails because user doesn't exist, try to sign up
-      if (signInError && signInError.message === "Invalid login credentials") {
-        const { error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: window.location.origin,
-          }
-        });
-
-        if (signUpError) {
-          toast({
-            variant: "destructive",
-            title: "Sign up failed",
-            description: signUpError.message,
-          });
-          return;
-        }
-
-        // Try signing in again after successful signup
-        const { error: finalSignInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (finalSignInError) {
-          toast({
-            variant: "destructive",
-            title: "Login failed",
-            description: finalSignInError.message,
-          });
-          return;
-        }
-      } else if (signInError) {
+      if (signInError) {
         toast({
           variant: "destructive",
           title: "Login failed",
