@@ -45,13 +45,10 @@ const Auth = () => {
       }
 
       if (isSignUp) {
-        // Try to sign up
+        // Handle sign up
         const { error: signUpError } = await supabase.auth.signUp({
           email,
           password,
-          options: {
-            emailRedirectTo: window.location.origin,
-          }
         });
 
         if (signUpError) {
@@ -68,6 +65,7 @@ const Auth = () => {
           title: "Sign up successful",
           description: "Please check your email to confirm your account before signing in.",
         });
+        
         // Reset form and switch to sign in mode
         setEmail('');
         setPassword('');
@@ -75,18 +73,27 @@ const Auth = () => {
         return;
       }
 
-      // Only attempt sign in if not in signup mode
+      // Handle sign in (only if not in sign up mode)
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (signInError) {
-        toast({
-          variant: "destructive",
-          title: "Login failed",
-          description: signInError.message,
-        });
+        // If the error indicates the user doesn't exist, suggest signing up
+        if (signInError.message.includes('Invalid login credentials')) {
+          toast({
+            variant: "destructive",
+            title: "Login failed",
+            description: "If you haven't registered yet, please sign up first.",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Login failed",
+            description: signInError.message,
+          });
+        }
         return;
       }
 
