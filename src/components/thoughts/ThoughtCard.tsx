@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -101,7 +102,7 @@ const ThoughtCard = ({
             className="w-full bg-sage-50 hover:bg-sage-100 border-sage-200 text-sage-700"
             onClick={() => navigate('/commitment-clarifier', { state: { thought: thought.content } })}
           >
-            {t('thoughts.clarify')}
+            Convert to commitment
           </Button>
         )}
         {showTagInput && (

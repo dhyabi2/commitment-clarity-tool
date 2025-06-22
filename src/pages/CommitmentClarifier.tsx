@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { ArrowLeft, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/components/ui/use-toast";
@@ -69,10 +71,11 @@ const CommitmentClarifier = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
+                <Label htmlFor="outcome" className="text-sm font-medium text-gray-700">
                   {t('commitments.clarifier.outcomeLabel')}
-                </label>
+                </Label>
                 <Textarea
+                  id="outcome"
                   placeholder={t('commitments.clarifier.outcomePlaceholder')}
                   value={outcome}
                   onChange={(e) => setOutcome(e.target.value)}
@@ -82,10 +85,11 @@ const CommitmentClarifier = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
+                <Label htmlFor="nextAction" className="text-sm font-medium text-gray-700">
                   {t('commitments.clarifier.nextActionLabel')}
-                </label>
+                </Label>
                 <Textarea
+                  id="nextAction"
                   placeholder={t('commitments.clarifier.nextActionPlaceholder')}
                   value={nextAction}
                   onChange={(e) => setNextAction(e.target.value)}
