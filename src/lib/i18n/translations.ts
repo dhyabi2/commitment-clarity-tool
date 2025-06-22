@@ -33,8 +33,8 @@ export const translations = {
       a6_3: "This ensures your data remains private and separate from other users without requiring an account"
     },
     brainDump: {
-      title: "Capture Your Thoughts",
-      description: "Clear your mind by capturing any unfinished thoughts or tasks here.",
+      title: "Brain Dump Time!",
+      description: "Got thoughts? Toss 'em in below — no need to sort or polish. Just unload and breathe.",
       placeholder: "What's on your mind?",
       addTags: "Add tags (optional) - press Enter to add",
       capture: "Capture Thought",
@@ -43,7 +43,7 @@ export const translations = {
     index: {
       step1: {
         title: "Brain Dump",
-        description: "Begin by capturing all your thoughts below. Don't worry about organizing them yet - just get them out of your head."
+        description: "Brain Dump Time! Got thoughts? Toss 'em in below — no need to sort or polish. Just unload and breathe."
       },
       step2: {
         title: "Review Your Active Commitments",
