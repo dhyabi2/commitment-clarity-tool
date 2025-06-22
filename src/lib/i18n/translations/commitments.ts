@@ -1,3 +1,4 @@
+
 export const commitmentsTranslations = {
   en: {
     commitments: {
@@ -13,12 +14,16 @@ export const commitmentsTranslations = {
       complete: "Mark as complete",
       clarifier: {
         title: "Clarify Your Commitment",
-        outcomeQuestion: "What's the specific outcome you want to achieve?",
+        description: "Transform your thought into a clear commitment with specific outcomes and actions.",
+        outcomeLabel: "What's the specific outcome you want to achieve?",
         outcomePlaceholder: "Enter the desired outcome...",
-        nextActionQuestion: "What's the very next physical action you need to take?",
+        nextActionLabel: "What's the very next physical action you need to take?",
         nextActionPlaceholder: "Enter the next action...",
+        outcomeQuestion: "What's the specific outcome you want to achieve?",
+        nextActionQuestion: "What's the very next physical action you need to take?",
         nextButton: "Next",
         saveButton: "Save Commitment",
+        submitButton: "Save Commitment",
         successTitle: "Commitment saved",
         successDescription: "Your commitment has been successfully recorded.",
         errorTitle: "Error",
@@ -26,6 +31,7 @@ export const commitmentsTranslations = {
       }
     },
     common: {
+      back: "Back",
       error: "Error",
       loading: "Loading..."
     }
@@ -44,12 +50,16 @@ export const commitmentsTranslations = {
       complete: "وضع علامة كمكتمل",
       clarifier: {
         title: "توضيح التزامك",
-        outcomeQuestion: "ما هي النتيجة المحددة التي تريد تحقيقها؟",
+        description: "حول فكرتك إلى التزام واضح بنتائج وأفعال محددة.",
+        outcomeLabel: "ما هي النتيجة المحددة التي تريد تحقيقها؟",
         outcomePlaceholder: "أدخل النتيجة المرجوة...",
-        nextActionQuestion: "ما هو الإجراء المادي التالي الذي تحتاج إلى اتخاذه؟",
+        nextActionLabel: "ما هو الإجراء المادي التالي الذي تحتاج إلى اتخاذه؟",
         nextActionPlaceholder: "أدخل الإجراء التالي...",
+        outcomeQuestion: "ما هي النتيجة المحددة التي تريد تحقيقها؟",
+        nextActionQuestion: "ما هو الإجراء المادي التالي الذي تحتاج إلى اتخاذه؟",
         nextButton: "التالي",
         saveButton: "حفظ الالتزام",
+        submitButton: "حفظ الالتزام",
         successTitle: "تم حفظ الالتزام",
         successDescription: "تم تسجيل التزامك بنجاح.",
         errorTitle: "خطأ",
@@ -57,6 +67,7 @@ export const commitmentsTranslations = {
       }
     },
     common: {
+      back: "رجوع",
       error: "خطأ",
       loading: "جارٍ التحميل..."
     }
