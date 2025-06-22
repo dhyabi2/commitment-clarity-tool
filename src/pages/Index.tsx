@@ -1,3 +1,4 @@
+
 import React from 'react';
 import BrainDump from '@/components/BrainDump';
 import ActiveCommitments from '@/components/ActiveCommitments';
@@ -16,9 +17,6 @@ const Index = () => {
     <div className="min-h-screen">
       <ScrollArea className="h-full bg-gradient-to-b from-cream to-sage-50">
         <div className="max-w-4xl mx-auto px-4 py-8">
-          <h1 className={`text-2xl font-bold text-sage-700 mb-6 ${isRTL ? 'text-right' : 'text-left'}`}>
-            {t('index.step1.title')}
-          </h1>
           <div className="space-y-6">
             {/* Step 1 */}
             <div className="relative">
@@ -32,9 +30,6 @@ const Index = () => {
                       <Brain className="h-6 w-6 text-sage-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-gray-600 mb-4 leading-relaxed text-sm">
-                        {t('index.step1.description')}
-                      </p>
                       <BrainDump />
                     </div>
                   </div>
