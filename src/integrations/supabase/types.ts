@@ -32,6 +32,7 @@ export type Database = {
           id: number
           nextaction: string
           outcome: string
+          user_id: string | null
         }
         Insert: {
           completed?: boolean
@@ -40,6 +41,7 @@ export type Database = {
           id?: number
           nextaction: string
           outcome: string
+          user_id?: string | null
         }
         Update: {
           completed?: boolean
@@ -48,6 +50,42 @@ export type Database = {
           id?: number
           nextaction?: string
           outcome?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commitments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -103,6 +141,7 @@ export type Database = {
           created_at: string
           device_id: string | null
           id: number
+          user_id: string | null
         }
         Insert: {
           completed?: boolean
@@ -110,6 +149,7 @@ export type Database = {
           created_at?: string
           device_id?: string | null
           id?: number
+          user_id?: string | null
         }
         Update: {
           completed?: boolean
@@ -117,8 +157,17 @@ export type Database = {
           created_at?: string
           device_id?: string | null
           id?: number
+          user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "thoughts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_sessions: {
         Row: {

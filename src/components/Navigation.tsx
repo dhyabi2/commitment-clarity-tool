@@ -1,7 +1,10 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Brain, CheckSquare, BarChart, HelpCircle } from 'lucide-react';
+import { Home, Brain, CheckSquare, BarChart, HelpCircle, User } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Tooltip,
   TooltipContent,
@@ -11,14 +14,15 @@ import {
 const Navigation = () => {
   const location = useLocation();
   const { t, dir } = useLanguage();
+  const { user } = useAuth();
   
   const isActive = (path: string) => location.pathname === path;
 
   const getIconSize = (path: string) => {
     if (path === '/thoughts') {
-      return 'h-9 w-9'; // Slightly larger for thoughts icon
+      return 'h-9 w-9';
     }
-    return 'h-7 w-7'; // Default size for other icons
+    return 'h-7 w-7';
   };
   
   const getIconColor = (path: string) => {
@@ -36,11 +40,30 @@ const Navigation = () => {
     { path: '/faq', icon: HelpCircle, label: t('nav.faq') },
   ];
 
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:top-0 md:bottom-auto shadow-lg" dir={dir()}>
       <div className="max-w-4xl mx-auto px-4">
-        <div className="hidden md:block text-xl font-semibold py-3 text-sage-700">{t('index.step1.title')}</div>
-        <div className="flex justify-around items-center py-3">
+        <div className="hidden md:flex items-center justify-between py-3">
+          <div className="text-xl font-semibold text-sage-700">{t('index.step1.title')}</div>
+          <Link to="/profile" className={`p-2 ${isActive('/profile') ? 'text-sage-600' : 'text-gray-600'} hover:text-sage-500 transition-colors`}>
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={user?.user_metadata?.avatar_url} />
+              <AvatarFallback className="text-xs bg-sage-100 text-sage-600">
+                {user?.user_metadata?.full_name ? getInitials(user.user_metadata.full_name) : getInitials(user?.email || 'U')}
+              </AvatarFallback>
+            </Avatar>
+          </Link>
+        </div>
+        <div className="flex justify-around items-center py-3 md:hidden">
           {navItems.map(({ path, icon: Icon, label }) => (
             <Tooltip key={path}>
               <TooltipTrigger asChild>
@@ -56,6 +79,24 @@ const Navigation = () => {
               </TooltipContent>
             </Tooltip>
           ))}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                to="/profile"
+                className={`p-2 ${isActive('/profile') ? 'text-sage-600' : 'text-gray-600'} hover:text-sage-500 transition-colors`}
+              >
+                <Avatar className="h-7 w-7">
+                  <AvatarImage src={user?.user_metadata?.avatar_url} />
+                  <AvatarFallback className="text-xs bg-sage-100 text-sage-600">
+                    {user?.user_metadata?.full_name ? getInitials(user.user_metadata.full_name) : getInitials(user?.email || 'U')}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{t('nav.profile') || 'Profile'}</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
     </nav>

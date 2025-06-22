@@ -9,16 +9,27 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/lib/supabase';
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useAuth } from '@/contexts/AuthContext';
 
 const CommitmentClarifier = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t, dir } = useLanguage();
+  const { user } = useAuth();
   const [outcome, setOutcome] = useState('');
   const [nextAction, setNextAction] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!user?.id) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to create commitments",
+        variant: "destructive",
+      });
+      return;
+    }
     
     try {
       const { error } = await supabase
@@ -26,7 +37,8 @@ const CommitmentClarifier = () => {
         .insert([{
           outcome,
           nextaction: nextAction,
-          completed: false
+          completed: false,
+          user_id: user.id
         }]);
 
       if (error) throw error;

@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase';
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useAuth } from '@/contexts/AuthContext';
 
 const CommitmentClarifier = () => {
   const [step, setStep] = useState(1);
@@ -16,13 +17,20 @@ const CommitmentClarifier = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { t, dir } = useLanguage();
+  const { user } = useAuth();
   const isRTL = dir() === 'rtl';
 
   const addCommitmentMutation = useMutation({
     mutationFn: async (commitment: { outcome: string; nextAction: string }) => {
+      if (!user?.id) throw new Error('User not authenticated');
+
       const { data, error } = await supabase
         .from('commitments')
-        .insert([commitment])
+        .insert([{
+          outcome: commitment.outcome,
+          nextaction: commitment.nextAction,
+          user_id: user.id
+        }])
         .select()
         .single();
       
