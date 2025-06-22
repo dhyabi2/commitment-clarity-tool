@@ -47,31 +47,31 @@ const CommitmentClarifier = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cream p-4 pb-20 md:pb-4" dir={dir()}>
+    <div className="min-h-screen bg-cream p-6 pb-24 md:pb-6" dir={dir()}>
       <div className="max-w-2xl mx-auto">
         <Button
           variant="ghost"
-          className="mb-4"
+          className="mb-6 text-base"
           onClick={() => navigate(-1)}
         >
-          <ArrowLeft className={`h-4 w-4 ${dir() === 'rtl' ? 'ml-2 rotate-180' : 'mr-2'}`} />
+          <ArrowLeft className={`h-5 w-5 ${dir() === 'rtl' ? 'ml-3 rotate-180' : 'mr-3'}`} />
           {t('common.back')}
         </Button>
 
         <Card className="bg-white/80 backdrop-blur-sm">
-          <CardHeader>
-            <h1 className="text-2xl font-bold text-sage-600">
+          <CardHeader className="pb-6">
+            <h1 className="text-3xl font-bold text-sage-600 mb-3">
               {t('commitments.clarifier.title')}
             </h1>
-            <p className="text-sage-500">
+            <p className="text-sage-500 text-lg leading-relaxed">
               {t('commitments.clarifier.description')}
             </p>
           </CardHeader>
           
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="outcome" className="text-sm font-medium text-gray-700">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="space-y-3">
+                <Label htmlFor="outcome" className="text-base font-medium text-gray-700">
                   {t('commitments.clarifier.outcomeLabel')}
                 </Label>
                 <Textarea
@@ -79,13 +79,13 @@ const CommitmentClarifier = () => {
                   placeholder={t('commitments.clarifier.outcomePlaceholder')}
                   value={outcome}
                   onChange={(e) => setOutcome(e.target.value)}
-                  className="min-h-[100px]"
+                  className="min-h-[120px] text-base leading-relaxed p-4"
                   required
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="nextAction" className="text-sm font-medium text-gray-700">
+              <div className="space-y-3">
+                <Label htmlFor="nextAction" className="text-base font-medium text-gray-700">
                   {t('commitments.clarifier.nextActionLabel')}
                 </Label>
                 <Textarea
@@ -93,13 +93,13 @@ const CommitmentClarifier = () => {
                   placeholder={t('commitments.clarifier.nextActionPlaceholder')}
                   value={nextAction}
                   onChange={(e) => setNextAction(e.target.value)}
-                  className="min-h-[100px]"
+                  className="min-h-[120px] text-base leading-relaxed p-4"
                   required
                 />
               </div>
 
-              <Button type="submit" className="w-full bg-sage-500 hover:bg-sage-600">
-                <Check className={`h-4 w-4 ${dir() === 'rtl' ? 'ml-2' : 'mr-2'}`} />
+              <Button type="submit" className="w-full bg-sage-500 hover:bg-sage-600 min-h-[56px] text-lg">
+                <Check className={`h-5 w-5 ${dir() === 'rtl' ? 'ml-3' : 'mr-3'}`} />
                 {t('commitments.clarifier.submitButton')}
               </Button>
             </form>

@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -32,7 +33,9 @@
     @apply border-border;
   }
   body {
-    @apply bg-cream text-foreground;
+    @apply bg-cream text-foreground text-base;
+    font-size: 18px;
+    line-height: 1.6;
   }
   [dir="rtl"] {
     text-align: right;
@@ -40,16 +43,29 @@
   [dir="rtl"] .ltr-text {
     text-align: left;
   }
+  
+  /* Mobile-optimized typography */
+  h1 { @apply text-3xl font-bold leading-tight; }
+  h2 { @apply text-2xl font-semibold leading-tight; }
+  h3 { @apply text-xl font-medium leading-tight; }
+  
+  /* Enhanced touch targets */
+  button, input, textarea, select {
+    min-height: 48px;
+  }
+  
+  /* Better spacing for mobile */
+  p { @apply text-base leading-relaxed; }
 }
 
 .commitment-card {
-  @apply bg-white rounded-lg shadow-sm transition-all duration-200 hover:shadow-md;
+  @apply bg-white rounded-lg shadow-sm transition-all duration-200 hover:shadow-md p-6;
 }
 
 .input-field {
-  @apply w-full rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-sage-400;
+  @apply w-full rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-sage-400 text-base min-h-[48px] px-4 py-3;
 }
 
 .btn-primary {
-  @apply bg-sage-400 text-white px-4 py-2 rounded-md hover:bg-sage-500 transition-colors flex items-center justify-center;
+  @apply bg-sage-400 text-white px-6 py-4 rounded-md hover:bg-sage-500 transition-colors flex items-center justify-center text-base font-medium min-h-[48px];
 }

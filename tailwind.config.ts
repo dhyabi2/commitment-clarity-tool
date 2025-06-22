@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,6 +19,18 @@ export default {
       },
     },
     extend: {
+      fontSize: {
+        'xs': ['14px', '20px'],     // Increased from 12px
+        'sm': ['16px', '24px'],     // Increased from 14px  
+        'base': ['18px', '28px'],   // Increased from 16px
+        'lg': ['20px', '30px'],     // Increased from 18px
+        'xl': ['22px', '32px'],     // Increased from 20px
+        '2xl': ['26px', '36px'],    // Increased from 24px
+        '3xl': ['32px', '40px'],    // Increased from 30px
+        '4xl': ['38px', '44px'],    // Increased from 36px
+        '5xl': ['50px', '56px'],    // Increased from 48px
+        '6xl': ['64px', '70px'],    // Increased from 60px
+      },
       colors: {
         sage: {
           50: "#f2f5f3",

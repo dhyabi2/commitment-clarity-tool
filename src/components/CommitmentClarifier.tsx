@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,45 +63,45 @@ const CommitmentClarifier = () => {
   };
 
   return (
-    <Card className="p-4 sm:p-6 animate-fade-in" dir={dir()}>
-      <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">
+    <Card className="p-6 sm:p-8 animate-fade-in" dir={dir()}>
+      <h2 className="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-6">
         {t('commitments.clarifier.title')}
       </h2>
-      <div className="space-y-4 sm:space-y-6">
+      <div className="space-y-6 sm:space-y-8">
         {step === 1 ? (
-          <div className="space-y-3 sm:space-y-4">
-            <p className="text-gray-600 text-sm sm:text-base">
+          <div className="space-y-4 sm:space-y-6">
+            <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
               {t('commitments.clarifier.outcomeQuestion')}
             </p>
             <Input
               value={outcome}
               onChange={(e) => setOutcome(e.target.value)}
               placeholder={t('commitments.clarifier.outcomePlaceholder')}
-              className="input-field text-sm sm:text-base"
+              className="input-field text-base"
             />
             <Button 
               onClick={handleNext} 
-              className="w-full sm:w-auto btn-primary"
+              className="w-full sm:w-auto btn-primary text-base"
               disabled={!outcome}
             >
               {t('commitments.clarifier.nextButton')}
-              <ArrowRight className={`${isRTL ? 'mr-2' : 'ml-2'} h-4 w-4 ${isRTL ? 'rotate-180' : ''}`} />
+              <ArrowRight className={`${isRTL ? 'mr-3' : 'ml-3'} h-5 w-5 ${isRTL ? 'rotate-180' : ''}`} />
             </Button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-            <p className="text-gray-600 text-sm sm:text-base">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+            <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
               {t('commitments.clarifier.nextActionQuestion')}
             </p>
             <Input
               value={nextAction}
               onChange={(e) => setNextAction(e.target.value)}
               placeholder={t('commitments.clarifier.nextActionPlaceholder')}
-              className="input-field text-sm sm:text-base"
+              className="input-field text-base"
             />
             <Button 
               type="submit" 
-              className="w-full sm:w-auto btn-primary"
+              className="w-full sm:w-auto btn-primary text-base"
               disabled={addCommitmentMutation.isPending}
             >
               {t('commitments.clarifier.saveButton')}
