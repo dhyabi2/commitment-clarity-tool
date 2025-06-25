@@ -1,38 +1,38 @@
 
-import { BrowserRouter } from "react-router-dom";
-import Routes from "./Routes";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import { LanguageProvider } from "@/lib/i18n/LanguageContext";
-import { AuthProvider } from "@/contexts/AuthContext";
-import Navigation from "./components/Navigation";
-import LanguageSwitcher from "./components/LanguageSwitcher";
+import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import { LanguageProvider } from "./lib/i18n/LanguageContext";
+import { AuthErrorBoundary } from "./components/auth/AuthErrorBoundary";
+import Navigation from "./components/Navigation";
+import Routes from "./Routes";
 
 const queryClient = new QueryClient();
 
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <LanguageProvider>
-        <AuthProvider>
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <AuthErrorBoundary>
+      <AuthProvider>
+        <LanguageProvider>
           <TooltipProvider>
+            <Toaster />
+            <Sonner />
             <BrowserRouter>
-              <ProtectedRoute>
-                <div className="md:pt-16">
-                  <LanguageSwitcher />
+              <div className="min-h-screen bg-cream">
+                <Navigation />
+                <main className="container mx-auto px-4 py-6 pb-24 md:pb-6">
                   <Routes />
-                  <Navigation />
-                  <Toaster />
-                </div>
-              </ProtectedRoute>
+                </main>
+              </div>
             </BrowserRouter>
           </TooltipProvider>
-        </AuthProvider>
-      </LanguageProvider>
-    </QueryClientProvider>
-  );
-}
+        </LanguageProvider>
+      </AuthProvider>
+    </AuthErrorBoundary>
+  </QueryClientProvider>
+);
 
 export default App;

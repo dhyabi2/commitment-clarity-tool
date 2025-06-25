@@ -9,6 +9,7 @@ import { Trash2, CheckCircle, Tag as TagIcon } from 'lucide-react';
 import { TagInput } from './TagInput';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useToast } from "@/components/ui/use-toast";
+import { useAuthErrorHandler } from '@/hooks/useAuthErrorHandler';
 
 interface Tag {
   id: number;
@@ -40,6 +41,7 @@ const ThoughtCard = ({
   const [showTagInput, setShowTagInput] = useState(false);
   const { t, dir } = useLanguage();
   const { toast } = useToast();
+  const { handleAuthError } = useAuthErrorHandler();
   const isRTL = dir() === 'rtl';
 
   const handleTagClick = () => {
@@ -49,6 +51,34 @@ const ThoughtCard = ({
         title: t('thoughts.addTagPrompt') || 'Add a tag',
         duration: 2000,
       });
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      onDelete(id);
+    } catch (error) {
+      handleAuthError(error);
+    }
+  };
+
+  const handleToggleComplete = async (id: number, completed: boolean) => {
+    try {
+      onToggleComplete(id, completed);
+    } catch (error) {
+      handleAuthError(error);
+    }
+  };
+
+  const handleAddTag = async (thoughtId: number, tag: string) => {
+    try {
+      onAddTag(thoughtId, tag);
+      toast({
+        title: t('thoughts.tagAdded') || 'Tag added successfully',
+        duration: 2000,
+      });
+    } catch (error) {
+      handleAuthError(error);
     }
   };
 
@@ -64,7 +94,7 @@ const ThoughtCard = ({
             variant="ghost"
             size="sm"
             className="h-8 w-8 p-0"
-            onClick={() => onToggleComplete(thought.id, !thought.completed)}
+            onClick={() => handleToggleComplete(thought.id, !thought.completed)}
           >
             <CheckCircle className={`h-5 w-5 ${thought.completed ? 'text-green-500' : 'text-gray-300'}`} />
           </Button>
@@ -85,7 +115,7 @@ const ThoughtCard = ({
             variant="ghost"
             size="sm"
             className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:text-red-600 h-8 w-8 p-0"
-            onClick={() => onDelete(thought.id)}
+            onClick={() => handleDelete(thought.id)}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -108,13 +138,7 @@ const ThoughtCard = ({
         {showTagInput && (
           <div className="mt-2">
             <TagInput 
-              onTagAdd={(tag) => {
-                onAddTag(thought.id, tag);
-                toast({
-                  title: t('thoughts.tagAdded') || 'Tag added successfully',
-                  duration: 2000,
-                });
-              }}
+              onTagAdd={(tag) => handleAddTag(thought.id, tag)}
               existingTags={validExistingTags}
               placeholder={t('thoughts.addTag')}
             />
