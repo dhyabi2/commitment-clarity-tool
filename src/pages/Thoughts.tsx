@@ -1,9 +1,11 @@
-
 import React, { useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/contexts/AuthContext';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Chrome } from "lucide-react";
 import ThoughtCard from '@/components/thoughts/ThoughtCard';
 import { TagManager } from '@/components/thoughts/TagManager';
 import { convertToXML, parseXMLData } from '@/utils/xmlUtils';
@@ -23,7 +25,7 @@ interface ImportedThought {
 const Thoughts = () => {
   const { toast } = useToast();
   const { dir } = useLanguage();
-  const { user } = useAuth();
+  const { user, signInWithGoogle } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedTag, setSelectedTag] = React.useState<string | null>(null);
 
@@ -149,7 +151,25 @@ const Thoughts = () => {
   if (!user) {
     return (
       <div className="min-h-screen bg-cream p-4 flex items-center justify-center" dir={dir()}>
-        <div className="text-center text-gray-600">Please sign in to view your thoughts.</div>
+        <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-xl">
+          <CardHeader className="text-center pb-6">
+            <CardTitle className="text-xl font-semibold text-sage-600 mb-2">
+              Sign in to view your thoughts
+            </CardTitle>
+            <CardDescription className="text-sage-500">
+              Please sign in to access your thoughts and create new ones.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center">
+            <Button
+              onClick={signInWithGoogle}
+              className="w-full bg-sage-600 hover:bg-sage-700 text-white min-h-[48px] flex items-center justify-center gap-3"
+            >
+              <Chrome className="h-5 w-5" />
+              Continue with Google
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }

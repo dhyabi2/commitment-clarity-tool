@@ -1,14 +1,16 @@
-
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/contexts/AuthContext';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Chrome } from "lucide-react";
 import ThoughtsList from '@/components/thoughts/ThoughtsList';
 
 const CompletedCommitments = () => {
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, signInWithGoogle } = useAuth();
   const queryClient = useQueryClient();
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
@@ -108,7 +110,25 @@ const CompletedCommitments = () => {
   if (!user) {
     return (
       <div className="min-h-screen bg-cream p-4 flex items-center justify-center">
-        <div className="text-center text-gray-600">Please sign in to view your completed thoughts.</div>
+        <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-xl">
+          <CardHeader className="text-center pb-6">
+            <CardTitle className="text-xl font-semibold text-sage-600 mb-2">
+              Sign in to view completed thoughts
+            </CardTitle>
+            <CardDescription className="text-sage-500">
+              Please sign in to access your completed thoughts and commitments.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center">
+            <Button
+              onClick={signInWithGoogle}
+              className="w-full bg-sage-600 hover:bg-sage-700 text-white min-h-[48px] flex items-center justify-center gap-3"
+            >
+              <Chrome className="h-5 w-5" />
+              Continue with Google
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
@@ -9,7 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2, Chrome } from "lucide-react";
 import ActivityTimeline from "@/components/dashboard/ActivityTimeline";
 import CompletionRate from "@/components/dashboard/CompletionRate";
 import DailyActivity from "@/components/dashboard/DailyActivity";
@@ -18,7 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const Dashboard = () => {
   const { t, dir } = useLanguage();
-  const { user } = useAuth();
+  const { user, signInWithGoogle } = useAuth();
   const isRTL = dir() === 'rtl';
 
   const { data: thoughts, isLoading: thoughtsLoading } = useQuery({
@@ -59,8 +59,26 @@ const Dashboard = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-cream to-sage-50 flex items-center justify-center">
-        <div className="text-center text-gray-600">Please sign in to view your dashboard.</div>
+      <div className="min-h-screen bg-gradient-to-b from-cream to-sage-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-xl">
+          <CardHeader className="text-center pb-6">
+            <CardTitle className="text-xl font-semibold text-sage-600 mb-2">
+              Sign in to view dashboard
+            </CardTitle>
+            <CardDescription className="text-sage-500">
+              Please sign in to access your personal dashboard and track your progress.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center">
+            <Button
+              onClick={signInWithGoogle}
+              className="w-full bg-sage-600 hover:bg-sage-700 text-white min-h-[48px] flex items-center justify-center gap-3"
+            >
+              <Chrome className="h-5 w-5" />
+              Continue with Google
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
