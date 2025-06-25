@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -139,21 +138,21 @@ const ActiveCommitments = () => {
 
   if (!user) {
     return (
-      <div className="p-6 text-center bg-gray-50 rounded-lg border border-gray-200">
-        <Lightbulb className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-600 mb-2">Sign in to view commitments</h3>
-        <p className="text-gray-500">Please sign in to see your active commitments and track your progress.</p>
+      <div className="p-4 sm:p-6 text-center bg-gray-50 rounded-lg border border-gray-200 mx-2 sm:mx-0">
+        <Lightbulb className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
+        <h3 className="text-base sm:text-lg font-medium text-gray-600 mb-2">Sign in to view commitments</h3>
+        <p className="text-sm sm:text-base text-gray-500">Please sign in to see your active commitments and track your progress.</p>
       </div>
     );
   }
 
   if (isLoading) {
     return (
-      <div className="p-6 text-center">
-        <div className="animate-pulse space-y-4">
-          <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
-          <div className="h-24 bg-gray-200 rounded"></div>
-          <div className="h-24 bg-gray-200 rounded"></div>
+      <div className="p-4 sm:p-6 text-center">
+        <div className="animate-pulse space-y-3 sm:space-y-4">
+          <div className="h-3 sm:h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
+          <div className="h-20 sm:h-24 bg-gray-200 rounded"></div>
+          <div className="h-20 sm:h-24 bg-gray-200 rounded"></div>
         </div>
       </div>
     );
@@ -163,27 +162,29 @@ const ActiveCommitments = () => {
 
   if (activeCommitments.length === 0) {
     return (
-      <div className="p-6 text-center bg-sage-50 rounded-lg border border-sage-200">
-        <Target className="h-12 w-12 text-sage-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-sage-600 mb-2">No active commitments</h3>
-        <p className="text-sage-500">You don't have any active commitments yet. Start by clarifying some of your thoughts into actionable commitments.</p>
+      <div className="p-4 sm:p-6 text-center bg-sage-50 rounded-lg border border-sage-200 mx-2 sm:mx-0">
+        <Target className="h-10 w-10 sm:h-12 sm:w-12 text-sage-400 mx-auto mb-3 sm:mb-4" />
+        <h3 className="text-base sm:text-lg font-medium text-sage-600 mb-2">No active commitments</h3>
+        <p className="text-sm sm:text-base text-sage-500">You don't have any active commitments yet. Start by clarifying some of your thoughts into actionable commitments.</p>
       </div>
     );
   }
 
   return (
-    <div className="animate-fade-in">
-      <div className="flex items-center gap-3 mb-6">
-        <Target className="h-6 w-6 text-sage-600" />
-        <h2 className="text-xl sm:text-2xl font-semibold text-sage-700">
-          Active Commitments
-        </h2>
-        <span className="bg-sage-100 text-sage-600 px-3 py-1 rounded-full text-sm font-medium">
+    <div className="animate-fade-in px-2 sm:px-0">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Target className="h-5 w-5 sm:h-6 sm:w-6 text-sage-600 flex-shrink-0" />
+          <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-sage-700">
+            Active Commitments
+          </h2>
+        </div>
+        <span className="bg-sage-100 text-sage-600 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium self-start sm:self-auto">
           {activeCommitments.length}
         </span>
       </div>
       
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {activeCommitments.map((commitment) => (
           <CommitmentCard
             key={commitment.id}
@@ -200,8 +201,8 @@ const ActiveCommitments = () => {
       </div>
       
       {activeCommitments.length > 0 && (
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <p className="text-sm text-blue-700">
+        <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <p className="text-xs sm:text-sm text-blue-700 leading-relaxed">
             💡 <strong>Tip:</strong> Focus on completing one commitment at a time. You can edit the outcome or next action if your plans change.
           </p>
         </div>
