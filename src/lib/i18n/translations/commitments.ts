@@ -8,7 +8,11 @@ export const commitmentsTranslations = {
       completedEmpty: "No completed commitments yet.",
       complete: "Complete",
       editOutcome: "Edit outcome",
-      editNextAction: "Edit next action", 
+      editNextAction: "Edit next action",
+      activeTitle: "Active Commitments",
+      clarifyButton: "Start Clarifying",
+      clarifyTitle: "Clarify Your Commitments",
+      clarifyDescription: "Transform your thoughts into clear commitments with specific outcomes and actionable next steps.",
       clarifier: {
         title: "Clarify Your Commitment",
         description: "Transform your thought into a clear commitment with a specific outcome and next action.",
@@ -37,6 +41,10 @@ export const commitmentsTranslations = {
       complete: "إكمال",
       editOutcome: "تعديل النتيجة",
       editNextAction: "تعديل الإجراء التالي",
+      activeTitle: "الالتزامات النشطة",
+      clarifyButton: "ابدأ التوضيح",
+      clarifyTitle: "وضح التزاماتك",
+      clarifyDescription: "حول أفكارك إلى التزامات واضحة مع نتائج محددة وخطوات عملية تالية.",
       clarifier: {
         title: "وضح التزامك",
         description: "حول فكرتك إلى التزام واضح مع نتيجة محددة وإجراء تالي.",

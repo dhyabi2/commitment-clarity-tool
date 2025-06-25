@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import BrainDump from '@/components/BrainDump';
 import ActiveCommitments from '@/components/ActiveCommitments';
 import { Card } from "@/components/ui/card";
-import { Brain, ListTodo } from "lucide-react";
+import { Brain, ArrowRight, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -139,7 +139,7 @@ const Index = () => {
               </Card>
             </div>
 
-            {/* Step 2 */}
+            {/* Step 2 - Commitment Flow Button */}
             <div className="relative" ref={step2Ref}>
               <div 
                 ref={step2NumberRef}
@@ -149,8 +149,32 @@ const Index = () => {
               </div>
               <div className={`${isRTL ? 'mr-6 sm:mr-4' : 'ml-6 sm:ml-4'}`}>
                 <Card className="card-content bg-white/80 backdrop-blur-sm p-6 sm:p-8 border-sage-200 shadow-lg hover:shadow-xl transition-all duration-300">
-                  <h2 className="text-xl font-semibold mb-4 text-sage-700">{t('index.step2.title')}</h2>
-                  <ActiveCommitments />
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-4">
+                      <div className="bg-sage-100 p-3 rounded-xl shadow-inner transform transition-transform hover:scale-105">
+                        <Target className="h-6 w-6 text-sage-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-sage-700">
+                          Clarify Your Commitments
+                        </h2>
+                        <p className="text-gray-600 text-sm sm:text-base mb-4">
+                          Transform your thoughts into clear commitments with specific outcomes and actionable next steps.
+                        </p>
+                        <Link to="/commitment-flow">
+                          <Button className="bg-sage-500 hover:bg-sage-600 text-white px-6 py-3 text-base font-medium">
+                            Start Clarifying
+                            <ArrowRight className={`h-5 w-5 ${isRTL ? 'mr-3 rotate-180' : 'ml-3'}`} />
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Show Active Commitments Below */}
+                  <div className="mt-8 pt-6 border-t border-sage-200">
+                    <ActiveCommitments />
+                  </div>
                 </Card>
               </div>
             </div>
