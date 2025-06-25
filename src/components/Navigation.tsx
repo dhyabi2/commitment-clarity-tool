@@ -50,7 +50,7 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:top-0 md:bottom-auto shadow-lg" dir={dir()}>
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:top-0 md:bottom-auto shadow-lg z-50" dir={dir()}>
       <div className="max-w-4xl mx-auto px-4">
         <div className="hidden md:flex items-center justify-between py-3">
           <div className="text-xl font-semibold text-sage-700">{t('index.step1.title')}</div>
@@ -63,13 +63,13 @@ const Navigation = () => {
             </Avatar>
           </Link>
         </div>
-        <div className="flex justify-around items-center py-3 md:hidden">
+        <div className="flex justify-around items-center py-3 md:hidden min-h-[60px]">
           {navItems.map(({ path, icon: Icon, label }) => (
             <Tooltip key={path}>
               <TooltipTrigger asChild>
                 <Link
                   to={path}
-                  className={`p-2 ${getIconColor(path)} hover:text-sage-500 transition-colors`}
+                  className={`p-3 ${getIconColor(path)} hover:text-sage-500 transition-colors touch-manipulation active:scale-95`}
                 >
                   <Icon className={`${getIconSize(path)} transition-all duration-300`} />
                 </Link>
@@ -83,7 +83,7 @@ const Navigation = () => {
             <TooltipTrigger asChild>
               <Link
                 to="/profile"
-                className={`p-2 ${isActive('/profile') ? 'text-sage-600' : 'text-gray-600'} hover:text-sage-500 transition-colors`}
+                className={`p-3 ${isActive('/profile') ? 'text-sage-600' : 'text-gray-600'} hover:text-sage-500 transition-colors touch-manipulation active:scale-95`}
               >
                 <Avatar className="h-7 w-7">
                   <AvatarImage src={user?.user_metadata?.avatar_url} />
