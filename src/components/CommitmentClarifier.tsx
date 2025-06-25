@@ -9,6 +9,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useAuth } from '@/contexts/AuthContext';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import SignInModal from './auth/SignInModal';
 
 const CommitmentClarifier = () => {
   const [step, setStep] = useState(1);
@@ -18,6 +20,7 @@ const CommitmentClarifier = () => {
   const queryClient = useQueryClient();
   const { t, dir } = useLanguage();
   const { user } = useAuth();
+  const { executeWithAuth, showSignInModal, setShowSignInModal, modalConfig } = useAuthGuard();
   const isRTL = dir() === 'rtl';
 
   const addCommitmentMutation = useMutation({
@@ -66,58 +69,76 @@ const CommitmentClarifier = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (outcome && nextAction) {
-      addCommitmentMutation.mutate({ outcome, nextAction });
+      executeWithAuth(
+        () => {
+          addCommitmentMutation.mutate({ outcome, nextAction });
+        },
+        { outcome, nextAction },
+        {
+          title: "Save your commitments",
+          description: "Sign in to track your outcomes and next actions. Stay organized and accountable across all your devices."
+        }
+      );
     }
   };
 
   return (
-    <Card className="p-6 sm:p-8 animate-fade-in" dir={dir()}>
-      <h2 className="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-6">
-        {t('commitments.clarifier.title')}
-      </h2>
-      <div className="space-y-6 sm:space-y-8">
-        {step === 1 ? (
-          <div className="space-y-4 sm:space-y-6">
-            <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
-              {t('commitments.clarifier.outcomeQuestion')}
-            </p>
-            <Input
-              value={outcome}
-              onChange={(e) => setOutcome(e.target.value)}
-              placeholder={t('commitments.clarifier.outcomePlaceholder')}
-              className="input-field text-base"
-            />
-            <Button 
-              onClick={handleNext} 
-              className="w-full sm:w-auto btn-primary text-base"
-              disabled={!outcome}
-            >
-              {t('commitments.clarifier.nextButton')}
-              <ArrowRight className={`${isRTL ? 'mr-3' : 'ml-3'} h-5 w-5 ${isRTL ? 'rotate-180' : ''}`} />
-            </Button>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-            <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
-              {t('commitments.clarifier.nextActionQuestion')}
-            </p>
-            <Input
-              value={nextAction}
-              onChange={(e) => setNextAction(e.target.value)}
-              placeholder={t('commitments.clarifier.nextActionPlaceholder')}
-              className="input-field text-base"
-            />
-            <Button 
-              type="submit" 
-              className="w-full sm:w-auto btn-primary text-base"
-              disabled={addCommitmentMutation.isPending}
-            >
-              {t('commitments.clarifier.saveButton')}
-            </Button>
-          </form>
-        )}
-      </div>
-    </Card>
+    <>
+      <Card className="p-6 sm:p-8 animate-fade-in" dir={dir()}>
+        <h2 className="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-6">
+          {t('commitments.clarifier.title')}
+        </h2>
+        <div className="space-y-6 sm:space-y-8">
+          {step === 1 ? (
+            <div className="space-y-4 sm:space-y-6">
+              <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
+                {t('commitments.clarifier.outcomeQuestion')}
+              </p>
+              <Input
+                value={outcome}
+                onChange={(e) => setOutcome(e.target.value)}
+                placeholder={t('commitments.clarifier.outcomePlaceholder')}
+                className="input-field text-base"
+              />
+              <Button 
+                onClick={handleNext} 
+                className="w-full sm:w-auto btn-primary text-base"
+                disabled={!outcome}
+              >
+                {t('commitments.clarifier.nextButton')}
+                <ArrowRight className={`${isRTL ? 'mr-3' : 'ml-3'} h-5 w-5 ${isRTL ? 'rotate-180' : ''}`} />
+              </Button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+              <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
+                {t('commitments.clarifier.nextActionQuestion')}
+              </p>
+              <Input
+                value={nextAction}
+                onChange={(e) => setNextAction(e.target.value)}
+                placeholder={t('commitments.clarifier.nextActionPlaceholder')}
+                className="input-field text-base"
+              />
+              <Button 
+                type="submit" 
+                className="w-full sm:w-auto btn-primary text-base"
+                disabled={addCommitmentMutation.isPending}
+              >
+                {t('commitments.clarifier.saveButton')}
+              </Button>
+            </form>
+          )}
+        </div>
+      </Card>
+
+      <SignInModal
+        open={showSignInModal}
+        onOpenChange={setShowSignInModal}
+        title={modalConfig.title}
+        description={modalConfig.description}
+      />
+    </>
   );
 };
 

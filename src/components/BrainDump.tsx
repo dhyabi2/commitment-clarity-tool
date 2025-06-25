@@ -7,6 +7,8 @@ import { Plus, Tag as TagIcon } from "lucide-react";
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { BrainDumpForm } from './brain-dump/BrainDumpForm';
 import { useBrainDumpMutation } from './brain-dump/useBrainDumpMutation';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import SignInModal from './auth/SignInModal';
 import { gsap } from 'gsap';
 
 const BrainDump = () => {
@@ -18,6 +20,8 @@ const BrainDump = () => {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
+  
+  const { executeWithAuth, showSignInModal, setShowSignInModal, modalConfig } = useAuthGuard();
   
   const { addThoughtMutation } = useBrainDumpMutation({
     onSuccess: () => {
@@ -69,50 +73,68 @@ const BrainDump = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (thought.trim()) {
-      // Submit animation
-      gsap.to(formRef.current, {
-        y: -10,
-        duration: 0.3,
-        ease: "power2.out",
-        onComplete: () => {
-          addThoughtMutation.mutate({ content: thought, tags });
+      executeWithAuth(
+        () => {
+          // Submit animation
           gsap.to(formRef.current, {
-            y: 0,
+            y: -10,
             duration: 0.3,
-            ease: "bounce.out"
+            ease: "power2.out",
+            onComplete: () => {
+              addThoughtMutation.mutate({ content: thought, tags });
+              gsap.to(formRef.current, {
+                y: 0,
+                duration: 0.3,
+                ease: "bounce.out"
+              });
+            }
           });
+        },
+        { thought, tags },
+        {
+          title: "Save your thoughts securely",
+          description: "Sign in to capture and organize your thoughts. They'll be safely stored and accessible across all your devices."
         }
-      });
+      );
     }
   };
 
   return (
-    <div className="animate-fade-in p-4 sm:p-0" dir={dir()} ref={containerRef}>
-      <h2 
-        ref={titleRef}
-        className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 transform"
-      >
-        {t('brainDump.title')}
-      </h2>
-      <p 
-        ref={descriptionRef}
-        className="text-gray-600 text-sm sm:text-base mb-4 transform"
-      >
-        {t('brainDump.description')}
-      </p>
-      <div ref={formRef} className="transform">
-        <BrainDumpForm
-          thought={thought}
-          setThought={setThought}
-          tags={tags}
-          setTags={setTags}
-          tagInput={tagInput}
-          setTagInput={setTagInput}
-          onSubmit={handleSubmit}
-          isPending={addThoughtMutation.isPending}
-        />
+    <>
+      <div className="animate-fade-in p-4 sm:p-0" dir={dir()} ref={containerRef}>
+        <h2 
+          ref={titleRef}
+          className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 transform"
+        >
+          {t('brainDump.title')}
+        </h2>
+        <p 
+          ref={descriptionRef}
+          className="text-gray-600 text-sm sm:text-base mb-4 transform"
+        >
+          {t('brainDump.description')}
+        </p>
+        <div ref={formRef} className="transform">
+          <BrainDumpForm
+            thought={thought}
+            setThought={setThought}
+            tags={tags}
+            setTags={setTags}
+            tagInput={tagInput}
+            setTagInput={setTagInput}
+            onSubmit={handleSubmit}
+            isPending={addThoughtMutation.isPending}
+          />
+        </div>
       </div>
-    </div>
+      
+      <SignInModal
+        open={showSignInModal}
+        onOpenChange={setShowSignInModal}
+        title={modalConfig.title}
+        description={modalConfig.description}
+      />
+    </>
   );
 };
 
