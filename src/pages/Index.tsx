@@ -3,11 +3,13 @@ import React, { useEffect, useRef } from 'react';
 import BrainDump from '@/components/BrainDump';
 import ActiveCommitments from '@/components/ActiveCommitments';
 import { Card } from "@/components/ui/card";
-import { Brain, ArrowRight, Target } from "lucide-react";
+import { Brain, ArrowRight, Target, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { useThoughtsQuery } from '@/hooks/useThoughtsQuery';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -15,12 +17,17 @@ gsap.registerPlugin(ScrollTrigger);
 
 const Index = () => {
   const { t, dir } = useLanguage();
+  const { user } = useAuth();
   const isRTL = dir() === 'rtl';
   const containerRef = useRef<HTMLDivElement>(null);
   const step1Ref = useRef<HTMLDivElement>(null);
   const step2Ref = useRef<HTMLDivElement>(null);
   const step1NumberRef = useRef<HTMLDivElement>(null);
   const step2NumberRef = useRef<HTMLDivElement>(null);
+
+  // Get user's thoughts to determine what to show in step 2
+  const { data: thoughts } = useThoughtsQuery(null);
+  const hasThoughts = thoughts && thoughts.length > 0;
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -139,7 +146,7 @@ const Index = () => {
               </Card>
             </div>
 
-            {/* Step 2 - Commitment Flow Button */}
+            {/* Step 2 - Show different content based on whether user has thoughts */}
             <div className="relative" ref={step2Ref}>
               <div 
                 ref={step2NumberRef}
@@ -149,32 +156,50 @@ const Index = () => {
               </div>
               <div className={`${isRTL ? 'mr-6 sm:mr-4' : 'ml-6 sm:ml-4'}`}>
                 <Card className="card-content bg-white/80 backdrop-blur-sm p-6 sm:p-8 border-sage-200 shadow-lg hover:shadow-xl transition-all duration-300">
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-4">
-                      <div className="bg-sage-100 p-3 rounded-xl shadow-inner transform transition-transform hover:scale-105">
-                        <Target className="h-6 w-6 text-sage-600" />
+                  {hasThoughts ? (
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-4">
+                        <div className="bg-sage-100 p-3 rounded-xl shadow-inner transform transition-transform hover:scale-105">
+                          <Target className="h-6 w-6 text-sage-600" />
+                        </div>
+                        <div className="flex-1">
+                          <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-sage-700">
+                            {t('commitments.clarifyTitle')}
+                          </h2>
+                          <p className="text-gray-600 text-sm sm:text-base mb-4">
+                            {t('commitments.clarifyDescription')}
+                          </p>
+                          <Link to="/commitment-flow">
+                            <Button className="bg-sage-500 hover:bg-sage-600 text-white px-6 py-3 text-base font-medium">
+                              {t('commitments.clarifyButton')}
+                              <ArrowRight className={`h-5 w-5 ${isRTL ? 'mr-3 rotate-180' : 'ml-3'}`} />
+                            </Button>
+                          </Link>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-sage-700">
-                          Clarify Your Commitments
-                        </h2>
-                        <p className="text-gray-600 text-sm sm:text-base mb-4">
-                          Transform your thoughts into clear commitments with specific outcomes and actionable next steps.
-                        </p>
-                        <Link to="/commitment-flow">
-                          <Button className="bg-sage-500 hover:bg-sage-600 text-white px-6 py-3 text-base font-medium">
-                            Start Clarifying
-                            <ArrowRight className={`h-5 w-5 ${isRTL ? 'mr-3 rotate-180' : 'ml-3'}`} />
-                          </Button>
-                        </Link>
+                      
+                      {/* Show Active Commitments Below */}
+                      <div className="mt-8 pt-6 border-t border-sage-200">
+                        <ActiveCommitments />
                       </div>
                     </div>
-                  </div>
-                  
-                  {/* Show Active Commitments Below */}
-                  <div className="mt-8 pt-6 border-t border-sage-200">
-                    <ActiveCommitments />
-                  </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-4">
+                        <div className="bg-gray-100 p-3 rounded-xl shadow-inner">
+                          <MessageSquare className="h-6 w-6 text-gray-500" />
+                        </div>
+                        <div className="flex-1">
+                          <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-gray-600">
+                            Ready to Get Organized?
+                          </h2>
+                          <p className="text-gray-500 text-sm sm:text-base">
+                            Start by capturing your thoughts above. Once you have some thoughts recorded, you'll be able to clarify them into actionable commitments.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </Card>
               </div>
             </div>
