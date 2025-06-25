@@ -1,17 +1,24 @@
+
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from '@/contexts/AuthContext';
 import ThoughtsList from '@/components/thoughts/ThoughtsList';
 
 const CompletedCommitments = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   const { data: thoughts, isLoading } = useQuery({
-    queryKey: ['completed-thoughts', selectedTag],
+    queryKey: ['completed-thoughts', selectedTag, user?.id],
     queryFn: async () => {
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
       let query = supabase
         .from('thoughts')
         .select(`
@@ -21,6 +28,7 @@ const CompletedCommitments = () => {
           )
         `)
         .eq('completed', true)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       
       const { data, error } = await query;
@@ -42,15 +50,21 @@ const CompletedCommitments = () => {
       }
 
       return transformedData;
-    }
+    },
+    enabled: !!user?.id
   });
 
   const deleteThoughtMutation = useMutation({
     mutationFn: async (thoughtId: number) => {
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
       const { error } = await supabase
         .from('thoughts')
         .delete()
-        .eq('id', thoughtId);
+        .eq('id', thoughtId)
+        .eq('user_id', user.id);
       
       if (error) throw error;
     },
@@ -65,10 +79,15 @@ const CompletedCommitments = () => {
 
   const toggleCompleteMutation = useMutation({
     mutationFn: async ({ thoughtId, completed }: { thoughtId: number; completed: boolean }) => {
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
       const { error } = await supabase
         .from('thoughts')
         .update({ completed })
-        .eq('id', thoughtId);
+        .eq('id', thoughtId)
+        .eq('user_id', user.id);
       
       if (error) throw error;
     },
@@ -85,6 +104,14 @@ const CompletedCommitments = () => {
   const handleTagClick = (tag: string | null) => {
     setSelectedTag(tag);
   };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-cream p-4 flex items-center justify-center">
+        <div className="text-center text-gray-600">Please sign in to view your completed thoughts.</div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

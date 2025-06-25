@@ -1,42 +1,44 @@
-import { useToast } from "@/components/ui/use-toast";
-import { useQueryClient, useMutation } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
-import { useLanguage } from '@/lib/i18n/LanguageContext';
-import { getDeviceId } from '@/utils/deviceId';
 
-interface AddThoughtParams {
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
+import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from '@/contexts/AuthContext';
+
+interface BrainDumpData {
   content: string;
   tags: string[];
 }
 
-interface UseBrainDumpMutationProps {
-  onSuccess?: () => void;
-}
-
-export const useBrainDumpMutation = ({ onSuccess }: UseBrainDumpMutationProps) => {
+export const useBrainDumpMutation = ({ onSuccess }: { onSuccess?: () => void }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { t } = useLanguage();
-  const deviceId = getDeviceId();
+  const { user } = useAuth();
 
   const addThoughtMutation = useMutation({
-    mutationFn: async ({ content, tags }: AddThoughtParams) => {
-      const { data: thoughtData, error: thoughtError } = await supabase
+    mutationFn: async ({ content, tags }: BrainDumpData) => {
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
+      const { data: thought, error: thoughtError } = await supabase
         .from('thoughts')
-        .insert([{ content, device_id: deviceId }])
+        .insert([{ 
+          content, 
+          completed: false,
+          user_id: user.id
+        }])
         .select()
         .single();
-      
+
       if (thoughtError) throw thoughtError;
 
       if (tags.length > 0) {
-        const { data: tagData, error: tagError } = await supabase
+        const { error: tagError } = await supabase
           .from('tags')
           .upsert(
-            tags.map(name => ({ name })),
+            tags.map(tag => ({ name: tag })),
             { onConflict: 'name' }
-          )
-          .select();
+          );
 
         if (tagError) throw tagError;
 
@@ -51,7 +53,7 @@ export const useBrainDumpMutation = ({ onSuccess }: UseBrainDumpMutationProps) =
           .from('thought_tags')
           .insert(
             existingTags.map(tag => ({
-              thought_id: thoughtData.id,
+              thought_id: thought.id,
               tag_id: tag.id
             }))
           );
@@ -59,15 +61,23 @@ export const useBrainDumpMutation = ({ onSuccess }: UseBrainDumpMutationProps) =
         if (relationError) throw relationError;
       }
 
-      return thoughtData;
+      return thought;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['thoughts'] });
       toast({
-        title: t('common.success'),
-        description: t('brainDump.thoughtCaptured'),
+        title: "Thought added",
+        description: "Your thought has been captured successfully.",
       });
       onSuccess?.();
+    },
+    onError: (error) => {
+      console.error('Error adding thought:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add thought. Please try again.",
+        variant: "destructive",
+      });
     }
   });
 

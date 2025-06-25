@@ -1,10 +1,18 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const useThoughtsQuery = (selectedTag: string | null) => {
+  const { user } = useAuth();
+  
   return useQuery({
-    queryKey: ['thoughts', 'active', selectedTag],
+    queryKey: ['thoughts', 'active', selectedTag, user?.id],
     queryFn: async () => {
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
       let query = supabase
         .from('thoughts')
         .select(`
@@ -14,6 +22,7 @@ export const useThoughtsQuery = (selectedTag: string | null) => {
           )
         `)
         .eq('completed', false)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       
       const { data, error } = await query;
@@ -35,6 +44,7 @@ export const useThoughtsQuery = (selectedTag: string | null) => {
       }
 
       return transformedData;
-    }
+    },
+    enabled: !!user?.id
   });
 };

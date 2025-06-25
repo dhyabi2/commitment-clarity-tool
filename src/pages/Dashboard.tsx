@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
@@ -13,34 +14,56 @@ import ActivityTimeline from "@/components/dashboard/ActivityTimeline";
 import CompletionRate from "@/components/dashboard/CompletionRate";
 import DailyActivity from "@/components/dashboard/DailyActivity";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Dashboard = () => {
   const { t, dir } = useLanguage();
+  const { user } = useAuth();
   const isRTL = dir() === 'rtl';
 
   const { data: thoughts, isLoading: thoughtsLoading } = useQuery({
-    queryKey: ["thoughts-stats"],
+    queryKey: ["thoughts-stats", user?.id],
     queryFn: async () => {
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
       const { data, error } = await supabase
         .from("thoughts")
         .select("*")
+        .eq('user_id', user.id)
         .order("created_at", { ascending: true });
       if (error) throw error;
       return data;
     },
+    enabled: !!user?.id
   });
 
   const { data: commitments, isLoading: commitmentsLoading } = useQuery({
-    queryKey: ["commitments-stats"],
+    queryKey: ["commitments-stats", user?.id],
     queryFn: async () => {
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
       const { data, error } = await supabase
         .from("commitments")
         .select("*")
+        .eq('user_id', user.id)
         .order("created_at", { ascending: true });
       if (error) throw error;
       return data;
     },
+    enabled: !!user?.id
   });
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-cream to-sage-50 flex items-center justify-center">
+        <div className="text-center text-gray-600">Please sign in to view your dashboard.</div>
+      </div>
+    );
+  }
 
   if (thoughtsLoading || commitmentsLoading) {
     return (

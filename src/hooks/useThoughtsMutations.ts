@@ -1,15 +1,20 @@
+
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/components/ui/use-toast";
-import { getDeviceId } from '@/utils/deviceId';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const useThoughtsMutations = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const deviceId = getDeviceId();
+  const { user } = useAuth();
 
   const addTagMutation = useMutation({
     mutationFn: async ({ thoughtId, tagName }: { thoughtId: number; tagName: string }) => {
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
       const { data: tagData, error: tagError } = await supabase
         .from('tags')
         .upsert({ name: tagName }, { onConflict: 'name' })
@@ -35,11 +40,15 @@ export const useThoughtsMutations = () => {
 
   const deleteThoughtMutation = useMutation({
     mutationFn: async (thoughtId: number) => {
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
       const { error } = await supabase
         .from('thoughts')
         .delete()
         .eq('id', thoughtId)
-        .eq('device_id', deviceId);
+        .eq('user_id', user.id);
       
       if (error) throw error;
     },
@@ -54,11 +63,15 @@ export const useThoughtsMutations = () => {
 
   const toggleCompleteMutation = useMutation({
     mutationFn: async ({ thoughtId, completed }: { thoughtId: number; completed: boolean }) => {
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
       const { error } = await supabase
         .from('thoughts')
         .update({ completed })
         .eq('id', thoughtId)
-        .eq('device_id', deviceId);
+        .eq('user_id', user.id);
       
       if (error) throw error;
     },

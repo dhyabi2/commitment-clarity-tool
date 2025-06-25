@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
 import CommitmentCard from './commitments/CommitmentCard';
 
 interface Commitment {
@@ -22,6 +23,7 @@ interface EditingState {
 const ActiveCommitments = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState<EditingState>({
     id: null,
@@ -30,24 +32,35 @@ const ActiveCommitments = () => {
   });
 
   const { data: commitments, isLoading } = useQuery({
-    queryKey: ['commitments'],
+    queryKey: ['commitments', user?.id],
     queryFn: async () => {
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
       const { data, error } = await supabase
         .from('commitments')
         .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       
       if (error) throw error;
       return data;
-    }
+    },
+    enabled: !!user?.id
   });
 
   const updateCommitmentMutation = useMutation({
     mutationFn: async ({ id, field, value }: { id: number; field: string; value: string }) => {
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
       const { error } = await supabase
         .from('commitments')
         .update({ [field]: value })
-        .eq('id', id);
+        .eq('id', id)
+        .eq('user_id', user.id);
       
       if (error) throw error;
     },
@@ -71,10 +84,15 @@ const ActiveCommitments = () => {
 
   const completeCommitmentMutation = useMutation({
     mutationFn: async (id: number) => {
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
       const { error } = await supabase
         .from('commitments')
         .update({ completed: true })
-        .eq('id', id);
+        .eq('id', id)
+        .eq('user_id', user.id);
       
       if (error) throw error;
     },
@@ -116,6 +134,10 @@ const ActiveCommitments = () => {
   const handleCancel = () => {
     setEditing({ id: null, field: null, value: '' });
   };
+
+  if (!user) {
+    return <div className="p-4 text-center text-gray-600">Please sign in to view your commitments.</div>;
+  }
 
   if (isLoading) {
     return <div className="p-4 text-center text-gray-600">{t('common.loading')}</div>;

@@ -1,7 +1,9 @@
+
 import React, { useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from '@/contexts/AuthContext';
 import ThoughtCard from '@/components/thoughts/ThoughtCard';
 import { TagManager } from '@/components/thoughts/TagManager';
 import { convertToXML, parseXMLData } from '@/utils/xmlUtils';
@@ -21,6 +23,7 @@ interface ImportedThought {
 const Thoughts = () => {
   const { toast } = useToast();
   const { dir } = useLanguage();
+  const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedTag, setSelectedTag] = React.useState<string | null>(null);
 
@@ -37,7 +40,7 @@ const Thoughts = () => {
   }, [thoughts]);
 
   const handleExport = () => {
-    if (!thoughts) return;
+    if (!thoughts || !user) return;
     
     const xmlContent = convertToXML(thoughts);
     const blob = new Blob([xmlContent], { type: 'text/xml' });
@@ -52,6 +55,15 @@ const Thoughts = () => {
   };
 
   const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!user?.id) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to import thoughts.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -63,16 +75,16 @@ const Thoughts = () => {
         let importCount = 0;
 
         for (const thought of importedThoughts) {
-          // Check for exact duplicate (same content AND device_id)
+          // Check for exact duplicate for this user
           const { data: existingThought } = await supabase
             .from('thoughts')
             .select('id')
             .eq('content', thought.content)
-            .eq('device_id', thought.device_id)
+            .eq('user_id', user.id)
             .single();
 
           if (existingThought) {
-            continue; // Skip only if exact duplicate
+            continue; // Skip if duplicate exists for this user
           }
 
           const { data: thoughtData, error: thoughtError } = await supabase
@@ -80,8 +92,8 @@ const Thoughts = () => {
             .insert([{ 
               content: thought.content, 
               completed: thought.completed,
-              device_id: thought.device_id, // Preserve the original device_id
-              created_at: thought.created_at // Preserve the original timestamp
+              user_id: user.id,
+              created_at: thought.created_at
             }])
             .select()
             .single();
@@ -133,6 +145,14 @@ const Thoughts = () => {
     };
     reader.readAsText(file);
   };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-cream p-4 flex items-center justify-center" dir={dir()}>
+        <div className="text-center text-gray-600">Please sign in to view your thoughts.</div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
