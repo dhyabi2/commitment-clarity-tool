@@ -20,6 +20,38 @@ export const useBrainDumpMutation = ({ onSuccess }: { onSuccess?: () => void }) 
         throw new Error('User not authenticated');
       }
 
+      console.log('Adding thought for user:', user.id);
+      console.log('Thought content:', content);
+      console.log('Tags:', tags);
+
+      // First, ensure the user has a profile
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError && profileError.code === 'PGRST116') {
+        // Profile doesn't exist, create it
+        console.log('Creating profile for user:', user.id);
+        const { error: createProfileError } = await supabase
+          .from('profiles')
+          .insert([{
+            id: user.id,
+            email: user.email,
+            full_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0],
+            avatar_url: user.user_metadata?.avatar_url
+          }]);
+
+        if (createProfileError) {
+          console.error('Error creating profile:', createProfileError);
+          throw createProfileError;
+        }
+      } else if (profileError) {
+        console.error('Error checking profile:', profileError);
+        throw profileError;
+      }
+
       const { data: thought, error: thoughtError } = await supabase
         .from('thoughts')
         .insert([{ 
@@ -30,9 +62,16 @@ export const useBrainDumpMutation = ({ onSuccess }: { onSuccess?: () => void }) 
         .select()
         .single();
 
-      if (thoughtError) throw thoughtError;
+      if (thoughtError) {
+        console.error('Error inserting thought:', thoughtError);
+        throw thoughtError;
+      }
+
+      console.log('Thought created successfully:', thought);
 
       if (tags.length > 0) {
+        console.log('Adding tags:', tags);
+        
         const { error: tagError } = await supabase
           .from('tags')
           .upsert(
@@ -40,14 +79,20 @@ export const useBrainDumpMutation = ({ onSuccess }: { onSuccess?: () => void }) 
             { onConflict: 'name' }
           );
 
-        if (tagError) throw tagError;
+        if (tagError) {
+          console.error('Error upserting tags:', tagError);
+          throw tagError;
+        }
 
         const { data: existingTags, error: existingTagsError } = await supabase
           .from('tags')
           .select('*')
           .in('name', tags);
 
-        if (existingTagsError) throw existingTagsError;
+        if (existingTagsError) {
+          console.error('Error fetching existing tags:', existingTagsError);
+          throw existingTagsError;
+        }
 
         const { error: relationError } = await supabase
           .from('thought_tags')
@@ -58,7 +103,12 @@ export const useBrainDumpMutation = ({ onSuccess }: { onSuccess?: () => void }) 
             }))
           );
 
-        if (relationError) throw relationError;
+        if (relationError) {
+          console.error('Error creating thought-tag relations:', relationError);
+          throw relationError;
+        }
+
+        console.log('Tags added successfully');
       }
 
       return thought;
