@@ -25,6 +25,8 @@ const BrainDump = () => {
   
   const { addThoughtMutation } = useBrainDumpMutation({
     onSuccess: () => {
+      console.log('Thought saved successfully, clearing form');
+      
       // Success animation
       gsap.to(formRef.current, {
         scale: 1.05,
@@ -33,6 +35,7 @@ const BrainDump = () => {
         repeat: 1,
         ease: "power2.inOut",
         onComplete: () => {
+          // Only clear form after successful save
           setThought("");
           setTags([]);
           setTagInput("");
@@ -73,8 +76,11 @@ const BrainDump = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (thought.trim()) {
+      console.log('Submitting thought:', { thought, tags });
+      
       executeWithAuth(
         () => {
+          console.log('Executing thought submission');
           // Submit animation
           gsap.to(formRef.current, {
             y: -10,
@@ -90,7 +96,7 @@ const BrainDump = () => {
             }
           });
         },
-        { thought, tags },
+        { thought, tags }, // Store the current form data
         {
           title: "Save your thoughts securely",
           description: "Sign in to capture and organize your thoughts. They'll be safely stored and accessible across all your devices."

@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -28,6 +27,7 @@ export const useAuthGuard = () => {
       action();
     } else {
       // User not authenticated, store action and show modal
+      console.log('Storing pending action with context:', context);
       setPendingAction({ action, context });
       if (customConfig) {
         setModalConfig({
@@ -42,27 +42,38 @@ export const useAuthGuard = () => {
   const handleModalClose = useCallback((open: boolean) => {
     setShowSignInModal(open);
     if (!open) {
-      setPendingAction(null);
+      // Don't clear pending action when modal closes - keep it for when user signs in
+      console.log('Modal closed, keeping pending action for later execution');
     }
   }, []);
 
   // Execute pending action when user becomes authenticated
   React.useEffect(() => {
-    if (user && pendingAction) {
-      // Small delay to allow modal to close gracefully
-      setTimeout(() => {
+    console.log('Auth state changed - user:', !!user, 'pendingAction:', !!pendingAction);
+    
+    if (user && pendingAction && !loading) {
+      console.log('Executing pending action after successful sign-in');
+      
+      // Execute the pending action immediately
+      try {
         pendingAction.action();
-        setPendingAction(null);
-        setShowSignInModal(false);
-      }, 100);
+        console.log('Pending action executed successfully');
+      } catch (error) {
+        console.error('Error executing pending action:', error);
+      }
+      
+      // Clean up
+      setPendingAction(null);
+      setShowSignInModal(false);
     }
-  }, [user, pendingAction]);
+  }, [user, pendingAction, loading]);
 
   return {
     executeWithAuth,
     showSignInModal,
     setShowSignInModal: handleModalClose,
     modalConfig,
-    isAuthenticated: !!user && !loading
+    isAuthenticated: !!user && !loading,
+    pendingAction // Expose for debugging
   };
 };
