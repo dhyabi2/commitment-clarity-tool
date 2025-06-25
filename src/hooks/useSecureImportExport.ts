@@ -1,9 +1,8 @@
-
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { parseXML } from '@/utils/xmlUtils';
+import { parseXMLData } from '@/utils/xmlUtils';
 
 interface ExportData {
   thoughts: any[];
@@ -93,7 +92,7 @@ export const useSecureImportExport = () => {
       try {
         if (file.name.endsWith('.xml')) {
           // Enhanced XML validation
-          data = parseXML(text);
+          data = parseXMLData(text);
           if (!data || typeof data !== 'object') {
             throw new Error('Invalid XML structure');
           }
