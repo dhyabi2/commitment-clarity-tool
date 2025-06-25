@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -5,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import CommitmentCard from './commitments/CommitmentCard';
+import { Target, Lightbulb } from 'lucide-react';
 
 interface Commitment {
   id: number;
@@ -67,15 +69,15 @@ const ActiveCommitments = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['commitments'] });
       toast({
-        title: t('commitments.updated'),
-        description: t('commitments.updatedDesc'),
+        title: "Commitment updated",
+        description: "Your commitment has been successfully updated.",
       });
       setEditing({ id: null, field: null, value: '' });
     },
     onError: (error) => {
       toast({
-        title: t('common.error'),
-        description: t('commitments.updateError'),
+        title: "Update failed",
+        description: "There was an error updating your commitment. Please try again.",
         variant: "destructive",
       });
       console.error('Error updating commitment:', error);
@@ -99,14 +101,14 @@ const ActiveCommitments = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['commitments'] });
       toast({
-        title: t('commitments.completed'),
-        description: t('commitments.completedDesc'),
+        title: "Commitment completed! 🎉",
+        description: "Congratulations on completing your commitment. Keep up the great work!",
       });
     },
     onError: (error) => {
       toast({
-        title: t('common.error'),
-        description: t('commitments.completeError'),
+        title: "Error completing commitment",
+        description: "There was an error marking your commitment as complete. Please try again.",
         variant: "destructive",
       });
       console.error('Error completing commitment:', error);
@@ -136,20 +138,53 @@ const ActiveCommitments = () => {
   };
 
   if (!user) {
-    return <div className="p-4 text-center text-gray-600">Please sign in to view your commitments.</div>;
+    return (
+      <div className="p-6 text-center bg-gray-50 rounded-lg border border-gray-200">
+        <Lightbulb className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-gray-600 mb-2">Sign in to view commitments</h3>
+        <p className="text-gray-500">Please sign in to see your active commitments and track your progress.</p>
+      </div>
+    );
   }
 
   if (isLoading) {
-    return <div className="p-4 text-center text-gray-600">{t('common.loading')}</div>;
+    return (
+      <div className="p-6 text-center">
+        <div className="animate-pulse space-y-4">
+          <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
+          <div className="h-24 bg-gray-200 rounded"></div>
+          <div className="h-24 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  const activeCommitments = commitments?.filter(c => !c.completed) || [];
+
+  if (activeCommitments.length === 0) {
+    return (
+      <div className="p-6 text-center bg-sage-50 rounded-lg border border-sage-200">
+        <Target className="h-12 w-12 text-sage-400 mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-sage-600 mb-2">No active commitments</h3>
+        <p className="text-sage-500">You don't have any active commitments yet. Start by clarifying some of your thoughts into actionable commitments.</p>
+      </div>
+    );
   }
 
   return (
-    <div className="animate-fade-in p-4 sm:p-0">
-      <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">
-        {t('commitments.activeTitle')}
-      </h2>
-      <div className="grid gap-3 sm:gap-4">
-        {commitments?.filter(c => !c.completed).map((commitment) => (
+    <div className="animate-fade-in">
+      <div className="flex items-center gap-3 mb-6">
+        <Target className="h-6 w-6 text-sage-600" />
+        <h2 className="text-xl sm:text-2xl font-semibold text-sage-700">
+          Active Commitments
+        </h2>
+        <span className="bg-sage-100 text-sage-600 px-3 py-1 rounded-full text-sm font-medium">
+          {activeCommitments.length}
+        </span>
+      </div>
+      
+      <div className="space-y-4">
+        {activeCommitments.map((commitment) => (
           <CommitmentCard
             key={commitment.id}
             commitment={commitment}
@@ -163,6 +198,14 @@ const ActiveCommitments = () => {
           />
         ))}
       </div>
+      
+      {activeCommitments.length > 0 && (
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <p className="text-sm text-blue-700">
+            💡 <strong>Tip:</strong> Focus on completing one commitment at a time. You can edit the outcome or next action if your plans change.
+          </p>
+        </div>
+      )}
     </div>
   );
 };
