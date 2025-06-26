@@ -136,25 +136,31 @@ serve(async (req) => {
       });
     }
 
-    // Enhanced Thawani API call with comprehensive logging
+    // Get the origin for redirect URLs
+    const origin = req.headers.get('origin') || 'https://2aa4e7a5-d631-4c39-bd02-c3aa11cc6dc2.lovableproject.com';
+
+    // Enhanced Thawani API call with LIVE environment
     const thawaniPayload = {
       client_reference_id: subscriptionId,
-      mode: 'subscription',
+      mode: 'payment', // Using 'payment' mode for one-time subscription activation
       products: [{
         name: 'Premium Thoughts Subscription',
         unit_amount: priceInBaiza,
         quantity: 1
       }],
-      success_url: `${req.headers.get('origin')}/subscription/success`,
-      cancel_url: `${req.headers.get('origin')}/subscription/cancel`,
+      success_url: `${origin}/subscription/success`,
+      cancel_url: `${origin}/subscription/cancel`,
       metadata: {
         user_id: user.id,
         subscription_id: subscriptionId
       }
     };
 
-    logStep('Preparing Thawani API request', {
-      url: 'https://uatcheckout.thawani.om/api/v1/checkout/session',
+    // LIVE Thawani API endpoint
+    const thawaniApiUrl = 'https://checkout.thawani.om/api/v1/checkout/session';
+
+    logStep('Preparing Thawani API request (LIVE)', {
+      url: thawaniApiUrl,
       payload: thawaniPayload,
       headers: {
         'Content-Type': 'application/json',
@@ -162,7 +168,7 @@ serve(async (req) => {
       }
     });
 
-    const thawaniResponse = await fetch('https://uatcheckout.thawani.om/api/v1/checkout/session', {
+    const thawaniResponse = await fetch(thawaniApiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -198,15 +204,16 @@ serve(async (req) => {
         errorMessage += `: ${thawaniData.detail}`;
       }
       if (thawaniResponse.status === 401) {
-        errorMessage += ' - Please check your Thawani API credentials';
+        errorMessage += ' - Please check your Thawani API credentials (ensure you are using LIVE keys for production)';
       }
       
       throw new Error(errorMessage)
     }
 
-    const checkoutUrl = `https://uatcheckout.thawani.om/pay/${thawaniData.data.session_id}?key=${thawaniPublishableKey}`;
+    // LIVE checkout URL
+    const checkoutUrl = `https://checkout.thawani.om/pay/${thawaniData.data.session_id}?key=${thawaniPublishableKey}`;
     
-    logStep('Checkout session created successfully', {
+    logStep('Checkout session created successfully (LIVE)', {
       sessionId: thawaniData.data.session_id,
       checkoutUrl: checkoutUrl,
       priceOMR: priceInOMR

@@ -5,7 +5,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 // Enhanced logging function
 const logStep = (step: string, data?: any) => {
   const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] WEBHOOK: ${step}`, data ? JSON.stringify(data, null, 2) : '');
+  console.log(`[${timestamp}] WEBHOOK (LIVE): ${step}`, data ? JSON.stringify(data, null, 2) : '');
 }
 
 serve(async (req) => {
@@ -24,12 +24,13 @@ serve(async (req) => {
     const body = await req.json()
     logStep('Webhook body parsed', { body });
 
-    if (body.event_type === 'payment_intent.succeeded') {
-      const { client_reference_id, payment_intent_id, amount, currency } = body.data
+    // Handle successful payment from live Thawani
+    if (body.event_type === 'payment_intent.succeeded' || body.event_type === 'payment.succeeded') {
+      const { client_reference_id, payment_intent_id, session_id, amount, currency } = body.data
 
-      logStep('Processing successful payment', {
+      logStep('Processing successful payment (LIVE)', {
         client_reference_id,
-        payment_intent_id,
+        payment_intent_id: payment_intent_id || session_id,
         amount,
         currency
       });
@@ -63,7 +64,7 @@ serve(async (req) => {
         .update({
           status: 'active',
           plan_type: 'premium',
-          thawani_subscription_id: payment_intent_id,
+          thawani_subscription_id: payment_intent_id || session_id,
           current_period_start: currentPeriodStart.toISOString(),
           current_period_end: currentPeriodEnd.toISOString(),
           updated_at: new Date().toISOString()
@@ -75,7 +76,7 @@ serve(async (req) => {
         throw updateError
       }
 
-      logStep('Subscription updated successfully');
+      logStep('Subscription updated successfully (LIVE)');
 
       // Record payment
       const { data: subscription } = await supabase
@@ -85,15 +86,15 @@ serve(async (req) => {
         .single()
 
       if (subscription) {
-        logStep('Recording payment', { userId: subscription.user_id });
+        logStep('Recording payment (LIVE)', { userId: subscription.user_id });
         
         const { error: paymentError } = await supabase
           .from('payments')
           .insert([{
             user_id: subscription.user_id,
             subscription_id: client_reference_id,
-            thawani_payment_id: payment_intent_id,
-            amount: amount / 100, // Convert from baiza to OMR
+            thawani_payment_id: payment_intent_id || session_id,
+            amount: amount / 1000, // Convert from baiza to OMR
             currency: currency || 'OMR',
             status: 'completed'
           }])
@@ -101,11 +102,11 @@ serve(async (req) => {
         if (paymentError) {
           logStep('ERROR: Failed to record payment', { error: paymentError });
         } else {
-          logStep('Payment recorded successfully');
+          logStep('Payment recorded successfully (LIVE)');
         }
       }
 
-      logStep('Subscription activation completed', { durationDays });
+      logStep('Subscription activation completed (LIVE)', { durationDays });
     } else {
       logStep('Unhandled webhook event type', { event_type: body.event_type });
     }
@@ -114,7 +115,7 @@ serve(async (req) => {
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep('ERROR: Webhook processing failed', {
+    logStep('ERROR: Webhook processing failed (LIVE)', {
       error: errorMessage,
       stack: error instanceof Error ? error.stack : undefined
     });
