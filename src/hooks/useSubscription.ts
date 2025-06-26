@@ -66,6 +66,18 @@ export const useSubscription = () => {
     enabled: !!user?.id
   });
 
+  const { data: subscriptionConfig, isLoading: configLoading } = useQuery({
+    queryKey: ['subscription-config'],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_subscription_config_json');
+      
+      if (error) throw error;
+      
+      return data as Record<string, string>;
+    },
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+
   const createSubscriptionMutation = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error('User not authenticated');
@@ -97,6 +109,10 @@ export const useSubscription = () => {
   const isNearLimit = !isPremium && currentUsage >= 18;
   const hasExceededLimit = !isPremium && currentUsage >= 20;
 
+  // Get pricing information from config
+  const priceOMR = subscriptionConfig?.subscription_price_omr || '14';
+  const durationDays = subscriptionConfig?.subscription_duration_days || '30';
+
   return {
     subscription,
     usage: currentUsage,
@@ -104,8 +120,10 @@ export const useSubscription = () => {
     canCreateThought,
     isNearLimit,
     hasExceededLimit,
-    isLoading: subscriptionLoading || usageLoading,
+    isLoading: subscriptionLoading || usageLoading || configLoading,
     createSubscription: () => createSubscriptionMutation.mutate(),
-    isCreatingSubscription: createSubscriptionMutation.isPending
+    isCreatingSubscription: createSubscriptionMutation.isPending,
+    priceOMR,
+    durationDays: parseInt(durationDays)
   };
 };

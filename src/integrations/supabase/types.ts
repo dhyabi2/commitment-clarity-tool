@@ -133,6 +133,33 @@ export type Database = {
         }
         Relationships: []
       }
+      subscription_config: {
+        Row: {
+          config_key: string
+          config_value: string
+          created_at: string
+          description: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          config_key: string
+          config_value: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          config_key?: string
+          config_value?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           created_at: string
@@ -315,6 +342,14 @@ export type Database = {
       get_current_month_usage: {
         Args: { p_user_id: string }
         Returns: number
+      }
+      get_subscription_config: {
+        Args: { p_config_key: string }
+        Returns: string
+      }
+      get_subscription_config_json: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
       }
       increment_usage_count: {
         Args: { p_user_id: string }

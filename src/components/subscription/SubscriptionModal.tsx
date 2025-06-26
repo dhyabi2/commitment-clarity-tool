@@ -21,11 +21,23 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   open,
   onOpenChange,
 }) => {
-  const { createSubscription, isCreatingSubscription, usage } = useSubscription();
+  const { createSubscription, isCreatingSubscription, usage, priceOMR, durationDays, isLoading } = useSubscription();
 
   const handleUpgrade = () => {
     createSubscription();
   };
+
+  if (isLoading) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-[425px]">
+          <div className="flex items-center justify-center p-8">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -45,9 +57,9 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
             <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center justify-between">
                 Premium Plan
-                <span className="text-2xl font-bold">14 OMR</span>
+                <span className="text-2xl font-bold">{priceOMR} OMR</span>
               </CardTitle>
-              <CardDescription>per month</CardDescription>
+              <CardDescription>per {durationDays} days</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center gap-2">

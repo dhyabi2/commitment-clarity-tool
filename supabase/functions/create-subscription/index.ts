@@ -27,6 +27,21 @@ serve(async (req) => {
       throw new Error('User not authenticated')
     }
 
+    // Get subscription configuration
+    const { data: configData, error: configError } = await supabase
+      .rpc('get_subscription_config_json')
+
+    if (configError) {
+      console.error('Error fetching subscription config:', configError)
+      throw new Error('Failed to fetch subscription configuration')
+    }
+
+    const config = configData as Record<string, string>
+    const priceInBaiza = parseInt(config.subscription_price_baiza || '1400')
+    const priceInOMR = config.subscription_price_omr || '14'
+
+    console.log('Subscription config:', { priceInBaiza, priceInOMR })
+
     // Create or get subscription record
     const { data: subscription, error: subError } = await supabase
       .from('subscriptions')
@@ -68,7 +83,7 @@ serve(async (req) => {
         mode: 'subscription',
         products: [{
           name: 'Premium Thoughts Subscription',
-          unit_amount: 1400, // 14 OMR in baiza
+          unit_amount: priceInBaiza,
           quantity: 1
         }],
         success_url: `${req.headers.get('origin')}/subscription/success`,
@@ -90,7 +105,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         checkout_url: `https://uatcheckout.thawani.om/pay/${thawaniData.data.session_id}?key=${Deno.env.get('THAWANI_PUBLISHABLE_KEY')}`,
-        session_id: thawaniData.data.session_id
+        session_id: thawaniData.data.session_id,
+        price_omr: priceInOMR
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
