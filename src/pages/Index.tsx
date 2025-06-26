@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { gsap } from 'gsap';
 import WelcomeSteps from '@/components/home/WelcomeSteps';
+import ElegantLanguageSwitcher from '@/components/ElegantLanguageSwitcher';
 
 const Index = () => {
   const { dir } = useLanguage();
@@ -26,6 +27,11 @@ const Index = () => {
       ref={containerRef}
       dir={dir()}
     >
+      {/* Mobile Language Switcher */}
+      <div className="md:hidden mb-4 flex justify-center">
+        <ElegantLanguageSwitcher />
+      </div>
+      
       <WelcomeSteps />
     </div>
   );

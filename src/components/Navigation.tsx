@@ -5,6 +5,7 @@ import { Home, Brain, CheckSquare, BarChart, HelpCircle, User } from 'lucide-rea
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ElegantLanguageSwitcher from './ElegantLanguageSwitcher';
 import {
   Tooltip,
   TooltipContent,
@@ -54,14 +55,17 @@ const Navigation = () => {
       <div className="max-w-4xl mx-auto px-4">
         <div className="hidden md:flex items-center justify-between py-3">
           <div className="text-xl font-semibold text-sage-700">{t('index.step1.title')}</div>
-          <Link to="/profile" className={`p-2 ${isActive('/profile') ? 'text-sage-600' : 'text-gray-600'} hover:text-sage-500 transition-colors`}>
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={user?.user_metadata?.avatar_url} />
-              <AvatarFallback className="text-xs bg-sage-100 text-sage-600">
-                {user?.user_metadata?.full_name ? getInitials(user.user_metadata.full_name) : getInitials(user?.email || 'U')}
-              </AvatarFallback>
-            </Avatar>
-          </Link>
+          <div className="flex items-center gap-3">
+            <ElegantLanguageSwitcher />
+            <Link to="/profile" className={`p-2 ${isActive('/profile') ? 'text-sage-600' : 'text-gray-600'} hover:text-sage-500 transition-colors`}>
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={user?.user_metadata?.avatar_url} />
+                <AvatarFallback className="text-xs bg-sage-100 text-sage-600">
+                  {user?.user_metadata?.full_name ? getInitials(user.user_metadata.full_name) : getInitials(user?.email || 'U')}
+                </AvatarFallback>
+              </Avatar>
+            </Link>
+          </div>
         </div>
         <div className="flex justify-around items-center py-3 md:hidden min-h-[60px]">
           {navItems.map(({ path, icon: Icon, label }) => (
