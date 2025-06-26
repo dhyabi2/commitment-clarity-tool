@@ -1,7 +1,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/contexts/AuthContext';
 
 interface BrainDumpData {
@@ -15,7 +15,7 @@ export const useBrainDumpMutation = ({
 }: { 
   onSuccess?: () => void;
   onLimitReached?: () => void;
-}) => {
+} = {}) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();

@@ -16,7 +16,12 @@ export const BrainDumpForm: React.FC = () => {
   const [tags, setTags] = useState<string[]>([]);
   const { canCreateThought, hasExceededLimit } = useSubscription();
   
-  const { mutate: addThought, isPending } = useBrainDumpMutation();
+  const { addThoughtMutation } = useBrainDumpMutation({
+    onSuccess: () => {
+      setContent('');
+      setTags([]);
+    }
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +32,7 @@ export const BrainDumpForm: React.FC = () => {
     
     if (!content.trim()) return;
 
-    addThought(
+    addThoughtMutation.mutate(
       { content: content.trim(), tags },
       {
         onSuccess: () => {
@@ -36,6 +41,12 @@ export const BrainDumpForm: React.FC = () => {
         }
       }
     );
+  };
+
+  const handleTagAdd = (tag: string) => {
+    if (tag && !tags.includes(tag)) {
+      setTags([...tags, tag]);
+    }
   };
 
   // Show upgrade prompt instead of form when limit is exceeded
@@ -78,22 +89,41 @@ export const BrainDumpForm: React.FC = () => {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               className="min-h-[120px] resize-none"
-              disabled={isPending}
+              disabled={addThoughtMutation.isPending}
             />
             
-            <TagInput
-              tags={tags}
-              onTagsChange={setTags}
-              placeholder={t('brainDump.tagPlaceholder')}
-              disabled={isPending}
-            />
+            <div className="space-y-2">
+              <TagInput
+                onTagAdd={handleTagAdd}
+                placeholder={t('brainDump.tagPlaceholder')}
+              />
+              {tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="bg-sage-100 text-sage-800 px-2 py-1 rounded-full text-sm flex items-center gap-1"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => setTags(tags.filter((_, i) => i !== index))}
+                        className="text-sage-600 hover:text-sage-800"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
             
             <Button 
               type="submit" 
-              disabled={!content.trim() || isPending}
+              disabled={!content.trim() || addThoughtMutation.isPending}
               className="w-full bg-sage-600 hover:bg-sage-700"
             >
-              {isPending ? (
+              {addThoughtMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   {t('brainDump.adding')}
