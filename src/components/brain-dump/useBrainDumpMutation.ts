@@ -28,7 +28,7 @@ export const useBrainDumpMutation = ({
 
       console.log('Checking if user can create thought...');
       
-      // Check if user can create thought
+      // Check if user can create thought (now handles unlimited usage internally)
       const { data: canCreate, error: checkError } = await supabase
         .rpc('can_create_thought', { p_user_id: user.id });
 
@@ -95,7 +95,7 @@ export const useBrainDumpMutation = ({
 
       console.log('Thought created successfully:', thought);
 
-      // Increment usage count
+      // Increment usage count (still track usage even in unlimited mode for analytics)
       const { error: usageError } = await supabase
         .rpc('increment_usage_count', { p_user_id: user.id });
 

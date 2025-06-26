@@ -3,13 +3,13 @@ import React, { useState } from 'react';
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Crown, AlertTriangle } from "lucide-react";
+import { Crown, AlertTriangle, Infinity } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { SubscriptionModal } from "./SubscriptionModal";
 
 export const UsageIndicator: React.FC = () => {
-  const { usage, maxFreeThoughts, isPremium, hasExceededLimit } = useSubscription();
+  const { usage, maxFreeThoughts, isPremium, isUnlimitedFree, hasExceededLimit } = useSubscription();
   const { t } = useLanguage();
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
 
@@ -21,6 +21,21 @@ export const UsageIndicator: React.FC = () => {
             <Crown className="h-4 w-4 text-yellow-600" />
             <span className="text-sm font-medium text-yellow-800">Premium Active</span>
             <span className="text-xs text-yellow-600">Unlimited thoughts</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Show unlimited free usage indicator
+  if (isUnlimitedFree) {
+    return (
+      <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
+        <CardContent className="p-3">
+          <div className="flex items-center gap-2">
+            <Infinity className="h-4 w-4 text-green-600" />
+            <span className="text-sm font-medium text-green-800">Free Unlimited</span>
+            <span className="text-xs text-green-600">{usage} thoughts used</span>
           </div>
         </CardContent>
       </Card>

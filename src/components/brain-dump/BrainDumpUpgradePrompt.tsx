@@ -17,10 +17,11 @@ export const BrainDumpUpgradePrompt: React.FC<BrainDumpUpgradePromptProps> = ({
   onOpenChange
 }) => {
   const { t } = useLanguage();
-  const { usage, maxFreeThoughts } = useSubscription();
+  const { usage, maxFreeThoughts, isUnlimitedFree } = useSubscription();
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
 
-  if (!open) return null;
+  // Don't show upgrade prompt if unlimited free usage is enabled
+  if (!open || isUnlimitedFree) return null;
 
   return (
     <>

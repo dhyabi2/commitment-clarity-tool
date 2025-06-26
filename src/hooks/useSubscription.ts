@@ -119,8 +119,9 @@ export const useSubscription = () => {
   const isPremium = subscription?.status === 'active' && subscription?.plan_type === 'premium';
   const currentUsage = usage?.thoughts_count || 0;
   const maxFreeThoughts = freeTierLimit || 20; // Fallback to 20 if not loaded
-  const canCreateThought = isPremium || currentUsage < maxFreeThoughts;
-  const hasExceededLimit = !isPremium && currentUsage >= maxFreeThoughts;
+  const isUnlimitedFree = maxFreeThoughts === 0; // New: detect unlimited mode
+  const canCreateThought = isPremium || isUnlimitedFree || currentUsage < maxFreeThoughts;
+  const hasExceededLimit = !isPremium && !isUnlimitedFree && currentUsage >= maxFreeThoughts;
 
   // Get pricing information from config
   const priceOMR = subscriptionConfig?.subscription_price_omr || '14';
@@ -131,6 +132,7 @@ export const useSubscription = () => {
     usage: currentUsage,
     maxFreeThoughts,
     isPremium,
+    isUnlimitedFree, // New: expose unlimited mode
     canCreateThought,
     hasExceededLimit,
     isLoading: subscriptionLoading || usageLoading || configLoading || freeTierLimitLoading,
