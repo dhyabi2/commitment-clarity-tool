@@ -1,140 +1,189 @@
-
-import { common } from './translations/common';
-import { dashboardTranslations } from './translations/dashboard';
-import { thoughtsTranslations } from './translations/thoughts';
-import { commitmentsTranslations } from './translations/commitments';
-
 export const translations = {
   en: {
-    ...common.en,
-    ...dashboardTranslations.en,
-    ...thoughtsTranslations.en,
-    ...commitmentsTranslations.en,
+    auth: {
+      signIn: "Sign In",
+      signOut: "Sign Out",
+      email: "Email",
+      password: "Password",
+      confirmPassword: "Confirm Password",
+      name: "Name",
+      forgotPassword: "Forgot Password?",
+      resetPassword: "Reset Password",
+      signInWithGoogle: "Sign in with Google",
+      signUp: "Sign Up",
+      signedInAs: "Signed in as",
+      validation: {
+        required: "This field is required",
+        email: "Invalid email address",
+        password: "Password must be at least 6 characters",
+        confirmPassword: "Passwords do not match",
+        name: "Name must be at least 3 characters",
+      },
+      error: {
+        credentials: "Invalid credentials",
+        email: "Email already exists",
+        default: "An error occurred",
+      },
+      success: {
+        resetPassword: "Password reset email sent",
+        updatePassword: "Password updated successfully",
+      },
+    },
+    navigation: {
+      home: "Home",
+      brainDump: "Brain Dump",
+      thoughts: "Thoughts",
+      commitments: "Commitments",
+      settings: "Settings",
+    },
+    home: {
+      title: "Welcome to Clarity",
+      subtitle: "Capture, clarify, and commit to your thoughts",
+      features: "Features",
+      feature1Title: "Brain Dump",
+      feature1Description: "Quickly capture all your thoughts in one place.",
+      feature2Title: "Clarify Thoughts",
+      feature2Description:
+        "Transform your thoughts into actionable commitments.",
+      feature3Title: "Commitments",
+      feature3Description: "Track and manage your commitments effectively.",
+      getStarted: "Get Started",
+    },
     subscription: {
       title: "Upgrade to Premium",
-      description: "You've reached your monthly limit of 20 thoughts. Upgrade to continue capturing your ideas.",
+      description: "Unlock unlimited thoughts and premium features",
       premiumPlan: "Premium Plan",
       per: "per",
       days: "days",
       unlimitedThoughts: "Unlimited thoughts",
-      allFeatures: "All existing features",
+      allFeatures: "Access to all features",
       prioritySupport: "Priority support",
       currentUsage: "Current usage",
-      thoughts: "thoughts this month",
-      maybeLater: "Maybe Later",
+      thoughts: "thoughts",
+      maybeLater: "Maybe later",
       upgradeNow: "Upgrade Now",
       processing: "Processing...",
-      limitReached: "You've reached your monthly limit. Please upgrade to continue adding thoughts."
-    },
-    faq: {
-      title: "Frequently Asked Questions",
-      q1: "What is Brain Dump?",
-      a1: "Brain Dump is a simple tool to help you clear your mind by capturing all your thoughts, tasks, and ideas in one place.",
-      q2: "How do I use Brain Dump effectively?",
-      a2: "Just write down whatever is on your mind without worrying about organization. You can later review and clarify these thoughts into actionable commitments.",
-      q3: "What happens after I capture my thoughts?",
-      a3_1: "Review your thoughts regularly",
-      a3_2: "Clarify them into specific commitments",
-      a3_3: "Track their completion status",
-      q4: "How do I turn thoughts into commitments?",
-      a4: "When you're ready to act on a thought:",
-      a4_1: "Click the 'Clarify' button on any thought",
-      a4_2: "Define the specific outcome and next action",
-      a4_desc: "This helps turn vague ideas into concrete, actionable steps.",
-      q5: "Can I organize my thoughts?",
-      a5: "Yes, you can add tags to your thoughts and filter them later. This helps you group related thoughts together.",
-      q6: "What is my Device UUID and how does it secure my data?",
-      a6: "Your Device UUID (Universally Unique Identifier) is a secure way to keep your data private:",
-      a6_1: "Each device gets its own unique identifier that's automatically generated and stored locally",
-      a6_2: "Your thoughts and commitments are only accessible from the device where they were created",
-      a6_3: "This ensures your data remains private and separate from other users without requiring an account"
+      limitReached: "You've reached your monthly limit. Upgrade to continue adding thoughts."
     },
     brainDump: {
-      title: "Brain Dump Time!",
-      description: "Got thoughts? Toss 'em in below — no need to sort or polish. Just unload and breathe.",
-      placeholder: "What's on your mind?",
-      addTags: "Add tags (optional) - press Enter to add",
-      tagPlaceholder: "Add a tag and press Enter",
-      capture: "Capture Thought",
+      title: "Brain Dump",
+      description: "Capture your thoughts quickly and organize them later",
+      placeholder: "What's on your mind? Just start writing...",
+      tagPlaceholder: "Add a tag",
       submit: "Capture Thought",
       adding: "Adding...",
-      thoughtCaptured: "Your thought has been safely stored."
+      thoughtCaptured: "Thought captured successfully!"
     },
-    index: {
-      step1: {
-        title: "Brain Dump",
-        description: "Brain Dump Time! Got thoughts? Toss 'em in below — no need to sort or polish. Just unload and breathe."
-      },
-      step2: {
-        title: "Review Your Active Commitments",
-        description: "Track and manage your ongoing commitments"
-      }
+    thoughts: {
+      title: "Your Thoughts",
+      description: "Review and clarify your thoughts to turn them into actionable commitments",
+      export: "Export thoughts",
+      import: "Import thoughts",
+      noThoughts: "No thoughts found",
+      startCapturing: "Start by capturing your thoughts in the brain dump area",
+      completeToSee: "Complete some thoughts to see them here",
+      goToBrainDump: "Go to Brain Dump",
+      addTag: "Add a tag and press Enter",
+      thoughtCaptured: "Thought captured successfully",
+      thoughtDeleted: "Thought deleted successfully",
+      thoughtUpdated: "Thought updated successfully",
+      importSuccess: "Thoughts imported successfully",
+      importError: "Error importing thoughts",
+      allTags: "All",
+      clarify: "Clarify"
     }
   },
   ar: {
-    ...common.ar,
-    ...dashboardTranslations.ar,
-    ...thoughtsTranslations.ar,
-    ...commitmentsTranslations.ar,
+    auth: {
+      signIn: "تسجيل الدخول",
+      signOut: "تسجيل الخروج",
+      email: "البريد الإلكتروني",
+      password: "كلمة المرور",
+      confirmPassword: "تأكيد كلمة المرور",
+      name: "الاسم",
+      forgotPassword: "هل نسيت كلمة المرور؟",
+      resetPassword: "إعادة تعيين كلمة المرور",
+      signInWithGoogle: "تسجيل الدخول باستخدام جوجل",
+      signUp: "اشتراك",
+      signedInAs: "تم تسجيل الدخول باسم",
+      validation: {
+        required: "هذا الحقل مطلوب",
+        email: "عنوان بريد إلكتروني غير صالح",
+        password: "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+        confirmPassword: "كلمات المرور غير متطابقة",
+        name: "يجب أن يتكون الاسم من 3 أحرف على الأقل",
+      },
+      error: {
+        credentials: "بيانات اعتماد غير صالحة",
+        email: "البريد الإلكتروني موجود بالفعل",
+        default: "حدث خطأ",
+      },
+      success: {
+        resetPassword: "تم إرسال بريد إلكتروني لإعادة تعيين كلمة المرور",
+        updatePassword: "تم تحديث كلمة المرور بنجاح",
+      },
+    },
+    navigation: {
+      home: "الرئيسية",
+      brainDump: "تفريغ الأفكار",
+      thoughts: "الأفكار",
+      commitments: "الالتزامات",
+      settings: "الإعدادات",
+    },
+    home: {
+      title: "مرحباً بك في Clarity",
+      subtitle: "اكتب ووضح والتزم بأفكارك",
+      features: "الميزات",
+      feature1Title: "تفريغ الأفكار",
+      feature1Description: "اكتب جميع أفكارك بسرعة في مكان واحد.",
+      feature2Title: "توضيح الأفكار",
+      feature2Description: "حوّل أفكارك إلى التزامات قابلة للتنفيذ.",
+      feature3Title: "الالتزامات",
+      feature3Description: "تتبع وإدارة التزاماتك بفعالية.",
+      getStarted: "ابدأ الآن",
+    },
     subscription: {
-      title: "الترقية إلى المميز",
-      description: "لقد وصلت إلى الحد الشهري وهو 20 فكرة. قم بالترقية لمواصلة تسجيل أفكارك.",
+      title: "الترقية إلى البريميوم",
+      description: "احصل على أفكار غير محدودة وميزات بريميوم",
       premiumPlan: "الخطة المميزة",
       per: "لكل",
       days: "يوم",
       unlimitedThoughts: "أفكار غير محدودة",
-      allFeatures: "جميع الميزات الحالية",
-      prioritySupport: "دعم أولوية",
+      allFeatures: "الوصول إلى جميع الميزات",
+      prioritySupport: "الدعم المميز",
       currentUsage: "الاستخدام الحالي",
-      thoughts: "فكرة هذا الشهر",
+      thoughts: "فكرة",
       maybeLater: "ربما لاحقاً",
-      upgradeNow: "قم بالترقية الآن",
+      upgradeNow: "ترقية الآن",
       processing: "جاري المعالجة...",
-      limitReached: "لقد وصلت إلى الحد الشهري. يرجى الترقية لمواصلة إضافة الأفكار."
-    },
-    faq: {
-      title: "الأسئلة الشائعة",
-      q1: "ما هو تفريغ الأفكار؟",
-      a1: "تفريغ الأفكار هو أداة بسيطة تساعدك على تصفية ذهنك من خلال تسجيل جميع أفكارك ومهامك وأفكارك في مكان واحد",
-      q2: "كيف أستخدم تفريغ الأفكار بشكل فعال؟",
-      a2: "فقط اكتب ما يدور في ذهنك دون القلق بشأن التنظيم. يمكنك لاحقاً مراجعة وتوضيح هذه الأفكار وتحويلها إلى التزامات قابلة للتنفيذ",
-      q3: "ماذا يحدث بعد تسجيل أفكاري؟",
-      a3_1: "راجع أفكارك بانتظام",
-      a3_2: "وضحها وتحولها إلى التزامات محددة",
-      a3_3: "تتبع حالة إكمالها",
-      q4: "كيف أحول الأفكار إلى التزامات؟",
-      a4: "عندما تكون مستعداً للعمل على فكرة ما:",
-      a4_1: "انقر على زر 'توضيح' على أي فكرة",
-      a4_2: "حدد النتيجة المحددة والإجراء التالي",
-      a4_desc: "هذا يساعد في تحويل الأفكار الغامضة إلى خطوات ملموسة وقابلة للتنفيذ.",
-      q5: "هل يمكنني تنظيم أفكاري؟",
-      a5: "نعم، يمكنك إضافة وسوم لأفكارك وتصفيتها لاحقاً. هذا يساعدك في تجميع الأفكار المرتبطة معاً.",
-      q6: "ما هو معرف جهازي الفريد وكيف يؤمن بياناتي؟",
-      a6: "معرف جهازك الفريد (UUID) هو طريقة آمنة للحفاظ على خصوصية بياناتك:",
-      a6_1: "يحصل كل جهاز على معرف فريد خاص به يتم إنشاؤه تلقائياً وتخزينه محلياً",
-      a6_2: "لا يمكن الوصول إلى أفكارك والتزاماتك إلا من الجهاز الذي تم إنشاؤها فيه",
-      a6_3: "هذا يضمن بقاء بياناتك خاصة ومنفصلة عن المستخدمين الآخرين دون الحاجة إلى حساب"
+      limitReached: "لقد وصلت إلى الحد الشهري. قم بالترقية لمتابعة إضافة الأفكار."
     },
     brainDump: {
-      title: "سجل أفكارك",
-      description: "صفِّ ذهنك من خلال تسجيل أي أفكار أو مهام غير مكتملة هنا",
-      placeholder: "ما الذي يدور في ذهنك؟",
-      addTags: "أضف وسوماً (اختياري) - اضغط Enter للإضافة",
-      tagPlaceholder: "أضف وسماً واضغط Enter",
-      capture: "تسجيل الفكرة",
-      submit: "تسجيل الفكرة",
-      adding: "جاري الإضافة...",
-      thoughtCaptured: "تم حفظ فكرتك بأمان."
+      title: "تفريغ الأفكار",
+      description: "اكتب أفكارك بسرعة ونظمها لاحقاً",
+      placeholder: "ما الذي يدور في ذهنك؟ ابدأ الكتابة...",
+      tagPlaceholder: "أضف وسماً",
+      submit: "احفظ الفكرة",
+      adding: "إضافة...",
+      thoughtCaptured: "تم حفظ الفكرة بنجاح!"
     },
-    index: {
-      step1: {
-        title: "تفريغ الأفكار",
-        description: "ابدأ بتسجيل جميع أفكارك أدناه. لا تقلق بشأن تنظيمها الآن - فقط أخرجها من رأسك."
-      },
-      step2: {
-        title: "مراجعة التزاماتك النشطة",
-        description: "تتبع وإدارة التزاماتك المستمرة."
-      }
+    thoughts: {
+      title: "أفكارك",
+      description: "راجع وحدد أفكارك لتحويلها إلى التزامات قابلة للتنفيذ",
+      export: "تصدير الأفكار",
+      import: "استيراد الأفكار",
+      noThoughts: "لا توجد أفكار",
+      startCapturing: "ابدأ بتسجيل أفكارك في منطقة تفريغ الأفكار",
+      completeToSee: "أكمل بعض الأفكار لرؤيتها هنا",
+      goToBrainDump: "اذهب إلى تفريغ الأفكار",
+      addTag: "أضف وسماً واضغط Enter",
+      thoughtCaptured: "تم تسجيل الفكرة بنجاح",
+      thoughtDeleted: "تم حذف الفكرة بنجاح",
+      thoughtUpdated: "تم تحديث الفكرة بنجاح",
+      importSuccess: "تم استيراد الأفكار بنجاح",
+      importError: "خطأ في استيراد الأفكار",
+      allTags: "الكل",
+      clarify: "توضيح"
     }
   }
 };

@@ -343,6 +343,10 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: number
       }
+      get_free_tier_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       get_subscription_config: {
         Args: { p_config_key: string }
         Returns: string

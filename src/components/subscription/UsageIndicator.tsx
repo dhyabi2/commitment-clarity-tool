@@ -6,7 +6,7 @@ import { Crown, AlertTriangle } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
 
 export const UsageIndicator: React.FC = () => {
-  const { usage, isPremium, isNearLimit, hasExceededLimit } = useSubscription();
+  const { usage, maxFreeThoughts, isPremium, isNearLimit, hasExceededLimit } = useSubscription();
 
   if (isPremium) {
     return (
@@ -22,7 +22,7 @@ export const UsageIndicator: React.FC = () => {
     );
   }
 
-  const percentage = Math.min((usage / 20) * 100, 100);
+  const percentage = Math.min((usage / maxFreeThoughts) * 100, 100);
   const isWarning = isNearLimit || hasExceededLimit;
 
   return (
@@ -32,7 +32,7 @@ export const UsageIndicator: React.FC = () => {
           <div className="flex items-center gap-2">
             {isWarning && <AlertTriangle className="h-4 w-4 text-red-500" />}
             <span className={`text-sm font-medium ${isWarning ? 'text-red-800' : 'text-sage-800'}`}>
-              {usage}/20 thoughts used
+              {usage}/{maxFreeThoughts} thoughts used
             </span>
           </div>
           <span className={`text-xs ${isWarning ? 'text-red-600' : 'text-sage-600'}`}>

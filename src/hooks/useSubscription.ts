@@ -78,6 +78,19 @@ export const useSubscription = () => {
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
+  // Get the free tier limit from config
+  const { data: freeTierLimit, isLoading: freeTierLimitLoading } = useQuery({
+    queryKey: ['free-tier-limit'],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_free_tier_limit');
+      
+      if (error) throw error;
+      
+      return data as number;
+    },
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+
   const createSubscriptionMutation = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error('User not authenticated');
@@ -105,9 +118,10 @@ export const useSubscription = () => {
 
   const isPremium = subscription?.status === 'active' && subscription?.plan_type === 'premium';
   const currentUsage = usage?.thoughts_count || 0;
-  const canCreateThought = isPremium || currentUsage < 20;
-  const isNearLimit = !isPremium && currentUsage >= 18;
-  const hasExceededLimit = !isPremium && currentUsage >= 20;
+  const maxFreeThoughts = freeTierLimit || 20; // Fallback to 20 if not loaded
+  const canCreateThought = isPremium || currentUsage < maxFreeThoughts;
+  const isNearLimit = !isPremium && currentUsage >= Math.max(maxFreeThoughts - 2, 0);
+  const hasExceededLimit = !isPremium && currentUsage >= maxFreeThoughts;
 
   // Get pricing information from config
   const priceOMR = subscriptionConfig?.subscription_price_omr || '14';
@@ -116,11 +130,12 @@ export const useSubscription = () => {
   return {
     subscription,
     usage: currentUsage,
+    maxFreeThoughts,
     isPremium,
     canCreateThought,
     isNearLimit,
     hasExceededLimit,
-    isLoading: subscriptionLoading || usageLoading || configLoading,
+    isLoading: subscriptionLoading || usageLoading || configLoading || freeTierLimitLoading,
     createSubscription: () => createSubscriptionMutation.mutate(),
     isCreatingSubscription: createSubscriptionMutation.isPending,
     priceOMR,
