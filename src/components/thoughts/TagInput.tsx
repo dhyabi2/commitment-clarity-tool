@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Input } from "@/components/ui/input";
 import { Tag as TagIcon } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 interface TagInputProps {
   onTagAdd: (tag: string) => void;
@@ -11,9 +13,9 @@ interface TagInputProps {
 
 export const TagInput = ({ 
   onTagAdd, 
-  placeholder = "Add a tag and press Enter",
   existingTags = [] 
 }: TagInputProps) => {
+  const { t } = useLanguage();
   const [tagInput, setTagInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [filteredTags, setFilteredTags] = useState<string[]>([]);
@@ -21,12 +23,14 @@ export const TagInput = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  // Initialize and validate existingTags
-  const validExistingTags = (existingTags || []).filter(tag => 
-    typeof tag === 'string' && tag.trim().length > 0
-  );
+  // Memoize valid existing tags to prevent unnecessary re-renders
+  const validExistingTags = useMemo(() => {
+    return (existingTags || []).filter(tag => 
+      typeof tag === 'string' && tag.trim().length > 0
+    );
+  }, [existingTags]);
 
-  // Filter tags based on input
+  // Filter tags based on input with proper dependency handling
   useEffect(() => {
     if (!tagInput.trim()) {
       setShowSuggestions(false);
@@ -106,19 +110,14 @@ export const TagInput = ({
           onKeyDown={handleKeyDown}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          placeholder={placeholder}
+          placeholder={t('thoughts.addTag')}
           className="flex-1"
         />
       </div>
       {showSuggestions && filteredTags.length > 0 && (
         <div 
           ref={suggestionsRef}
-          className="fixed w-[inherit] mt-1 bg-white border rounded-lg shadow-lg"
-          style={{ 
-            zIndex: 99999,
-            position: 'absolute',
-            width: '100%'
-          }}
+          className="absolute w-full mt-1 bg-white border rounded-lg shadow-lg z-50"
         >
           <div className="py-1">
             {filteredTags.map((tag, index) => (
