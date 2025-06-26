@@ -7,7 +7,7 @@ import { Brain, Loader2 } from "lucide-react";
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { TagInput } from '@/components/thoughts/TagInput';
 import { useBrainDumpMutation } from './useBrainDumpMutation';
-import BrainDumpUpgradePrompt from './BrainDumpUpgradePrompt';
+import { BrainDumpUpgradePrompt } from './BrainDumpUpgradePrompt';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import SignInModal from '@/components/auth/SignInModal';
 
@@ -48,6 +48,12 @@ const BrainDumpForm = () => {
     );
   };
 
+  const handleTagAdd = (tag: string) => {
+    if (tag && !tags.includes(tag)) {
+      setTags([...tags, tag]);
+    }
+  };
+
   return (
     <>
       <Card className="card-content bg-white/80 backdrop-blur-sm border-sage-200 shadow-lg hover:shadow-xl transition-all duration-300">
@@ -74,11 +80,30 @@ const BrainDumpForm = () => {
 
             <div>
               <TagInput
-                value={tags}
-                onChange={setTags}
+                onTagAdd={handleTagAdd}
                 placeholder="Add tags (optional)..."
                 disabled={addThoughtMutation.isPending}
+                existingTags={tags}
               />
+              {tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-sage-100 text-sage-700"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => setTags(tags.filter((_, i) => i !== index))}
+                        className="ml-1 text-sage-500 hover:text-sage-700"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
             <Button

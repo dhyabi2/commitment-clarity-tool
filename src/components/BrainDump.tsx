@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
-import { BrainDumpForm } from './brain-dump/BrainDumpForm';
+import BrainDumpForm from './brain-dump/BrainDumpForm';
 import { UsageIndicator } from './subscription/UsageIndicator';
 import { gsap } from 'gsap';
 
