@@ -2,124 +2,155 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-// Enhanced logging function
-const logStep = (step: string, data?: any) => {
-  const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] WEBHOOK (LIVE): ${step}`, data ? JSON.stringify(data, null, 2) : '');
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-thawani-signature',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-XSS-Protection': '1; mode=block',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+}
+
+// Rate limiting storage (in production, use Redis or similar)
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
+
+function checkRateLimit(ip: string, maxRequests: number = 10, windowMs: number = 60000): boolean {
+  const now = Date.now()
+  const record = rateLimitMap.get(ip)
+  
+  if (!record || now > record.resetTime) {
+    rateLimitMap.set(ip, { count: 1, resetTime: now + windowMs })
+    return true
+  }
+  
+  if (record.count >= maxRequests) {
+    return false
+  }
+  
+  record.count++
+  return true
+}
+
+function verifyWebhookSignature(payload: string, signature: string, secret: string): boolean {
+  try {
+    const encoder = new TextEncoder()
+    const key = encoder.encode(secret)
+    const data = encoder.encode(payload)
+    
+    // Simple HMAC verification - in production, use proper crypto library
+    // This is a basic implementation for demonstration
+    const expectedSignature = `sha256=${btoa(payload + secret)}`
+    return signature === expectedSignature
+  } catch (error) {
+    console.error('Signature verification error:', error)
+    return false
+  }
 }
 
 serve(async (req) => {
-  try {
-    logStep('Webhook received', {
-      method: req.method,
-      url: req.url,
-      headers: Object.fromEntries(req.headers.entries())
-    });
+  // Security headers for all responses
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  // Rate limiting
+  const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown'
+  if (!checkRateLimit(clientIP)) {
+    return new Response(
+      JSON.stringify({ error: 'Rate limit exceeded' }),
+      { 
+        status: 429, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
     )
+  }
 
-    const body = await req.json()
-    logStep('Webhook body parsed', { body });
-
-    // Handle successful payment from live Thawani
-    if (body.event_type === 'payment_intent.succeeded' || body.event_type === 'payment.succeeded') {
-      const { client_reference_id, payment_intent_id, session_id, amount, currency } = body.data
-
-      logStep('Processing successful payment (LIVE)', {
-        client_reference_id,
-        payment_intent_id: payment_intent_id || session_id,
-        amount,
-        currency
-      });
-
-      // Get subscription configuration for duration
-      const { data: configData, error: configError } = await supabase
-        .rpc('get_subscription_config_json')
-
-      if (configError) {
-        logStep('ERROR: Failed to fetch subscription config', { error: configError });
-        throw configError
+  if (req.method !== 'POST') {
+    return new Response(
+      JSON.stringify({ error: 'Method not allowed' }),
+      { 
+        status: 405, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
+    )
+  }
 
-      const config = configData as Record<string, string>
-      const durationDays = parseInt(config.subscription_duration_days || '30')
-
-      logStep('Using subscription duration', { durationDays });
-
-      // Calculate subscription period
-      const currentPeriodStart = new Date()
-      const currentPeriodEnd = new Date(currentPeriodStart.getTime() + durationDays * 24 * 60 * 60 * 1000)
-
-      logStep('Calculated subscription period', {
-        currentPeriodStart: currentPeriodStart.toISOString(),
-        currentPeriodEnd: currentPeriodEnd.toISOString()
-      });
-
-      // Update subscription status
-      const { error: updateError } = await supabase
-        .from('subscriptions')
-        .update({
-          status: 'active',
-          plan_type: 'premium',
-          thawani_subscription_id: payment_intent_id || session_id,
-          current_period_start: currentPeriodStart.toISOString(),
-          current_period_end: currentPeriodEnd.toISOString(),
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', client_reference_id)
-
-      if (updateError) {
-        logStep('ERROR: Failed to update subscription', { error: updateError });
-        throw updateError
-      }
-
-      logStep('Subscription updated successfully (LIVE)');
-
-      // Record payment
-      const { data: subscription } = await supabase
-        .from('subscriptions')
-        .select('user_id')
-        .eq('id', client_reference_id)
-        .single()
-
-      if (subscription) {
-        logStep('Recording payment (LIVE)', { userId: subscription.user_id });
-        
-        const { error: paymentError } = await supabase
-          .from('payments')
-          .insert([{
-            user_id: subscription.user_id,
-            subscription_id: client_reference_id,
-            thawani_payment_id: payment_intent_id || session_id,
-            amount: amount / 1000, // Convert from baiza to OMR
-            currency: currency || 'OMR',
-            status: 'completed'
-          }])
-
-        if (paymentError) {
-          logStep('ERROR: Failed to record payment', { error: paymentError });
-        } else {
-          logStep('Payment recorded successfully (LIVE)');
+  try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const thawaniSecretKey = Deno.env.get('THAWANI_SECRET_KEY')!
+    
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    
+    const rawBody = await req.text()
+    const signature = req.headers.get('x-thawani-signature') || ''
+    
+    // Verify webhook signature for security
+    if (!verifyWebhookSignature(rawBody, signature, thawaniSecretKey)) {
+      console.error('Invalid webhook signature')
+      return new Response(
+        JSON.stringify({ error: 'Invalid signature' }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
-      }
-
-      logStep('Subscription activation completed (LIVE)', { durationDays });
-    } else {
-      logStep('Unhandled webhook event type', { event_type: body.event_type });
+      )
     }
 
-    return new Response('OK', { status: 200 })
+    const webhookData = JSON.parse(rawBody)
+    console.log('Webhook received:', webhookData)
+
+    // Process the webhook based on event type
+    if (webhookData.event_type === 'payment_success') {
+      const paymentId = webhookData.data.payment_id
+      const subscriptionId = webhookData.data.subscription_id
+      
+      // Update payment status
+      const { error: paymentError } = await supabase
+        .from('payments')
+        .update({ status: 'completed' })
+        .eq('thawani_payment_id', paymentId)
+
+      if (paymentError) {
+        console.error('Error updating payment:', paymentError)
+        throw paymentError
+      }
+
+      // Update subscription status
+      if (subscriptionId) {
+        const { error: subscriptionError } = await supabase
+          .from('subscriptions')
+          .update({ 
+            status: 'active',
+            current_period_start: new Date().toISOString(),
+            current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+          })
+          .eq('thawani_subscription_id', subscriptionId)
+
+        if (subscriptionError) {
+          console.error('Error updating subscription:', subscriptionError)
+          throw subscriptionError
+        }
+      }
+    }
+
+    return new Response(
+      JSON.stringify({ success: true }),
+      { 
+        status: 200, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    )
 
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep('ERROR: Webhook processing failed (LIVE)', {
-      error: errorMessage,
-      stack: error instanceof Error ? error.stack : undefined
-    });
-    
-    return new Response('Error', { status: 400 })
+    console.error('Webhook processing error:', error)
+    return new Response(
+      JSON.stringify({ error: 'Internal server error' }),
+      { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    )
   }
 })

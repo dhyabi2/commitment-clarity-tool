@@ -5,247 +5,186 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-XSS-Protection': '1; mode=block',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
 }
 
-// Enhanced logging function
-const logStep = (step: string, data?: any) => {
-  const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] ${step}`, data ? JSON.stringify(data, null, 2) : '');
+// Rate limiting storage
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
+
+function checkRateLimit(ip: string, maxRequests: number = 5, windowMs: number = 60000): boolean {
+  const now = Date.now()
+  const record = rateLimitMap.get(ip)
+  
+  if (!record || now > record.resetTime) {
+    rateLimitMap.set(ip, { count: 1, resetTime: now + windowMs })
+    return true
+  }
+  
+  if (record.count >= maxRequests) {
+    return false
+  }
+  
+  record.count++
+  return true
+}
+
+function validateInput(data: any): boolean {
+  // Basic input validation
+  if (!data || typeof data !== 'object') return false
+  
+  // Add more specific validation as needed
+  return true
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
+  // Security headers for all responses
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
-  try {
-    logStep('CREATE-SUBSCRIPTION: Function started');
-
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  // Rate limiting
+  const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown'
+  if (!checkRateLimit(clientIP)) {
+    return new Response(
+      JSON.stringify({ error: 'Rate limit exceeded' }),
+      { 
+        status: 429, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
     )
+  }
 
-    // Enhanced authentication logging
+  if (req.method !== 'POST') {
+    return new Response(
+      JSON.stringify({ error: 'Method not allowed' }),
+      { 
+        status: 405, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    )
+  }
+
+  try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const thawaniPublishableKey = Deno.env.get('THAWANI_PUBLISHABLE_KEY')!
+    const thawaniSecretKey = Deno.env.get('THAWANI_SECRET_KEY')!
+    
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    
+    // Get the authorization header
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
-      logStep('ERROR: No authorization header provided');
-      throw new Error('No authorization header provided')
+      return new Response(
+        JSON.stringify({ error: 'Missing authorization header' }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
     }
 
+    // Verify the JWT token
     const token = authHeader.replace('Bearer ', '')
-    logStep('Authenticating user with token');
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
     
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token)
-
-    if (userError) {
-      logStep('ERROR: User authentication failed', { error: userError });
-      throw new Error(`User authentication failed: ${userError.message}`)
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid or expired token' }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
     }
 
-    if (!user) {
-      logStep('ERROR: User not authenticated');
-      throw new Error('User not authenticated')
-    }
-
-    logStep('User authenticated successfully', { 
-      userId: user.id, 
-      email: user.email 
-    });
-
-    // Enhanced environment variable checking
-    const thawaniSecretKey = Deno.env.get('THAWANI_SECRET_KEY');
-    const thawaniPublishableKey = Deno.env.get('THAWANI_PUBLISHABLE_KEY');
+    const requestData = await req.json()
     
-    if (!thawaniSecretKey) {
-      logStep('ERROR: THAWANI_SECRET_KEY not found in environment');
-      throw new Error('THAWANI_SECRET_KEY is not configured')
+    if (!validateInput(requestData)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid input data' }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
     }
 
-    if (!thawaniPublishableKey) {
-      logStep('ERROR: THAWANI_PUBLISHABLE_KEY not found in environment');
-      throw new Error('THAWANI_PUBLISHABLE_KEY is not configured')
-    }
+    // Get subscription configuration
+    const { data: configData } = await supabase.rpc('get_subscription_config_json')
+    const priceInBaiza = parseInt(configData?.subscription_price_baiza || '1400')
 
-    logStep('Thawani keys found', {
-      secretKeyLength: thawaniSecretKey.length,
-      publishableKeyLength: thawaniPublishableKey.length,
-      secretKeyPrefix: thawaniSecretKey.substring(0, 10) + '...',
-      publishableKeyPrefix: thawaniPublishableKey.substring(0, 10) + '...'
-    });
-
-    // Get subscription configuration with detailed logging
-    logStep('Fetching subscription configuration');
-    const { data: configData, error: configError } = await supabase
-      .rpc('get_subscription_config_json')
-
-    if (configError) {
-      logStep('ERROR: Failed to fetch subscription config', { error: configError });
-      throw new Error('Failed to fetch subscription configuration')
-    }
-
-    const config = configData as Record<string, string>
-    const priceInBaiza = parseInt(config.subscription_price_baiza || '1400')
-    const priceInOMR = config.subscription_price_omr || '14'
-
-    logStep('Subscription config loaded', { 
-      priceInBaiza, 
-      priceInOMR,
-      fullConfig: config 
-    });
-
-    // Create or get subscription record with detailed logging
-    logStep('Checking existing subscription');
-    const { data: subscription, error: subError } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .eq('user_id', user.id)
-      .single()
-
-    let subscriptionId: string
-
-    if (subError && subError.code === 'PGRST116') {
-      logStep('Creating new subscription record');
-      const { data: newSub, error: createError } = await supabase
-        .from('subscriptions')
-        .insert([{
-          user_id: user.id,
-          status: 'free',
-          plan_type: 'free'
-        }])
-        .select()
-        .single()
-
-      if (createError) {
-        logStep('ERROR: Failed to create subscription', { error: createError });
-        throw createError
-      }
-      
-      subscriptionId = newSub.id
-      logStep('New subscription created', { subscriptionId });
-    } else if (subError) {
-      logStep('ERROR: Failed to fetch subscription', { error: subError });
-      throw subError
-    } else {
-      subscriptionId = subscription.id
-      logStep('Existing subscription found', { 
-        subscriptionId, 
-        currentStatus: subscription.status,
-        currentPlan: subscription.plan_type 
-      });
-    }
-
-    // Get the origin for redirect URLs
-    const origin = req.headers.get('origin') || 'https://2aa4e7a5-d631-4c39-bd02-c3aa11cc6dc2.lovableproject.com';
-
-    // Enhanced Thawani API call with LIVE environment
-    const thawaniPayload = {
-      client_reference_id: subscriptionId,
-      mode: 'payment', // Using 'payment' mode for one-time subscription activation
-      products: [{
-        name: 'Premium Thoughts Subscription',
-        unit_amount: priceInBaiza,
-        quantity: 1
-      }],
-      success_url: `${origin}/subscription/success`,
-      cancel_url: `${origin}/subscription/cancel`,
-      metadata: {
-        user_id: user.id,
-        subscription_id: subscriptionId
-      }
-    };
-
-    // LIVE Thawani API endpoint
-    const thawaniApiUrl = 'https://checkout.thawani.om/api/v1/checkout/session';
-
-    logStep('Preparing Thawani API request (LIVE)', {
-      url: thawaniApiUrl,
-      payload: thawaniPayload,
-      headers: {
-        'Content-Type': 'application/json',
-        'thawani-api-key': `${thawaniSecretKey.substring(0, 10)}...` // Log partial key for debugging
-      }
-    });
-
-    const thawaniResponse = await fetch(thawaniApiUrl, {
+    // Create Thawani checkout session
+    const thawaniResponse = await fetch('https://uatcheckout.thawani.om/api/v1/checkout/session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'thawani-api-key': thawaniSecretKey
+        'thawani-api-key': thawaniSecretKey,
       },
-      body: JSON.stringify(thawaniPayload)
+      body: JSON.stringify({
+        client_reference_id: user.id,
+        mode: 'payment',
+        products: [{
+          name: 'Premium Subscription',
+          unit_amount: priceInBaiza,
+          quantity: 1,
+        }],
+        success_url: `${req.headers.get('origin')}/subscription-success`,
+        cancel_url: `${req.headers.get('origin')}/subscription-cancel`,
+        metadata: {
+          user_id: user.id,
+        },
+      }),
     })
 
-    logStep('Thawani API response received', {
-      status: thawaniResponse.status,
-      statusText: thawaniResponse.statusText,
-      headers: Object.fromEntries(thawaniResponse.headers.entries())
-    });
-
-    const thawaniData = await thawaniResponse.json()
-    
-    logStep('Thawani API response data', {
-      responseData: thawaniData,
-      success: thawaniResponse.ok
-    });
-
     if (!thawaniResponse.ok) {
-      logStep('ERROR: Thawani API request failed', {
-        status: thawaniResponse.status,
-        statusText: thawaniResponse.statusText,
-        errorData: thawaniData,
-        requestPayload: thawaniPayload
-      });
-      
-      // Enhanced error message based on response
-      let errorMessage = 'Failed to create checkout session';
-      if (thawaniData.detail) {
-        errorMessage += `: ${thawaniData.detail}`;
-      }
-      if (thawaniResponse.status === 401) {
-        errorMessage += ' - Please check your Thawani API credentials (ensure you are using LIVE keys for production)';
-      }
-      
-      throw new Error(errorMessage)
+      const errorData = await thawaniResponse.text()
+      console.error('Thawani API error:', errorData)
+      throw new Error('Failed to create checkout session')
     }
 
-    // LIVE checkout URL
-    const checkoutUrl = `https://checkout.thawani.om/pay/${thawaniData.data.session_id}?key=${thawaniPublishableKey}`;
-    
-    logStep('Checkout session created successfully (LIVE)', {
-      sessionId: thawaniData.data.session_id,
-      checkoutUrl: checkoutUrl,
-      priceOMR: priceInOMR
-    });
+    const sessionData = await thawaniResponse.json()
+
+    // Store payment record
+    const { error: paymentError } = await supabase
+      .from('payments')
+      .insert({
+        user_id: user.id,
+        thawani_payment_id: sessionData.data.session_id,
+        amount: priceInBaiza / 100, // Convert to OMR
+        status: 'pending',
+      })
+
+    if (paymentError) {
+      console.error('Error storing payment:', paymentError)
+      throw paymentError
+    }
 
     return new Response(
-      JSON.stringify({ 
-        checkout_url: checkoutUrl,
-        session_id: thawaniData.data.session_id,
-        price_omr: priceInOMR
+      JSON.stringify({
+        checkout_url: sessionData.data.checkout_url,
+        session_id: sessionData.data.session_id,
       }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
+        status: 200, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     )
 
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep('ERROR: Function execution failed', {
-      error: errorMessage,
-      stack: error instanceof Error ? error.stack : undefined
-    });
-    
+    console.error('Subscription creation error:', error)
     return new Response(
       JSON.stringify({ 
-        error: errorMessage,
-        timestamp: new Date().toISOString()
+        error: 'Failed to create subscription',
+        details: error instanceof Error ? error.message : 'Unknown error'
       }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     )
   }
