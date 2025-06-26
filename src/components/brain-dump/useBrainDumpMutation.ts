@@ -9,7 +9,13 @@ interface BrainDumpData {
   tags: string[];
 }
 
-export const useBrainDumpMutation = ({ onSuccess }: { onSuccess?: () => void }) => {
+export const useBrainDumpMutation = ({ 
+  onSuccess, 
+  onLimitReached 
+}: { 
+  onSuccess?: () => void;
+  onLimitReached?: () => void;
+}) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -18,6 +24,17 @@ export const useBrainDumpMutation = ({ onSuccess }: { onSuccess?: () => void }) 
     mutationFn: async ({ content, tags }: BrainDumpData) => {
       if (!user?.id) {
         throw new Error('User not authenticated');
+      }
+
+      // Check if user can create thought
+      const { data: canCreate, error: checkError } = await supabase
+        .rpc('can_create_thought', { p_user_id: user.id });
+
+      if (checkError) throw checkError;
+
+      if (!canCreate) {
+        onLimitReached?.();
+        throw new Error('Monthly thought limit reached');
       }
 
       console.log('Adding thought for user:', user.id);
@@ -69,6 +86,14 @@ export const useBrainDumpMutation = ({ onSuccess }: { onSuccess?: () => void }) 
 
       console.log('Thought created successfully:', thought);
 
+      // Increment usage count
+      const { error: usageError } = await supabase
+        .rpc('increment_usage_count', { p_user_id: user.id });
+
+      if (usageError) {
+        console.error('Error incrementing usage:', usageError);
+      }
+
       if (tags.length > 0) {
         console.log('Adding tags:', tags);
         
@@ -115,6 +140,7 @@ export const useBrainDumpMutation = ({ onSuccess }: { onSuccess?: () => void }) 
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['thoughts'] });
+      queryClient.invalidateQueries({ queryKey: ['usage'] });
       toast({
         title: "Thought added",
         description: "Your thought has been captured successfully.",
@@ -123,11 +149,13 @@ export const useBrainDumpMutation = ({ onSuccess }: { onSuccess?: () => void }) 
     },
     onError: (error) => {
       console.error('Error adding thought:', error);
-      toast({
-        title: "Error",
-        description: "Failed to add thought. Please try again.",
-        variant: "destructive",
-      });
+      if (error.message !== 'Monthly thought limit reached') {
+        toast({
+          title: "Error",
+          description: "Failed to add thought. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   });
 

@@ -8,6 +8,9 @@ import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { BrainDumpForm } from './brain-dump/BrainDumpForm';
 import { useBrainDumpMutation } from './brain-dump/useBrainDumpMutation';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useSubscription } from '@/hooks/useSubscription';
+import { SubscriptionModal } from './subscription/SubscriptionModal';
+import { UsageIndicator } from './subscription/UsageIndicator';
 import SignInModal from './auth/SignInModal';
 import { gsap } from 'gsap';
 
@@ -16,12 +19,14 @@ const BrainDump = () => {
   const [thought, setThought] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
   
   const { executeWithAuth, showSignInModal, setShowSignInModal, modalConfig } = useAuthGuard();
+  const { hasExceededLimit } = useSubscription();
   
   const { addThoughtMutation } = useBrainDumpMutation({
     onSuccess: () => {
@@ -41,6 +46,9 @@ const BrainDump = () => {
           setTagInput("");
         }
       });
+    },
+    onLimitReached: () => {
+      setShowSubscriptionModal(true);
     }
   });
 
@@ -120,7 +128,10 @@ const BrainDump = () => {
         >
           {t('brainDump.description')}
         </p>
-        <div ref={formRef} className="transform">
+        
+        <UsageIndicator />
+        
+        <div ref={formRef} className="transform mt-4">
           <BrainDumpForm
             thought={thought}
             setThought={setThought}
@@ -130,9 +141,15 @@ const BrainDump = () => {
             setTagInput={setTagInput}
             onSubmit={handleSubmit}
             isPending={addThoughtMutation.isPending}
+            disabled={hasExceededLimit}
           />
         </div>
       </div>
+      
+      <SubscriptionModal
+        open={showSubscriptionModal}
+        onOpenChange={setShowSubscriptionModal}
+      />
       
       <SignInModal
         open={showSignInModal}
