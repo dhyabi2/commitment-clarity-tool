@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { Loader2, User, Mail, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Profile {
   id: string;
@@ -22,6 +22,7 @@ const ProfileSettings = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const { t, dir } = useLanguage();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -99,6 +100,7 @@ const ProfileSettings = () => {
   const handleSignOut = async () => {
     try {
       await signOut();
+      navigate('/');
       toast({
         title: "Signed out",
         description: "You have been signed out successfully",
