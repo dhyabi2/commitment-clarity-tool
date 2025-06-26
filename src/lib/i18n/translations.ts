@@ -1,6 +1,16 @@
 
 export const translations = {
   en: {
+    index: {
+      step1: {
+        title: "Capture Your Thoughts",
+        description: "Start by writing down everything on your mind - don't worry about organizing yet."
+      },
+      step2: {
+        title: "Clarify Into Action",
+        description: "Transform your thoughts into clear commitments with specific outcomes."
+      }
+    },
     auth: {
       welcome: "Welcome to Mind Garden",
       signIn: "Sign In",
@@ -223,6 +233,16 @@ export const translations = {
     }
   },
   ar: {
+    index: {
+      step1: {
+        title: "سجل أفكارك",
+        description: "ابدأ بكتابة كل ما يدور في ذهنك - لا تقلق بشأن التنظيم بعد."
+      },
+      step2: {
+        title: "وضح للعمل",
+        description: "حول أفكارك إلى التزامات واضحة مع نتائج محددة."
+      }
+    },
     auth: {
       welcome: "مرحباً بك في حديقة العقل",
       signIn: "تسجيل الدخول",
