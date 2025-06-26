@@ -210,6 +210,7 @@ export const translations = {
     },
     faq: {
       title: "Frequently Asked Questions",
+      quote: "First of all, if it's on your mind, your mind isn't clear. Anything you consider unfinished in any way must be captured in a trusted system outside your mind, or what I call a collection tool, that you know you'll come back to regularly and sort through. Second, you must clarify exactly what your commitment is and decide what you have to do, if anything, to make progress toward fulfilling it. Third, once you've decided on all the actions you need to take, you must keep reminders of them organized in a system you review regularly.",
       q1: "What is Mind Garden?",
       a1: "Mind Garden is a simple and powerful tool designed to help you capture your thoughts, clarify them into actionable commitments, and track your progress towards achieving your goals.",
       q2: "How does the Brain Dump feature work?",
@@ -336,7 +337,7 @@ export const translations = {
       premiumPlan: "الخطة المميزة",
       per: "لكل",
       days: "يوم",
-      unlimitedThoughts: "أفكار غير محدودة",
+      unlimitedThoughts: " أفكار غير محدودة",
       allFeatures: "الوصول إلى جميع الميزات",
       prioritySupport: "الدعم المميز",
       currentUsage: "الاستخدام الحالي",
@@ -444,6 +445,7 @@ export const translations = {
     },
     faq: {
       title: "الأسئلة الشائعة",
+      quote: "أولاً، إذا كان هناك شيء في عقلك، فعقلك ليس صافياً. أي شيء تعتبره غير مكتمل بأي شكل من الأشكال يجب التقاطه في نظام موثوق خارج عقلك، أو ما أسميه أداة جمع، تعلم أنك ستعود إليها بانتظام وتقوم بفرزها. ثانياً، يجب أن توضح بالضبط ما هو التزامك وتقرر ما عليك فعله، إن وُجد، لإحراز تقدم نحو الوفاء به. ثالثاً، بمجرد أن تقرر جميع الإجراءات التي تحتاج لاتخاذها، يجب أن تحتفظ بتذكيرات منها منظمة في نظام تراجعه بانتظام.",
       q1: "ما هي حديقة العقل؟",
       a1: "حديقة العقل هي أداة بسيطة وقوية مصممة لمساعدتك على تسجيل أفكارك وتوضيحها إلى التزامات قابلة للتنفيذ وتتبع تقدمك نحو تحقيق أهدافك.",
       q2: "كيف تعمل ميزة تفريغ الأفكار؟",
