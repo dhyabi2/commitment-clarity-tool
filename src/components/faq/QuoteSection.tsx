@@ -14,7 +14,7 @@ const QuoteSection = () => {
         <div className="flex-shrink-0 mt-1">
           <Quote className="h-8 w-8 text-sage-600" />
         </div>
-        <blockquote className={`text-sage-800 leading-relaxed text-base italic ${isRTL ? 'text-right' : 'text-left'}`}>
+        <blockquote className={`text-sage-800 leading-loose text-base italic font-serif ${isRTL ? 'text-right' : 'text-left'}`}>
           "{t('faq.quote')}"
         </blockquote>
       </div>
