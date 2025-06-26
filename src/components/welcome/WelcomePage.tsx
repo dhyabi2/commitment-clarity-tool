@@ -232,6 +232,17 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete }) => {
           )}
         </div>
 
+        {/* PWA Install Prompt */}
+        <div className="text-center mt-6 p-4 bg-sage-50 rounded-lg border border-sage-200">
+          <p className="text-sm text-sage-700 mb-3">
+            💡 للحصول على أفضل تجربة، قم بتثبيت التطبيق على جهازك
+          </p>
+          <div className="text-xs text-sage-600 space-y-1">
+            <p>• على الأندرويد: اضغط على القائمة ← "إضافة إلى الشاشة الرئيسية"</p>
+            <p>• على الآيفون: اضغط على أيقونة المشاركة ← "إضافة إلى الشاشة الرئيسية"</p>
+          </div>
+        </div>
+
         {/* Skip Button */}
         <div className="text-center mt-6">
           <Button 
