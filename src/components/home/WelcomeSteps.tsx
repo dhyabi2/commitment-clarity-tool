@@ -59,7 +59,7 @@ const WelcomeSteps = () => {
         ref={step2Ref}
         stepNumber={2}
         icon={hasThoughts ? Target : MessageSquare}
-        title={hasThoughts ? t('commitments.clarifyTitle') : 'Ready to Get Organized?'}
+        title={hasThoughts ? t('commitments.clarifyTitle') : t('index.step2.readyTitle')}
         isRTL={isRTL}
       >
         {hasThoughts ? (
@@ -84,7 +84,7 @@ const WelcomeSteps = () => {
         ) : (
           <div className="text-center py-8">
             <p className="text-gray-500 text-base leading-relaxed">
-              Start by capturing your thoughts above. Once you have some thoughts recorded, you'll be able to clarify them into actionable commitments.
+              {t('index.step2.readyDescription')}
             </p>
           </div>
         )}

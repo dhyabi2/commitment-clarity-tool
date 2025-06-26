@@ -1,4 +1,3 @@
-
 export const translations = {
   en: {
     index: {
@@ -8,7 +7,9 @@ export const translations = {
       },
       step2: {
         title: "Clarify Into Action",
-        description: "Transform your thoughts into clear commitments with specific outcomes."
+        description: "Transform your thoughts into clear commitments with specific outcomes.",
+        readyTitle: "Ready to Get Organized?",
+        readyDescription: "Start by capturing your thoughts above. Once you have some thoughts recorded, you'll be able to clarify them into actionable commitments."
       }
     },
     auth: {
@@ -240,7 +241,9 @@ export const translations = {
       },
       step2: {
         title: "وضح للعمل",
-        description: "حول أفكارك إلى التزامات واضحة مع نتائج محددة."
+        description: "حول أفكارك إلى التزامات واضحة مع نتائج محددة.",
+        readyTitle: "هل أنت مستعد للتنظيم؟",
+        readyDescription: "ابدأ بتسجيل أفكارك أعلاه. بمجرد تسجيل بعض الأفكار، ستتمكن من توضيحها وتحويلها إلى التزامات قابلة للتنفيذ."
       }
     },
     auth: {
