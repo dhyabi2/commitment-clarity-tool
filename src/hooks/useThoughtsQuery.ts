@@ -12,7 +12,15 @@ export const useThoughtsQuery = (userId: string | null) => {
 
       const { data, error } = await supabase
         .from('thoughts')
-        .select('*')
+        .select(`
+          *,
+          tags:thought_tags(
+            tag:tags(
+              id,
+              name
+            )
+          )
+        `)
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
 
@@ -21,7 +29,13 @@ export const useThoughtsQuery = (userId: string | null) => {
         throw error;
       }
 
-      return data || [];
+      // Transform the data to match the expected format
+      const transformedData = (data || []).map(thought => ({
+        ...thought,
+        tags: thought.tags?.map((tagRelation: any) => tagRelation.tag).filter(Boolean) || []
+      }));
+
+      return transformedData;
     },
     enabled: !!userId,
   });
