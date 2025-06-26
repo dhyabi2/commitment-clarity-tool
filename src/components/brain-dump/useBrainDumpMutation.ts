@@ -26,15 +26,24 @@ export const useBrainDumpMutation = ({
         throw new Error('User not authenticated');
       }
 
+      console.log('Checking if user can create thought...');
+      
       // Check if user can create thought
       const { data: canCreate, error: checkError } = await supabase
         .rpc('can_create_thought', { p_user_id: user.id });
 
-      if (checkError) throw checkError;
+      if (checkError) {
+        console.error('Error checking thought limit:', checkError);
+        throw checkError;
+      }
+
+      console.log('Can create thought:', canCreate);
 
       if (!canCreate) {
-        onLimitReached?.();
-        throw new Error('Monthly thought limit reached');
+        console.log('Monthly thought limit reached, triggering onLimitReached');
+        const error = new Error('Monthly thought limit reached');
+        error.name = 'LIMIT_REACHED';
+        throw error;
       }
 
       console.log('Adding thought for user:', user.id);
@@ -147,10 +156,17 @@ export const useBrainDumpMutation = ({
       });
       onSuccess?.();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Error adding thought:', error);
+      
+      // Handle limit reached error specifically
+      if (error.name === 'LIMIT_REACHED' || error.message === 'Monthly thought limit reached') {
+        onLimitReached?.();
+        return;
+      }
+      
       // Don't show error toasts for authentication errors - these are handled by the auth guard
-      if (error.message !== 'User not authenticated' && error.message !== 'Monthly thought limit reached') {
+      if (error.message !== 'User not authenticated') {
         toast({
           title: "Error",
           description: "Failed to add thought. Please try again.",

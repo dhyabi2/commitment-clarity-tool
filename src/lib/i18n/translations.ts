@@ -91,7 +91,11 @@ export const translations = {
       importSuccess: "Thoughts imported successfully",
       importError: "Error importing thoughts",
       allTags: "All",
-      clarify: "Clarify"
+      clarify: "Clarify",
+      captureTitle: "Capture Your Thoughts",
+      placeholder: "What's on your mind? Just start writing...",
+      captureButton: "Capture Thought",
+      capturing: "Capturing..."
     }
   },
   ar: {
@@ -184,7 +188,11 @@ export const translations = {
       importSuccess: "تم استيراد الأفكار بنجاح",
       importError: "خطأ في استيراد الأفكار",
       allTags: "الكل",
-      clarify: "توضيح"
+      clarify: "توضيح",
+      captureTitle: "سجل أفكارك",
+      placeholder: "ما الذي يدور في ذهنك؟ ابدأ الكتابة...",
+      captureButton: "احفظ الفكرة",
+      capturing: "جاري الحفظ..."
     }
   }
 };

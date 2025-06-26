@@ -7,11 +7,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Crown, Loader2 } from "lucide-react";
-import { useSubscription } from "@/hooks/useSubscription";
+import { Crown, Check, Loader2 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useSubscription } from "@/hooks/useSubscription";
 
 interface SubscriptionModalProps {
   open: boolean;
@@ -20,30 +20,18 @@ interface SubscriptionModalProps {
 
 export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   open,
-  onOpenChange,
+  onOpenChange
 }) => {
-  const { createSubscription, isCreatingSubscription, usage, priceOMR, durationDays, isLoading } = useSubscription();
   const { t } = useLanguage();
+  const { createSubscription, isCreatingSubscription, priceOMR, durationDays } = useSubscription();
 
   const handleUpgrade = () => {
     createSubscription();
   };
 
-  if (isLoading) {
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[425px]">
-          <div className="flex items-center justify-center p-8">
-            <Loader2 className="h-8 w-8 animate-spin" />
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Crown className="h-5 w-5 text-yellow-500" />
@@ -53,17 +41,22 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
             {t('subscription.description')}
           </DialogDescription>
         </DialogHeader>
-
-        <div className="grid gap-4 py-4">
-          <Card className="border-sage-200">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg flex items-center justify-between">
-                {t('subscription.premiumPlan')}
-                <span className="text-2xl font-bold">{priceOMR} OMR</span>
-              </CardTitle>
-              <CardDescription>{t('subscription.per')} {durationDays} {t('subscription.days')}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
+        
+        <Card className="border-2 border-sage-200">
+          <CardHeader className="text-center">
+            <CardTitle className="flex items-center justify-center gap-2">
+              <Crown className="h-5 w-5 text-yellow-500" />
+              {t('subscription.premiumPlan')}
+            </CardTitle>
+            <div className="text-3xl font-bold text-sage-700">
+              {priceOMR} OMR
+              <span className="text-sm font-normal text-sage-600">
+                /{t('subscription.per')} {durationDays} {t('subscription.days')}
+              </span>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-green-500" />
                 <span className="text-sm">{t('subscription.unlimitedThoughts')}</span>
@@ -76,39 +69,37 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
                 <Check className="h-4 w-4 text-green-500" />
                 <span className="text-sm">{t('subscription.prioritySupport')}</span>
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          <div className="bg-sage-50 p-4 rounded-lg">
-            <p className="text-sm text-sage-600 text-center">
-              {t('subscription.currentUsage')}: <strong>{usage}/20</strong> {t('subscription.thoughts')}
-            </p>
-          </div>
-
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="flex-1"
-            >
-              {t('subscription.maybeLater')}
-            </Button>
-            <Button
-              onClick={handleUpgrade}
-              disabled={isCreatingSubscription}
-              className="flex-1 bg-sage-600 hover:bg-sage-700"
-            >
-              {isCreatingSubscription ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('subscription.processing')}
-                </>
-              ) : (
-                t('subscription.upgradeNow')
-              )}
-            </Button>
-          </div>
-        </div>
+            <div className="flex gap-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                className="flex-1"
+                disabled={isCreatingSubscription}
+              >
+                {t('subscription.maybeLater')}
+              </Button>
+              <Button
+                onClick={handleUpgrade}
+                disabled={isCreatingSubscription}
+                className="flex-1 bg-sage-600 hover:bg-sage-700"
+              >
+                {isCreatingSubscription ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    {t('subscription.processing')}
+                  </>
+                ) : (
+                  <>
+                    <Crown className="w-4 h-4 mr-2" />
+                    {t('subscription.upgradeNow')}
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </DialogContent>
     </Dialog>
   );
