@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Crown, Loader2 } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface SubscriptionModalProps {
   open: boolean;
@@ -22,6 +23,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   onOpenChange,
 }) => {
   const { createSubscription, isCreatingSubscription, usage, priceOMR, durationDays, isLoading } = useSubscription();
+  const { t } = useLanguage();
 
   const handleUpgrade = () => {
     createSubscription();
@@ -45,10 +47,10 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Crown className="h-5 w-5 text-yellow-500" />
-            Upgrade to Premium
+            {t('subscription.title')}
           </DialogTitle>
           <DialogDescription>
-            You've reached your monthly limit of 20 thoughts. Upgrade to continue capturing your ideas.
+            {t('subscription.description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -56,30 +58,30 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           <Card className="border-sage-200">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center justify-between">
-                Premium Plan
+                {t('subscription.premiumPlan')}
                 <span className="text-2xl font-bold">{priceOMR} OMR</span>
               </CardTitle>
-              <CardDescription>per {durationDays} days</CardDescription>
+              <CardDescription>{t('subscription.per')} {durationDays} {t('subscription.days')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-green-500" />
-                <span className="text-sm">Unlimited thoughts</span>
+                <span className="text-sm">{t('subscription.unlimitedThoughts')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-green-500" />
-                <span className="text-sm">All existing features</span>
+                <span className="text-sm">{t('subscription.allFeatures')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-green-500" />
-                <span className="text-sm">Priority support</span>
+                <span className="text-sm">{t('subscription.prioritySupport')}</span>
               </div>
             </CardContent>
           </Card>
 
           <div className="bg-sage-50 p-4 rounded-lg">
             <p className="text-sm text-sage-600 text-center">
-              Current usage: <strong>{usage}/20</strong> thoughts this month
+              {t('subscription.currentUsage')}: <strong>{usage}/20</strong> {t('subscription.thoughts')}
             </p>
           </div>
 
@@ -89,7 +91,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
               onClick={() => onOpenChange(false)}
               className="flex-1"
             >
-              Maybe Later
+              {t('subscription.maybeLater')}
             </Button>
             <Button
               onClick={handleUpgrade}
@@ -99,10 +101,10 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
               {isCreatingSubscription ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
+                  {t('subscription.processing')}
                 </>
               ) : (
-                'Upgrade Now'
+                t('subscription.upgradeNow')
               )}
             </Button>
           </div>

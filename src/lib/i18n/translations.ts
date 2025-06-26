@@ -1,3 +1,4 @@
+
 import { common } from './translations/common';
 import { dashboardTranslations } from './translations/dashboard';
 import { thoughtsTranslations } from './translations/thoughts';
@@ -9,6 +10,22 @@ export const translations = {
     ...dashboardTranslations.en,
     ...thoughtsTranslations.en,
     ...commitmentsTranslations.en,
+    subscription: {
+      title: "Upgrade to Premium",
+      description: "You've reached your monthly limit of 20 thoughts. Upgrade to continue capturing your ideas.",
+      premiumPlan: "Premium Plan",
+      per: "per",
+      days: "days",
+      unlimitedThoughts: "Unlimited thoughts",
+      allFeatures: "All existing features",
+      prioritySupport: "Priority support",
+      currentUsage: "Current usage",
+      thoughts: "thoughts this month",
+      maybeLater: "Maybe Later",
+      upgradeNow: "Upgrade Now",
+      processing: "Processing...",
+      limitReached: "You've reached your monthly limit. Please upgrade to continue adding thoughts."
+    },
     faq: {
       title: "Frequently Asked Questions",
       q1: "What is Brain Dump?",
@@ -37,7 +54,10 @@ export const translations = {
       description: "Got thoughts? Toss 'em in below — no need to sort or polish. Just unload and breathe.",
       placeholder: "What's on your mind?",
       addTags: "Add tags (optional) - press Enter to add",
+      tagPlaceholder: "Add a tag and press Enter",
       capture: "Capture Thought",
+      submit: "Capture Thought",
+      adding: "Adding...",
       thoughtCaptured: "Your thought has been safely stored."
     },
     index: {
@@ -56,6 +76,22 @@ export const translations = {
     ...dashboardTranslations.ar,
     ...thoughtsTranslations.ar,
     ...commitmentsTranslations.ar,
+    subscription: {
+      title: "الترقية إلى المميز",
+      description: "لقد وصلت إلى الحد الشهري وهو 20 فكرة. قم بالترقية لمواصلة تسجيل أفكارك.",
+      premiumPlan: "الخطة المميزة",
+      per: "لكل",
+      days: "يوم",
+      unlimitedThoughts: "أفكار غير محدودة",
+      allFeatures: "جميع الميزات الحالية",
+      prioritySupport: "دعم أولوية",
+      currentUsage: "الاستخدام الحالي",
+      thoughts: "فكرة هذا الشهر",
+      maybeLater: "ربما لاحقاً",
+      upgradeNow: "قم بالترقية الآن",
+      processing: "جاري المعالجة...",
+      limitReached: "لقد وصلت إلى الحد الشهري. يرجى الترقية لمواصلة إضافة الأفكار."
+    },
     faq: {
       title: "الأسئلة الشائعة",
       q1: "ما هو تفريغ الأفكار؟",
@@ -84,7 +120,10 @@ export const translations = {
       description: "صفِّ ذهنك من خلال تسجيل أي أفكار أو مهام غير مكتملة هنا",
       placeholder: "ما الذي يدور في ذهنك؟",
       addTags: "أضف وسوماً (اختياري) - اضغط Enter للإضافة",
+      tagPlaceholder: "أضف وسماً واضغط Enter",
       capture: "تسجيل الفكرة",
+      submit: "تسجيل الفكرة",
+      adding: "جاري الإضافة...",
       thoughtCaptured: "تم حفظ فكرتك بأمان."
     },
     index: {

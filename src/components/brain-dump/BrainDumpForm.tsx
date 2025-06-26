@@ -62,7 +62,7 @@ export const BrainDumpForm: React.FC<BrainDumpFormProps> = ({
         
         {disabled && (
           <p className="text-sm text-red-600">
-            You've reached your monthly limit. Please upgrade to continue adding thoughts.
+            {t('subscription.limitReached')}
           </p>
         )}
       </div>
