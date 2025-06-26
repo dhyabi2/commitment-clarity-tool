@@ -2,7 +2,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export const useSubscription = () => {
   const { user } = useAuth();
@@ -120,7 +120,6 @@ export const useSubscription = () => {
   const currentUsage = usage?.thoughts_count || 0;
   const maxFreeThoughts = freeTierLimit || 20; // Fallback to 20 if not loaded
   const canCreateThought = isPremium || currentUsage < maxFreeThoughts;
-  const isNearLimit = !isPremium && currentUsage >= Math.max(maxFreeThoughts - 2, 0);
   const hasExceededLimit = !isPremium && currentUsage >= maxFreeThoughts;
 
   // Get pricing information from config
@@ -133,7 +132,6 @@ export const useSubscription = () => {
     maxFreeThoughts,
     isPremium,
     canCreateThought,
-    isNearLimit,
     hasExceededLimit,
     isLoading: subscriptionLoading || usageLoading || configLoading || freeTierLimitLoading,
     createSubscription: () => createSubscriptionMutation.mutate(),

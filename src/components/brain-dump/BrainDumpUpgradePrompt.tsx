@@ -7,10 +7,20 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useSubscription } from "@/hooks/useSubscription";
 import { SubscriptionModal } from "../subscription/SubscriptionModal";
 
-export const BrainDumpUpgradePrompt: React.FC = () => {
+interface BrainDumpUpgradePromptProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export const BrainDumpUpgradePrompt: React.FC<BrainDumpUpgradePromptProps> = ({
+  open,
+  onOpenChange
+}) => {
   const { t } = useLanguage();
   const { usage, maxFreeThoughts } = useSubscription();
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
+
+  if (!open) return null;
 
   return (
     <>
@@ -25,13 +35,22 @@ export const BrainDumpUpgradePrompt: React.FC = () => {
           <p className="text-sm text-red-700">
             You've used {usage}/{maxFreeThoughts} thoughts this month. Upgrade to Premium for unlimited thoughts and continue capturing your ideas.
           </p>
-          <Button
-            onClick={() => setShowSubscriptionModal(true)}
-            className="w-full bg-sage-600 hover:bg-sage-700 text-white"
-          >
-            <Crown className="w-4 h-4 mr-2" />
-            {t('subscription.upgradeNow')}
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="flex-1"
+            >
+              Maybe later
+            </Button>
+            <Button
+              onClick={() => setShowSubscriptionModal(true)}
+              className="flex-1 bg-sage-600 hover:bg-sage-700 text-white"
+            >
+              <Crown className="w-4 h-4 mr-2" />
+              {t('subscription.upgradeNow')}
+            </Button>
+          </div>
         </CardContent>
       </Card>
 

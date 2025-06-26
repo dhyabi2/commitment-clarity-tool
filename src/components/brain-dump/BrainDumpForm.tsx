@@ -82,7 +82,6 @@ const BrainDumpForm = () => {
               <TagInput
                 onTagAdd={handleTagAdd}
                 placeholder="Add tags (optional)..."
-                disabled={addThoughtMutation.isPending}
                 existingTags={tags}
               />
               {tags.length > 0 && (
@@ -131,10 +130,14 @@ const BrainDumpForm = () => {
         description={modalConfig.description}
       />
 
-      <BrainDumpUpgradePrompt
-        open={showUpgradePrompt}
-        onOpenChange={setShowUpgradePrompt}
-      />
+      {showUpgradePrompt && (
+        <div className="mt-4">
+          <BrainDumpUpgradePrompt
+            open={showUpgradePrompt}
+            onOpenChange={setShowUpgradePrompt}
+          />
+        </div>
+      )}
     </>
   );
 };

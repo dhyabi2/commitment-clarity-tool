@@ -2,7 +2,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import BrainDumpForm from './brain-dump/BrainDumpForm';
-import { UsageIndicator } from './subscription/UsageIndicator';
 import { gsap } from 'gsap';
 
 const BrainDump = () => {
@@ -40,9 +39,7 @@ const BrainDump = () => {
 
   return (
     <div className="animate-fade-in p-4 sm:p-0" dir={dir()} ref={containerRef}>
-      <UsageIndicator />
-      
-      <div ref={formRef} className="transform mt-4">
+      <div ref={formRef} className="transform">
         <BrainDumpForm />
       </div>
     </div>
