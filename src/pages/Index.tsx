@@ -1,6 +1,5 @@
 
 import React, { useEffect, useRef } from 'react';
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -25,12 +24,12 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen" ref={containerRef}>
-      <ScrollArea className="h-full bg-gradient-to-b from-cream to-sage-50">
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <WelcomeSteps containerRef={containerRef} />
-        </div>
-      </ScrollArea>
+    <div 
+      className="min-h-screen bg-gradient-to-b from-cream to-sage-50 px-4 py-8" 
+      ref={containerRef}
+      dir={dir()}
+    >
+      <WelcomeSteps containerRef={containerRef} />
     </div>
   );
 };

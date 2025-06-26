@@ -114,57 +114,65 @@ const WelcomeSteps = ({ containerRef }: WelcomeStepsProps) => {
   }, [containerRef]);
 
   return (
-    <div className="space-y-6">
-      {/* Step 1 */}
-      <StepCard
-        ref={step1Ref}
-        stepNumber={1}
-        icon={Brain}
-        isRTL={isRTL}
-        numberRef={step1NumberRef}
-      >
-        <BrainDump />
-      </StepCard>
+    <div className="max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        {/* Step 1 - Full width on mobile, half on desktop */}
+        <div className="lg:col-span-1">
+          <StepCard
+            ref={step1Ref}
+            stepNumber={1}
+            icon={Brain}
+            isRTL={isRTL}
+            numberRef={step1NumberRef}
+          >
+            <BrainDump />
+          </StepCard>
+        </div>
 
-      {/* Step 2 - Show different content based on whether user has thoughts */}
-      <StepCard
-        ref={step2Ref}
-        stepNumber={2}
-        icon={hasThoughts ? Target : MessageSquare}
-        isRTL={isRTL}
-        numberRef={step2NumberRef}
-      >
-        {hasThoughts ? (
-          <div className="space-y-4">
-            <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-sage-700">
-              {t('commitments.clarifyTitle')}
-            </h2>
-            <p className="text-gray-600 text-sm sm:text-base mb-4">
-              {t('commitments.clarifyDescription')}
-            </p>
-            <Link to="/commitment-flow">
-              <Button className="bg-sage-500 hover:bg-sage-600 text-white px-6 py-3 text-base font-medium">
-                {t('commitments.clarifyButton')}
-                <ArrowRight className={`h-5 w-5 ${isRTL ? 'mr-3 rotate-180' : 'ml-3'}`} />
-              </Button>
-            </Link>
-            
-            {/* Show Active Commitments Below */}
-            <div className="mt-8 pt-6 border-t border-sage-200">
-              <ActiveCommitments />
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-gray-600">
-              Ready to Get Organized?
-            </h2>
-            <p className="text-gray-500 text-sm sm:text-base">
-              Start by capturing your thoughts above. Once you have some thoughts recorded, you'll be able to clarify them into actionable commitments.
-            </p>
-          </div>
-        )}
-      </StepCard>
+        {/* Step 2 - Full width on mobile, half on desktop */}
+        <div className="lg:col-span-1">
+          <StepCard
+            ref={step2Ref}
+            stepNumber={2}
+            icon={hasThoughts ? Target : MessageSquare}
+            isRTL={isRTL}
+            numberRef={step2NumberRef}
+          >
+            {hasThoughts ? (
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  <h2 className="text-xl sm:text-2xl font-semibold text-sage-700">
+                    {t('commitments.clarifyTitle')}
+                  </h2>
+                  <p className="text-gray-600 text-sm sm:text-base">
+                    {t('commitments.clarifyDescription')}
+                  </p>
+                  <Link to="/commitment-flow">
+                    <Button className="bg-sage-500 hover:bg-sage-600 text-white px-6 py-3 text-base font-medium w-full sm:w-auto">
+                      {t('commitments.clarifyButton')}
+                      <ArrowRight className={`h-5 w-5 ${isRTL ? 'mr-3 rotate-180' : 'ml-3'}`} />
+                    </Button>
+                  </Link>
+                </div>
+                
+                {/* Show Active Commitments Below */}
+                <div className="pt-6 border-t border-sage-200">
+                  <ActiveCommitments />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4 text-center lg:text-left">
+                <h2 className="text-xl sm:text-2xl font-semibold text-gray-600">
+                  Ready to Get Organized?
+                </h2>
+                <p className="text-gray-500 text-sm sm:text-base">
+                  Start by capturing your thoughts above. Once you have some thoughts recorded, you'll be able to clarify them into actionable commitments.
+                </p>
+              </div>
+            )}
+          </StepCard>
+        </div>
+      </div>
     </div>
   );
 };
