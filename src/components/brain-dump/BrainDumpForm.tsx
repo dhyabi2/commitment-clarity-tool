@@ -1,140 +1,117 @@
 
 import React, { useState } from 'react';
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Brain } from "lucide-react";
-import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { useBrainDumpMutation } from "./useBrainDumpMutation";
-import { TagInput } from "../thoughts/TagInput";
-import { useSubscription } from "@/hooks/useSubscription";
-import { BrainDumpUpgradePrompt } from "./BrainDumpUpgradePrompt";
+import { Brain, Loader2 } from "lucide-react";
+import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { TagInput } from '@/components/thoughts/TagInput';
+import { useBrainDumpMutation } from './useBrainDumpMutation';
+import BrainDumpUpgradePrompt from './BrainDumpUpgradePrompt';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import SignInModal from '@/components/auth/SignInModal';
 
-export const BrainDumpForm: React.FC = () => {
+const BrainDumpForm = () => {
   const { t } = useLanguage();
-  const [content, setContent] = useState('');
+  const [thought, setThought] = useState('');
   const [tags, setTags] = useState<string[]>([]);
-  const { canCreateThought, hasExceededLimit } = useSubscription();
-  
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
+
+  const { executeWithAuth, showSignInModal, setShowSignInModal, modalConfig } = useAuthGuard();
+
   const { addThoughtMutation } = useBrainDumpMutation({
     onSuccess: () => {
-      setContent('');
+      setThought('');
       setTags([]);
+    },
+    onLimitReached: () => {
+      setShowUpgradePrompt(true);
     }
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!canCreateThought) {
-      return; // This shouldn't happen as the form is hidden when limit is exceeded
-    }
-    
-    if (!content.trim()) return;
+    if (!thought.trim()) return;
 
-    addThoughtMutation.mutate(
-      { content: content.trim(), tags },
+    executeWithAuth(
+      () => {
+        addThoughtMutation.mutate({
+          content: thought.trim(),
+          tags
+        });
+      },
+      { thought: thought.trim(), tags },
       {
-        onSuccess: () => {
-          setContent('');
-          setTags([]);
-        }
+        title: "Sign in to capture your thoughts",
+        description: "Create an account to securely save your thoughts and access them from anywhere."
       }
     );
   };
 
-  const handleTagAdd = (tag: string) => {
-    if (tag && !tags.includes(tag)) {
-      setTags([...tags, tag]);
-    }
-  };
-
-  // Show upgrade prompt instead of form when limit is exceeded
-  if (hasExceededLimit) {
-    return (
-      <div className="space-y-6">
-        <div className="text-center">
-          <Brain className="mx-auto h-12 w-12 text-sage-400 mb-4" />
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('brainDump.title')}</h1>
-          <p className="text-gray-600">{t('brainDump.description')}</p>
-        </div>
-        
-        <BrainDumpUpgradePrompt />
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <Brain className="mx-auto h-12 w-12 text-sage-400 mb-4" />
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('brainDump.title')}</h1>
-        <p className="text-gray-600">{t('brainDump.description')}</p>
-      </div>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Brain className="h-5 w-5 text-sage-600" />
-            {t('brainDump.title')}
-          </CardTitle>
-          <CardDescription>
-            {t('brainDump.description')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Textarea
-              placeholder={t('brainDump.placeholder')}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="min-h-[120px] resize-none"
-              disabled={addThoughtMutation.isPending}
-            />
-            
-            <div className="space-y-2">
-              <TagInput
-                onTagAdd={handleTagAdd}
-                placeholder={t('brainDump.tagPlaceholder')}
-              />
-              {tags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="bg-sage-100 text-sage-800 px-2 py-1 rounded-full text-sm flex items-center gap-1"
-                    >
-                      {tag}
-                      <button
-                        type="button"
-                        onClick={() => setTags(tags.filter((_, i) => i !== index))}
-                        className="text-sage-600 hover:text-sage-800"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              )}
+    <>
+      <Card className="card-content bg-white/80 backdrop-blur-sm border-sage-200 shadow-lg hover:shadow-xl transition-all duration-300">
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-sage-100 rounded-full">
+              <Brain className="h-5 w-5 text-sage-600" />
             </div>
-            
-            <Button 
-              type="submit" 
-              disabled={!content.trim() || addThoughtMutation.isPending}
-              className="w-full bg-sage-600 hover:bg-sage-700"
+            <h2 className="text-xl sm:text-2xl font-semibold text-sage-700">
+              {t('thoughts.captureTitle')}
+            </h2>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Textarea
+                value={thought}
+                onChange={(e) => setThought(e.target.value)}
+                placeholder={t('thoughts.placeholder')}
+                className="min-h-[120px] resize-none border-sage-200 focus:border-sage-400 focus:ring-sage-200 bg-white/70"
+                disabled={addThoughtMutation.isPending}
+              />
+            </div>
+
+            <div>
+              <TagInput
+                value={tags}
+                onChange={setTags}
+                placeholder="Add tags (optional)..."
+                disabled={addThoughtMutation.isPending}
+              />
+            </div>
+
+            <Button
+              type="submit"
+              disabled={!thought.trim() || addThoughtMutation.isPending}
+              className="w-full bg-sage-500 hover:bg-sage-600 text-white font-medium py-3 text-base transition-colors"
             >
               {addThoughtMutation.isPending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('brainDump.adding')}
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  {t('thoughts.capturing')}
                 </>
               ) : (
-                t('brainDump.submit')
+                t('thoughts.captureButton')
               )}
             </Button>
           </form>
         </CardContent>
       </Card>
-    </div>
+
+      <SignInModal
+        open={showSignInModal}
+        onOpenChange={setShowSignInModal}
+        title={modalConfig.title}
+        description={modalConfig.description}
+      />
+
+      <BrainDumpUpgradePrompt
+        open={showUpgradePrompt}
+        onOpenChange={setShowUpgradePrompt}
+      />
+    </>
   );
 };
+
+export default BrainDumpForm;

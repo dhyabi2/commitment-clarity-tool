@@ -149,7 +149,8 @@ export const useBrainDumpMutation = ({
     },
     onError: (error) => {
       console.error('Error adding thought:', error);
-      if (error.message !== 'Monthly thought limit reached') {
+      // Don't show error toasts for authentication errors - these are handled by the auth guard
+      if (error.message !== 'User not authenticated' && error.message !== 'Monthly thought limit reached') {
         toast({
           title: "Error",
           description: "Failed to add thought. Please try again.",
