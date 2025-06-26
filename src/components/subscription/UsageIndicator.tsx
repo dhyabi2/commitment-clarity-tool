@@ -9,7 +9,7 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { SubscriptionModal } from "./SubscriptionModal";
 
 export const UsageIndicator: React.FC = () => {
-  const { usage, maxFreeThoughts, isPremium, isNearLimit, hasExceededLimit } = useSubscription();
+  const { usage, maxFreeThoughts, isPremium, hasExceededLimit } = useSubscription();
   const { t } = useLanguage();
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
 
@@ -28,7 +28,7 @@ export const UsageIndicator: React.FC = () => {
   }
 
   const percentage = Math.min((usage / maxFreeThoughts) * 100, 100);
-  const isWarning = isNearLimit || hasExceededLimit;
+  const isWarning = hasExceededLimit;
 
   return (
     <>
