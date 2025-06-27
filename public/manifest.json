@@ -1,8 +1,8 @@
 
 {
-  "name": "Commitment Clarity Tool",
-  "short_name": "CommitmentTool",
-  "description": "A tool to help clarify and manage your commitments",
+  "name": "صفاء الذهن",
+  "short_name": "صفاء الذهن",
+  "description": "أداة لتوضيح الأفكار وتحويلها إلى التزامات واضحة",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -28,6 +28,6 @@
     }
   ],
   "categories": ["productivity", "utilities"],
-  "lang": "en",
-  "dir": "ltr"
+  "lang": "ar",
+  "dir": "rtl"
 }
