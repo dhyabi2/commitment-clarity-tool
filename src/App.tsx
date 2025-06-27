@@ -9,6 +9,7 @@ import { LanguageProvider } from "./lib/i18n/LanguageContext";
 import { AuthErrorBoundary } from "./components/auth/AuthErrorBoundary";
 import Navigation from "./components/Navigation";
 import Routes from "./Routes";
+import PWAInstallPrompt from "./components/pwa/PWAInstallPrompt";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
                 <main className="container mx-auto px-4 py-6 pb-24 md:pb-6">
                   <Routes />
                 </main>
+                <PWAInstallPrompt />
               </div>
             </BrowserRouter>
           </TooltipProvider>
