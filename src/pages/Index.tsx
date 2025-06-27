@@ -4,17 +4,12 @@ import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { gsap } from 'gsap';
 import WelcomeSteps from '@/components/home/WelcomeSteps';
 import ElegantLanguageSwitcher from '@/components/ElegantLanguageSwitcher';
-import { useAuth } from '@/contexts/AuthContext';
-import { Loader2 } from 'lucide-react';
 
 const Index = () => {
   const { dir } = useLanguage();
-  const { loading } = useAuth();
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (loading) return;
-
     const ctx = gsap.context(() => {
       // Initial page load animation
       gsap.fromTo(containerRef.current, 
@@ -24,15 +19,7 @@ const Index = () => {
     }, containerRef);
 
     return () => ctx.revert();
-  }, [loading]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-cream flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-sage-500" />
-      </div>
-    );
-  }
+  }, []);
 
   return (
     <div 

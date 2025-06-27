@@ -1,42 +1,50 @@
 
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
 
-export const useThoughtsQuery = (userId: string | null) => {
+export const useThoughtsQuery = (selectedTag: string | null) => {
+  const { user } = useAuth();
+  
   return useQuery({
-    queryKey: ['thoughts', userId],
+    queryKey: ['thoughts', 'active', selectedTag, user?.id],
     queryFn: async () => {
-      if (!userId) {
-        return [];
+      if (!user?.id) {
+        throw new Error('User not authenticated');
       }
 
-      const { data, error } = await supabase
+      let query = supabase
         .from('thoughts')
         .select(`
           *,
           tags:thought_tags(
-            tag:tags(
-              id,
-              name
-            )
+            tag:tags(*)
           )
         `)
-        .eq('user_id', userId)
+        .eq('completed', false)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
+      
+      const { data, error } = await query;
+      
+      if (error) throw error;
 
-      if (error) {
-        console.error('Error fetching thoughts:', error);
-        throw error;
-      }
-
-      // Transform the data to match the expected format
-      const transformedData = (data || []).map(thought => ({
+      const transformedData = data.map(thought => ({
         ...thought,
-        tags: thought.tags?.map((tagRelation: any) => tagRelation.tag).filter(Boolean) || []
+        tags: thought.tags
+          ?.map(t => t.tag)
+          .filter(Boolean)
+          .sort((a, b) => a.name.localeCompare(b.name))
       }));
+
+      if (selectedTag) {
+        return transformedData.filter(thought => 
+          thought.tags?.some(tag => tag.name === selectedTag)
+        );
+      }
 
       return transformedData;
     },
-    enabled: !!userId,
+    enabled: !!user?.id
   });
 };
