@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,7 @@ import {
   Plus,
   Home,
   MoreVertical,
-  Safari,
+  Globe,
   CheckCircle,
   ArrowRight
 } from 'lucide-react';
@@ -29,7 +28,7 @@ const PWAActionPlan: React.FC<PWAActionPlanProps> = ({ isOpen, onClose }) => {
 
   const iOSSteps = [
     {
-      icon: Safari,
+      icon: Globe,
       title: t('pwa.ios.step1.title') || 'Open in Safari',
       description: t('pwa.ios.step1.desc') || 'Make sure you\'re using Safari browser',
       action: 'Tap the Share button at the bottom'
