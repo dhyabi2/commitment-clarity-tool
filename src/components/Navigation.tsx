@@ -51,10 +51,32 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:top-0 md:bottom-auto shadow-lg z-50" dir={dir()}>
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:top-0 md:bottom-auto md:border-t-0 md:border-b shadow-lg z-50" dir={dir()}>
       <div className="max-w-4xl mx-auto px-4">
+        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center justify-between py-3">
           <div className="text-xl font-semibold text-sage-700">{t('index.step1.title')}</div>
+          
+          {/* Desktop Navigation Items */}
+          <div className="flex items-center gap-1">
+            {navItems.map(({ path, icon: Icon, label }) => (
+              <Tooltip key={path}>
+                <TooltipTrigger asChild>
+                  <Link
+                    to={path}
+                    className={`p-2 rounded-lg transition-colors ${getIconColor(path)} hover:text-sage-500 hover:bg-sage-50`}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{label}</p>
+                </TooltipContent>
+              </Tooltip>
+            ))}
+          </div>
+
+          {/* Desktop Right Side Items */}
           <div className="flex items-center gap-3">
             <ElegantLanguageSwitcher />
             <Link to="/profile" className={`p-2 ${isActive('/profile') ? 'text-sage-600' : 'text-gray-600'} hover:text-sage-500 transition-colors`}>
@@ -67,6 +89,8 @@ const Navigation = () => {
             </Link>
           </div>
         </div>
+
+        {/* Mobile Bottom Navigation */}
         <div className="flex justify-around items-center py-3 md:hidden min-h-[60px]">
           {navItems.map(({ path, icon: Icon, label }) => (
             <Tooltip key={path}>
