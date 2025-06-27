@@ -33,7 +33,11 @@ export const contentTranslations = {
       continueWithGoogle: "Continue with Google"
     },
     thoughts: {
-      addTag: "Add a tag"
+      addTag: "Add a tag",
+      captureTitle: "Capture Your Thoughts",
+      placeholder: "What's on your mind? Write down everything without worrying about structure...",
+      captureButton: "Capture Thought",
+      capturing: "Capturing..."
     },
     commitments: {
       clarifyTitle: "Clarify Your Thoughts",
@@ -74,7 +78,11 @@ export const contentTranslations = {
       continueWithGoogle: "المتابعة مع جوجل"
     },
     thoughts: {
-      addTag: "أضف علامة"
+      addTag: "أضف علامة",
+      captureTitle: "سجل أفكارك",
+      placeholder: "ما الذي يشغل بالك؟ اكتب كل شيء دون القلق بشأن التنظيم...",
+      captureButton: "سجل الفكرة",
+      capturing: "جاري التسجيل..."
     },
     commitments: {
       clarifyTitle: "وضح أفكارك",
