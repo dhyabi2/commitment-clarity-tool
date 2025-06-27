@@ -1,214 +1,492 @@
 export const translations = {
-  home: {
-    title: 'صفحة البداية',
-  },
-  about: {
-    title: 'عن',
-  },
-  commitments: {
-    title: 'تعهدات',
-    clarifyTitle: 'توضيح التعهدات',
-    clarifyDescription: 'حان الوقت الآن لتوضيح التعهدات التي قمت بتحديدها في الخطوة السابقة. قم بتحويل الأفكار المتناثرة إلى أهداف واضحة.',
-    clarifyButton: 'ابدأ التوضيح',
-  },
-  faq: {
-    title: 'أسئلة شائعة',
-    q1: 'ما هو صفاء الذهن؟',
-    a1: 'صفاء الذهن هو حالة ذهنية تتميز بالوضوح والتركيز والهدوء. إنها القدرة على التفكير بوضوح واتخاذ القرارات بثقة، دون تشتيت أو إرهاق.',
-    q2: 'لماذا صفاء الذهن مهم؟',
-    a2: 'صفاء الذهن مهم لأنه يسمح لك بالعيش حياة أكثر فعالية وإشباعًا. عندما يكون ذهنك صافيًا، يمكنك التركيز على أهدافك، واتخاذ قرارات أفضل، وإدارة التوتر بشكل أكثر فعالية.',
-    q3: 'كيف يمكنني تحقيق صفاء الذهن؟',
-    a3: 'هناك العديد من الأشياء التي يمكنك القيام بها لتحقيق صفاء الذهن، بما في ذلك:',
-    a3_1: 'ممارسة اليقظة الذهنية',
-    a3_2: 'قضاء الوقت في الطبيعة',
-    a3_3: 'الحصول على قسط كاف من النوم',
-    q4: 'ما هي بعض فوائد صفاء الذهن؟',
-    a4: 'هناك العديد من الفوائد لصفاء الذهن، بما في ذلك:',
-    a4_1: 'تحسين التركيز',
-    a4_2: 'تقليل التوتر',
-    a4_desc: 'بالإضافة إلى هذه الفوائد، يمكن أن يحسن صفاء الذهن أيضًا علاقاتك وصحتك العامة.',
-    q5: 'كيف أبدأ؟',
-    a5: 'ابدأ بتحديد ما يشتت ذهنك. بمجرد أن تعرف ما هي هذه الأشياء، يمكنك البدء في اتخاذ خطوات لتقليلها أو إزالتها.',
-    q6: 'ما هي بعض النصائح للحفاظ على صفاء الذهن؟',
-    a6: 'فيما يلي بعض النصائح للحفاظ على صفاء الذهن:',
-    a6_1: 'خصص وقتًا كل يوم لتهدئة ذهنك.',
-    a6_2: 'تجنب تعدد المهام.',
-    a6_3: 'اعتني بصحتك الجسدية.',
-    quoteTitle: 'اقتباس ملهم',
-    quoteIntro: 'فيما يلي بعض النقاط الرئيسية التي يجب تذكرها:',
-    quotePoint1: 'التركيز على الحاضر.',
-    quotePoint2: 'كن لطيفًا مع نفسك.',
-    quotePoint3: 'لا تحكم على أفكارك.',
-    exerciseTitle: 'تمرين بسيط',
-    exerciseText1: 'اجلس في مكان هادئ.',
-    exerciseText2: 'أغمض عينيك.',
-    exerciseText3: 'ركز على أنفاسك.',
-    exerciseText4: 'عندما يشتت ذهنك، أعد تركيزك على أنفاسك.',
-    exerciseText5: 'استمر في هذا التمرين لمدة 5-10 دقائق.',
-  },
-  index: {
-    step1: {
-      title: 'تفريغ الأفكار',
+  en: {
+    index: {
+      step1: {
+        title: "Capture Your Thoughts",
+        description: "Start by writing down everything on your mind - don't worry about organizing yet."
+      },
+      step2: {
+        title: "Clarify Into Action",
+        description: "Transform your thoughts into clear commitments with specific outcomes.",
+        readyTitle: "Ready to Get Organized?",
+        readyDescription: "Start by capturing your thoughts above. Once you have some thoughts recorded, you'll be able to clarify them into actionable commitments."
+      }
     },
-    step2: {
-      title: 'تحديد الأولويات',
-      readyTitle: 'أنت على استعداد!',
-      readyDescription: 'ليس لديك أفكار مضافة بعد. ابدأ بتدوين بعض الأفكار المتناثرة.',
+    auth: {
+      welcome: "Welcome to Mind Garden",
+      signIn: "Sign In",
+      signUp: "Sign Up",
+      signOut: "Sign Out",
+      email: "Email",
+      password: "Password",
+      confirmPassword: "Confirm Password",
+      name: "Name",
+      forgotPassword: "Forgot Password?",
+      resetPassword: "Reset Password",
+      signInWithGoogle: "Sign in with Google",
+      signedInAs: "Signed in as",
+      signInDescription: "Sign in to access your thoughts and commitments",
+      errorTitle: "Authentication Error",
+      signInError: "Failed to sign in. Please try again.",
+      termsText: "By signing in, you agree to our Terms of Service and Privacy Policy",
+      validation: {
+        required: "This field is required",
+        email: "Invalid email address",
+        password: "Password must be at least 6 characters",
+        confirmPassword: "Passwords do not match",
+        name: "Name must be at least 3 characters",
+      },
+      error: {
+        credentials: "Invalid credentials",
+        email: "Email already exists",
+        default: "An error occurred",
+      },
+      success: {
+        resetPassword: "Password reset email sent",
+        updatePassword: "Password updated successfully",
+      },
     },
-  },
-  welcome: {
-    slide1: {
-      title: 'مرحبًا بك في صفاء الذهن',
-      description: 'أداة تساعدك على تنظيم أفكارك والتزاماتك.',
+    navigation: {
+      home: "Home",
+      brainDump: "Brain Dump",
+      thoughts: "Thoughts",
+      commitments: "Commitments",
+      settings: "Settings",
     },
-    slide2: {
-      title: 'تفريغ الأفكار',
-      description: 'ابدأ بتدوين كل ما يشغل بالك.',
+    nav: {
+      home: "Home",
+      thoughts: "Thoughts",
+      completed: "Completed",
+      stats: "Dashboard",
+      faq: "FAQ",
+      profile: "Profile"
     },
-    slide3: {
-      title: 'تحديد الأهداف',
-      description: 'حوّل أفكارك إلى أهداف والتزامات واضحة.',
+    home: {
+      title: "Welcome to Clarity",
+      subtitle: "Capture, clarify, and commit to your thoughts",
+      features: "Features",
+      feature1Title: "Brain Dump",
+      feature1Description: "Quickly capture all your thoughts in one place.",
+      feature2Title: "Clarify Thoughts",
+      feature2Description: "Transform your thoughts into actionable commitments.",
+      feature3Title: "Commitments",
+      feature3Description: "Track and manage your commitments effectively.",
+      getStarted: "Get Started",
     },
-    slide4: {
-      title: 'تنفيذ ومتابعة',
-      description: 'تابع تقدمك وحافظ على تركيزك.',
+    welcome: {
+      slide1: {
+        title: "Welcome to Mind Garden",
+        description: "A simple and powerful tool to help you capture thoughts, clarify commitments, and achieve your goals with peace of mind."
+      },
+      slide2: {
+        title: "Brain Dump Your Thoughts",
+        description: "Quickly capture any thought, idea, or task that's on your mind. Don't worry about organizing - just get it out of your head."
+      },
+      slide3: {
+        title: "Clarify into Commitments", 
+        description: "Transform your scattered thoughts into clear, actionable commitments with specific outcomes and next steps."
+      },
+      slide4: {
+        title: "Track Your Progress",
+        description: "Monitor your commitments, celebrate completions, and maintain momentum towards your goals."
+      },
+      of: "of",
+      previous: "Previous",
+      next: "Next",
+      getStarted: "Get Started",
+      skip: "Skip Introduction"
     },
-    previous: 'السابق',
-    next: 'التالي',
-    getStarted: 'ابدأ الآن',
-    skip: 'تخطي',
-    of: 'من',
-  },
-  activeCommitments: {
-    title: 'تعهدات نشطة',
-    empty: 'ليس لديك أي تعهدات نشطة حاليًا.',
-  },
-  pwa: {
-    install: {
-      title: 'تثبيت التطبيق',
-      description: 'احصل على تجربة أفضل عن طريق تثبيت تطبيقنا على جهازك. يمكنك الوصول إليه مباشرة من الشاشة الرئيسية!',
-      benefit1: 'وصول أسرع وأكثر سهولة',
-      benefit2: 'يعمل حتى بدون اتصال بالإنترنت',
-      benefit3: 'تجربة مثل التطبيقات الأصلية',
-      button: 'تثبيت الآن',
-      later: 'لاحقاً'
+    subscription: {
+      title: "Upgrade to Premium",
+      description: "Unlock unlimited thoughts and premium features",
+      premiumPlan: "Premium Plan",
+      per: "per",
+      days: "days",
+      unlimitedThoughts: "Unlimited thoughts",
+      allFeatures: "Access to all features",
+      prioritySupport: "Priority support",
+      currentUsage: "Current usage",
+      thoughts: "thoughts",
+      maybeLater: "Maybe later",
+      upgradeNow: "Upgrade Now",
+      processing: "Processing...",
+      limitReached: "You've reached your monthly limit. Upgrade to continue adding thoughts."
     },
-    banner: {
-      title: 'احصل على التطبيق!',
-      subtitle: 'تثبيت للوصول السريع',
-      install: 'تثبيت'
+    brainDump: {
+      title: "Brain Dump",
+      description: "Capture your thoughts quickly and organize them later",
+      placeholder: "What's on your mind? Just start writing...",
+      tagPlaceholder: "Add a tag",
+      submit: "Capture Thought",
+      adding: "Adding...",
+      thoughtCaptured: "Thought captured successfully!"
     },
-    button: {
-      install: 'تثبيت التطبيق',
-      installed: 'مثبت ✓'
+    thoughts: {
+      title: "Your Thoughts",
+      description: "Review and clarify your thoughts to turn them into actionable commitments",
+      export: "Export thoughts",
+      import: "Import thoughts",
+      noThoughts: "No thoughts found",
+      startCapturing: "Start by capturing your thoughts in the brain dump area",
+      completeToSee: "Complete some thoughts to see them here",
+      goToBrainDump: "Go to Brain Dump",
+      addTag: "Add a tag and press Enter",
+      thoughtCaptured: "Thought captured successfully",
+      thoughtDeleted: "Thought deleted successfully",
+      thoughtUpdated: "Thought updated successfully",
+      importSuccess: "Thoughts imported successfully",
+      importError: "Error importing thoughts",
+      allTags: "All",
+      clarify: "Clarify",
+      captureTitle: "Capture Your Thoughts",
+      placeholder: "What's on your mind? Just start writing...",
+      captureButton: "Capture Thought",
+      capturing: "Capturing..."
+    },
+    commitments: {
+      title: "My Commitments",
+      empty: "No commitments yet. Start by capturing some thoughts!",
+      completed: "Completed Commitments",
+      completedEmpty: "No completed commitments yet.",
+      complete: "Complete",
+      editOutcome: "Edit outcome",
+      editNextAction: "Edit next action",
+      activeTitle: "Active Commitments",
+      clarifyButton: "Start Clarifying",
+      clarifyTitle: "Clarify Your Commitments",
+      clarifyDescription: "Transform your thoughts into clear commitments with specific outcomes and actionable next steps.",
+      clarifier: {
+        title: "Clarify Your Commitment",
+        description: "Transform your thought into a clear commitment with a specific outcome and next action.",
+        outcomeQuestion: "What specific outcome do you want to achieve?",
+        outcomePlaceholder: "Be specific about what success looks like...",
+        outcomeLabel: "Desired Outcome",
+        nextActionQuestion: "What's the very next action you need to take?",
+        nextActionPlaceholder: "The first concrete step you can take...",
+        nextActionLabel: "Next Action",
+        nextButton: "Next",
+        saveButton: "Save Commitment",
+        submitButton: "Create Commitment",
+        successTitle: "Commitment Created",
+        successDescription: "Your commitment has been saved successfully.",
+        errorTitle: "Error",
+        errorDescription: "Failed to save commitment. Please try again."
+      }
+    },
+    dashboard: {
+      title: "Dashboard",
+      timeline: "Activity Timeline",
+      timelineDesc: "Track your progress over time",
+      completion: "Completion Rate",
+      completionDesc: "Your commitment completion rate",
+      daily: "Daily Activity",
+      dailyDesc: "Your activity in the last 7 days",
+      charts: {
+        thoughts: "Thoughts",
+        activeThoughts: "Active Thoughts",
+        completedThoughts: "Completed Thoughts",
+        commitments: "Commitments",
+        completed: "Completed",
+        pending: "Pending"
+      }
+    },
+    common: {
+      success: "Success",
+      error: "Error",
+      loading: "Loading...",
+      save: "Save",
+      cancel: "Cancel",
+      delete: "Delete",
+      edit: "Edit",
+      back: "Back"
+    },
+    profile: {
+      title: "Profile Settings",
+      email: "Email",
+      emailNote: "Email cannot be changed",
+      fullName: "Full Name",
+      fullNamePlaceholder: "Enter your full name",
+      save: "Save Changes"
+    },
+    faq: {
+      title: "Frequently Asked Questions",
+      quoteTitle: "Basic Requirements for Commitment Management",
+      quoteIntro: "Good commitment management requires implementing some basic activities and behaviors:",
+      quotePoint1: "First of all, if something is on your mind, your mind isn't clear. Anything you consider unfinished in any way must be captured in a trusted system outside your mind, or what I call a 'collection bucket', which you know you'll come back to regularly and review.",
+      quotePoint2: "Second, you must clarify exactly what your commitment is and decide what you have to do, if anything, to make progress toward fulfilling it.",
+      quotePoint3: "Third, once you've decided on all the actions you need to take, you must keep reminders of them organized in a system you review regularly.",
+      exerciseTitle: "An important exercise to test this model",
+      exerciseText1: "I suggest you write down the project or situation that's most on your mind at this moment. What's bothering you most, or distracting you, or interesting you, or in some other way consuming a large part of your conscious attention?",
+      exerciseText2: "Now, describe in one written sentence the successful outcome desired for this problem or situation. In other words, what would need to happen for you to check this 'project' off as 'done'?",
+      exerciseText3: "Now, write down the very next physical action required to move the situation forward. If you had nothing else to do in your life but get closure on this, where would you go right now, and what would you do?",
+      exerciseText4: "Did this two-minute thinking have any value for you? If you're like the majority of people who complete this exercise during my seminars, you probably feel some enhanced sense of control, relaxation, and focus.",
+      exerciseText5: "What happened to create this improvement in your personal experience? The situation itself didn't progress materially. The answer is: thinking. Not a lot, just enough to crystallize your commitment and the resources required to fulfill it.",
+      q1: "What is Mind Garden?",
+      a1: "Mind Garden is a simple and powerful tool designed to help you capture your thoughts, clarify them into actionable commitments, and track your progress towards achieving your goals.",
+      q2: "How does the Brain Dump feature work?",
+      a2: "The Brain Dump feature allows you to quickly capture any thought, idea, or task that comes to mind without worrying about organization. Just write it down and organize it later.",
+      q3: "How do I turn my thoughts into commitments?",
+      a3: "You can transform your thoughts into commitments through our clarification process:",
+      a3_1: "Select a thought from your Brain Dump",
+      a3_2: "Define the specific outcome you want to achieve",
+      a3_3: "Identify the next concrete action you need to take",
+      q4: "What's the difference between thoughts and commitments?",
+      a4: "Thoughts are raw ideas or tasks you've captured, while commitments are:",
+      a4_1: "Clearly defined with specific outcomes",
+      a4_2: "Have actionable next steps identified",
+      a4_desc: "This transformation helps you move from scattered thinking to focused action.",
+      q5: "Can I organize my thoughts with tags?",
+      a5: "Yes! You can add tags to your thoughts to categorize and organize them. Tags help you filter and find related thoughts quickly.",
+      q6: "How does the progress tracking work?",
+      a6: "Mind Garden tracks your progress in several ways:",
+      a6_1: "Activity timeline showing your daily progress",
+      a6_2: "Completion rates for your commitments",
+      a6_3: "Visual charts displaying your thought and commitment patterns"
     }
-  }
-};
-
-// English translations
-export const englishTranslations = {
-  home: {
-    title: 'Home',
   },
-  about: {
-    title: 'About',
-  },
-  commitments: {
-    title: 'Commitments',
-    clarifyTitle: 'Clarify Commitments',
-    clarifyDescription: 'Now it\'s time to clarify the commitments you identified in the previous step. Turn scattered thoughts into clear goals.',
-    clarifyButton: 'Start Clarifying',
-  },
-  faq: {
-    title: 'FAQ',
-    q1: 'What is Clarity of Mind?',
-    a1: 'Clarity of mind is a mental state characterized by clarity, focus, and calmness. It is the ability to think clearly and make decisions confidently, without distraction or fatigue.',
-    q2: 'Why is Clarity of Mind Important?',
-    a2: 'Clarity of mind is important because it allows you to live a more effective and fulfilling life. When your mind is clear, you can focus on your goals, make better decisions, and manage stress more effectively.',
-    q3: 'How Can I Achieve Clarity of Mind?',
-    a3: 'There are many things you can do to achieve clarity of mind, including:',
-    a3_1: 'Practice mindfulness',
-    a3_2: 'Spend time in nature',
-    a3_3: 'Get enough sleep',
-    q4: 'What are Some Benefits of Clarity of Mind?',
-    a4: 'There are many benefits to clarity of mind, including:',
-    a4_1: 'Improved focus',
-    a4_2: 'Reduced stress',
-    a4_desc: 'In addition to these benefits, clarity of mind can also improve your relationships and overall health.',
-    q5: 'How Do I Get Started?',
-    a5: 'Start by identifying what is distracting your mind. Once you know what these things are, you can start taking steps to reduce or eliminate them.',
-    q6: 'What are Some Tips for Maintaining Clarity of Mind?',
-    a6: 'Here are some tips for maintaining clarity of mind:',
-    a6_1: 'Set aside time each day to quiet your mind.',
-    a6_2: 'Avoid multitasking.',
-    a6_3: 'Take care of your physical health.',
-    quoteTitle: 'Inspiring Quote',
-    quoteIntro: 'Here are some key points to remember:',
-    quotePoint1: 'Focus on the present.',
-    quotePoint2: 'Be kind to yourself.',
-    quotePoint3: 'Don\'t judge your thoughts.',
-    exerciseTitle: 'Simple Exercise',
-    exerciseText1: 'Sit in a quiet place.',
-    exerciseText2: 'Close your eyes.',
-    exerciseText3: 'Focus on your breath.',
-    exerciseText4: 'When your mind wanders, refocus on your breath.',
-    exerciseText5: 'Continue this exercise for 5-10 minutes.',
-  },
-  index: {
-    step1: {
-      title: 'Brain Dump',
+  ar: {
+    index: {
+      step1: {
+        title: "سجل أفكارك",
+        description: "ابدأ بكتابة كل ما يدور في ذهنك - لا تقلق بشأن التنظيم بعد."
+      },
+      step2: {
+        title: "وضح للعمل",
+        description: "حول أفكارك إلى التزامات واضحة مع نتائج محددة.",
+        readyTitle: "هل أنت مستعد للتنظيم؟",
+        readyDescription: "ابدأ بتسجيل أفكارك أعلاه. بمجرد تسجيل بعض الأفكار، ستتمكن من توضيحها وتحويلها إلى التزامات قابلة للتنفيذ."
+      }
     },
-    step2: {
-      title: 'Prioritize',
-      readyTitle: 'You are ready!',
-      readyDescription: 'You don\'t have any thoughts added yet. Start by writing down some scattered thoughts.',
+    auth: {
+      welcome: "مرحباً بك في حديقة العقل",
+      signIn: "تسجيل الدخول",
+      signUp: "إنشاء حساب",
+      signOut: "تسجيل الخروج",
+      email: "البريد الإلكتروني",
+      password: "كلمة المرور",
+      confirmPassword: "تأكيد كلمة المرور",
+      name: "الاسم",
+      forgotPassword: "هل نسيت كلمة المرور؟",
+      resetPassword: "إعادة تعيين كلمة المرور",
+      signInWithGoogle: "تسجيل الدخول باستخدام جوجل",
+      signedInAs: "تم تسجيل الدخول باسم",
+      signInDescription: "سجل دخولك للوصول إلى أفكارك والتزاماتك",
+      errorTitle: "خطأ في المصادقة",
+      signInError: "فشل في تسجيل الدخول. يرجى المحاولة مرة أخرى.",
+      termsText: "بتسجيل الدخول، فإنك توافق على شروط الخدمة وسياسة الخصوصية",
+      validation: {
+        required: "هذا الحقل مطلوب",
+        email: "عنوان بريد إلكتروني غير صالح",
+        password: "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+        confirmPassword: "كلمات المرور غير متطابقة",
+        name: "يجب أن يتكون الاسم من 3 أحرف على الأقل",
+      },
+      error: {
+        credentials: "بيانات اعتماد غير صالحة",
+        email: "البريد الإلكتروني موجود بالفعل",
+        default: "حدث خطأ",
+      },
+      success: {
+        resetPassword: "تم إرسال بريد إلكتروني لإعادة تعيين كلمة المرور",
+        updatePassword: "تم تحديث كلمة المرور بنجاح",
+      },
     },
-  },
-  welcome: {
-    slide1: {
-      title: 'Welcome to Clarity of Mind',
-      description: 'A tool to help you organize your thoughts and commitments.',
+    navigation: {
+      home: "الرئيسية",
+      brainDump: "تفريغ الأفكار",
+      thoughts: "الأفكار",
+      commitments: "الالتزامات",
+      settings: "الإعدادات",
     },
-    slide2: {
-      title: 'Brain Dump',
-      description: 'Start by writing down everything that\'s on your mind.',
+    nav: {
+      home: "الرئيسية",
+      thoughts: "الأفكار",
+      completed: "مكتمل",
+      stats: "لوحة التحكم",
+      faq: "الأسئلة الشائعة",
+      profile: "الملف الشخصي"
     },
-    slide3: {
-      title: 'Set Goals',
-      description: 'Turn your thoughts into clear goals and commitments.',
+    home: {
+      title: "مرحباً بك في Clarity",
+      subtitle: "اكتب ووضح والتزم بأفكارك",
+      features: "الميزات",
+      feature1Title: "تفريغ الأفكار",
+      feature1Description: "اكتب جميع أفكارك بسرعة في مكان واحد.",
+      feature2Title: "توضيح الأفكار",
+      feature2Description: "حوّل أفكارك إلى التزامات قابلة للتنفيذ.",
+      feature3Title: "الالتزامات",
+      feature3Description: "تتبع وإدارة التزاماتك بفعالية.",
+      getStarted: "ابدأ الآن",
     },
-    slide4: {
-      title: 'Execute and Track',
-      description: 'Track your progress and stay focused.',
+    welcome: {
+      slide1: {
+        title: "مرحباً بك في حديقة العقل",
+        description: "أداة بسيطة وقوية لمساعدتك على تسجيل الأفكار وتوضيح الالتزامات وتحقيق أهدافك براحة البال."
+      },
+      slide2: {
+        title: "سجل أفكارك",
+        description: "التقط بسرعة أي فكرة أو مهمة تدور في ذهنك. لا تقلق بشأن التنظيم - فقط أخرجها من رأسك."
+      },
+      slide3: {
+        title: "وضح الالتزامات",
+        description: "حول أفكارك المبعثرة إلى التزامات واضحة وقابلة للتنفيذ مع نتائج محددة وخطوات تالية."
+      },
+      slide4: {
+        title: "تتبع تقدمك",
+        description: "راقب التزاماتك واحتفل بالإنجازات وحافظ على الزخم نحو أهدافك."
+      },
+      of: "من",
+      previous: "السابق",
+      next: "التالي",
+      getStarted: "ابدأ الآن",
+      skip: "تخطي المقدمة"
     },
-    previous: 'Previous',
-    next: 'Next',
-    getStarted: 'Get Started',
-    skip: 'Skip',
-    of: 'of',
-  },
-  activeCommitments: {
-    title: 'Active Commitments',
-    empty: 'You don\'t have any active commitments currently.',
-  },
-  pwa: {
-    install: {
-      title: 'Install App',
-      description: 'Get a better experience by installing our app on your device. Access it directly from your home screen!',
-      benefit1: 'Faster and easier access',
-      benefit2: 'Works even without internet',
-      benefit3: 'Native app-like experience',
-      button: 'Install Now',
-      later: 'Maybe Later'
+    subscription: {
+      title: "الترقية إلى البريميوم",
+      description: "احصل على أفكار غير محدودة وميزات بريميوم",
+      premiumPlan: "الخطة المميزة",
+      per: "لكل",
+      days: "يوم",
+      unlimitedThoughts: " أفكار غير محدودة",
+      allFeatures: "الوصول إلى جميع الميزات",
+      prioritySupport: "الدعم المميز",
+      currentUsage: "الاستخدام الحالي",
+      thoughts: "فكرة",
+      maybeLater: "ربما لاحقاً",
+      upgradeNow: "ترقية الآن",
+      processing: "جاري المعالجة...",
+      limitReached: "لقد وصلت إلى الحد الشهري. قم بالترقية لمتابعة إضافة الأفكار."
     },
-    banner: {
-      title: 'Get the App!',
-      subtitle: 'Install for quick access',
-      install: 'Install'
+    brainDump: {
+      title: "تفريغ الأفكار",
+      description: "اكتب أفكارك بسرعة ونظمها لاحقاً",
+      placeholder: "ما الذي يدور في ذهنك؟ ابدأ الكتابة...",
+      tagPlaceholder: "أضف وسماً",
+      submit: "احفظ الفكرة",
+      adding: "إضافة...",
+      thoughtCaptured: "تم حفظ الفكرة بنجاح!"
     },
-    button: {
-      install: 'Install App',
-      installed: 'Installed ✓'
+    thoughts: {
+      title: "أفكارك",
+      description: "راجع وحدد أفكارك لتحويلها إلى التزامات قابلة للتنفيذ",
+      export: "تصدير الأفكار",
+      import: "استيراد الأفكار",
+      noThoughts: "لا توجد أفكار",
+      startCapturing: "ابدأ بتسجيل أفكارك في منطقة تفريغ الأفكار",
+      completeToSee: "أكمل بعض الأفكار لرؤيتها هنا",
+      goToBrainDump: "اذهب إلى تفريغ الأفكار",
+      addTag: "أضف وسماً واضغط Enter",
+      thoughtCaptured: "تم تسجيل الفكرة بنجاح",
+      thoughtDeleted: "تم حذف الفكرة بنجاح",
+      thoughtUpdated: "تم تحديث الفكرة بنجاح",
+      importSuccess: "تم استيراد الأفكار بنجاح",
+      importError: "خطأ في استيراد الأفكار",
+      allTags: "الكل",
+      clarify: "توضيح",
+      captureTitle: "سجل أفكارك",
+      placeholder: "ما الذي يدور في ذهنك؟ ابدأ الكتابة...",
+      captureButton: "احفظ الفكرة",
+      capturing: "جاري الحفظ..."
+    },
+    commitments: {
+      title: "التزاماتي",
+      empty: "لا توجد التزامات بعد. ابدأ بتسجيل بعض الأفكار!",
+      completed: "الالتزامات المكتملة",
+      completedEmpty: "لا توجد التزامات مكتملة بعد.",
+      complete: "إكمال",
+      editOutcome: "تعديل النتيجة",
+      editNextAction: "تعديل الإجراء التالي",
+      activeTitle: "الالتزامات النشطة",
+      clarifyButton: "ابدأ التوضيح",
+      clarifyTitle: "وضح التزاماتك",
+      clarifyDescription: "حول أفكارك إلى التزامات واضحة مع نتائج محددة وخطوات عملية تالية.",
+      clarifier: {
+        title: "وضح التزامك",
+        description: "حول فكرتك إلى التزام واضح مع نتيجة محددة وإجراء تالي.",
+        outcomeQuestion: "ما النتيجة المحددة التي تريد تحقيقها؟",
+        outcomePlaceholder: "كن محدداً حول شكل النجاح...",
+        outcomeLabel: "النتيجة المرجوة",
+        nextActionQuestion: "ما هو الإجراء التالي الذي تحتاج لاتخاذه؟",
+        nextActionPlaceholder: "الخطوة الملموسة الأولى التي يمكنك اتخاذها...",
+        nextActionLabel: "الإجراء التالي",
+        nextButton: "التالي",
+        saveButton: "حفظ الالتزام",
+        submitButton: "إنشاء التزام",
+        successTitle: "تم إنشاء الالتزام",
+        successDescription: "تم حفظ التزامك بنجاح.",
+        errorTitle: "خطأ",
+        errorDescription: "فشل في حفظ الالتزام. يرجى المحاولة مرة أخرى."
+      }
+    },
+    dashboard: {
+      title: "لوحة المعلومات",
+      timeline: "الجدول الزمني للنشاط",
+      timelineDesc: "تتبع تقدمك مع مرور الوقت",
+      completion: "معدل الإنجاز",
+      completionDesc: "معدل إنجاز التزاماتك",
+      daily: "النشاط اليومي",
+      dailyDesc: "نشاطك في آخر 7 أيام",
+      charts: {
+        thoughts: "الأفكار",
+        activeThoughts: "الأفكار النشطة",
+        completedThoughts: "الأفكار المكتملة",
+        commitments: "الالتزامات",
+        completed: "مكتمل",
+        pending: "قيد الانتظار"
+      }
+    },
+    common: {
+      success: "نجاح",
+      error: "خطأ",
+      loading: "جاري التحميل...",
+      save: "حفظ",
+      cancel: "إلغاء",
+      delete: "حذف",
+      edit: "تعديل",
+      back: "رجوع"
+    },
+    profile: {
+      title: "إعدادات الملف الشخصي",
+      email: "البريد الإلكتروني",
+      emailNote: "لا يمكن تغيير البريد الإلكتروني",
+      fullName: "الاسم الكامل",
+      fullNamePlaceholder: "أدخل اسمك الكامل",
+      save: "حفظ التغييرات"
+    },
+    faq: {
+      title: "الأسئلة الشائعة",
+      quoteTitle: "المتطلبات الأساسية لإدارة الالتزامات",
+      quoteIntro: "إدارة الالتزامات بشكل جيد تتطلب تنفيذ بعض الأنشطة والسلوكيات الأساسية:",
+      quotePoint1: "أولاً وقبل كل شيء، إذا كان هناك شيء يشغل بالك، فإن عقلك ليس صافيًا. أي شيء تعتبره غير مكتمل بأي شكل من الأشكال يجب أن يُسجل في نظام موثوق خارج عقلك، أو ما أسميه \"دلو التجميع\"، والذي تعلم أنك ستعود إليه بانتظام وتراجعه.",
+      quotePoint2: "ثانيًا، يجب أن توضح بالضبط ما هو التزامك وتقرر ما الذي يجب عليك فعله، إن وجد، لتحقيق تقدم نحو الوفاء به.",
+      quotePoint3: "ثالثًا، بمجرد أن تقرر جميع الإجراءات التي تحتاج إلى اتخاذها، يجب أن تحتفظ بتذكيرات بها منظمة في نظام تراجعه بانتظام.",
+      exerciseTitle: "تمرين مهم لاختبار هذا النموذج",
+      exerciseText1: "أقترح أن تكتب المشروع أو الوضع الذي يشغل بالك أكثر في هذه اللحظة. ما الذي يزعجك أكثر، أو يشتت انتباهك، أو يثير اهتمامك، أو يستهلك بطريقة أو بأخرى جزءًا كبيرًا من انتباهك الواعي؟",
+      exerciseText2: "الآن، صف في جملة مكتوبة واحدة النتيجة الناجحة المرغوبة لهذه المشكلة أو الوضع. بمعنى آخر، ماذا يجب أن يحدث حتى تتمكن من شطب هذا \"المشروع\" كـ\"منتهٍ\"؟",
+      exerciseText3: "الآن، اكتب الإجراء المادي التالي المطلوب لدفع الوضع إلى الأمام. إذا لم يكن لديك شيء آخر تفعله في حياتك سوى إنهاء هذا الأمر، أين ستذهب الآن، وما الإجراء الملموس الذي ستتخذه؟",
+      exerciseText4: "هل كان لهذا التفكير لمدة دقيقتين أي قيمة بالنسبة لك؟ إذا كنت مثل غالبية الأشخاص الذين يكملون هذا التمرين خلال ندواتي، فمن المحتمل أنك تشعر بقليل من السيطرة المعززة، والاسترخاء، والتركيز.",
+      exerciseText5: "ما الذي حدث لخلق هذا التحسن في تجربتك الشخصية؟ الوضع نفسه لم يتقدم أكثر. الإجابة هي: التفكير. ليس كثيرًا، فقط بما يكفي لتثبيت التزامك والموارد المطلوبة للوفاء به.",
+      q1: "ما هي حديقة العقل؟",
+      a1: "حديقة العقل هي أداة بسيطة وقوية مصممة لمساعدتك على تسجيل أفكارك وتوضيحها إلى التزامات قابلة للتنفيذ وتتبع تقدمك نحو تحقيق أهدافك.",
+      q2: "كيف تعمل ميزة تفريغ الأفكار؟",
+      a2: "تتيح لك ميزة تفريغ الأفكار التقاط أي فكرة أو مهمة تخطر ببالك بسرعة دون القلق بشأن التنظيم. فقط اكتبها ونظمها لاحقاً.",
+      q3: "كيف أحول أفكاري إلى التزامات؟",
+      a3: "يمكنك تحويل أفكارك إلى التزامات من خلال عملية التوضيح:",
+      a3_1: "اختر فكرة من تفريغ الأفكار",
+      a3_2: "حدد النتيجة المحددة التي تريد تحقيقها",
+      a3_3: "حدد الإجراء الملموس التالي الذي تحتاج لاتخاذه",
+      q4: "ما الفرق بين الأفكار والالتزامات؟",
+      a4: "الأفكار هي أفكار أو مهام خام سجلتها، بينما الالتزامات هي:",
+      a4_1: "محددة بوضوح مع نتائج محددة",
+      a4_2: "لها خطوات تالية قابلة للتنفيذ محددة",
+      a4_desc: "هذا التحويل يساعدك على الانتقال من التفكير المبعثر إلى العمل المركز.",
+      q5: "هل يمكنني تنظيم أفكاري بالوسوم؟",
+      a5: "نعم! يمكنك إضافة وسوم إلى أفكارك لتصنيفها وتنظيمها. تساعدك الوسوم على تصفية الأفكار ذات الصلة والعثور عليها بسرعة.",
+      q6: "كيف يعمل تتبع التقدم؟",
+      a6: "تتتبع حديقة العقل تقدمك بعدة طرق:",
+      a6_1: "الجدول الزمني للنشاط الذي يُظهر تقدمك اليومي",
+      a6_2: "معدلات إنجاز التزاماتك",
+      a6_3: "مخططات بصرية تعرض أنماط أفكارك والتزاماتك"
     }
   }
 };
