@@ -10,7 +10,9 @@ export const contentTranslations = {
       step2: {
         title: "Brain Dump",
         subtitle: "Empty your mind",
-        description: "Write down everything that's on your mind without worrying about organization or structure."
+        description: "Write down everything that's on your mind without worrying about organization or structure.",
+        readyTitle: "Ready to Start",
+        readyDescription: "Once you've captured some thoughts, you'll be able to clarify them into actionable commitments."
       },
       step3: {
         title: "Clarify & Commit",
@@ -29,6 +31,14 @@ export const contentTranslations = {
       signInRequired: "Sign in to view dashboard",
       signInDescription: "Please sign in to access your personal dashboard and track your progress.",
       continueWithGoogle: "Continue with Google"
+    },
+    thoughts: {
+      addTag: "Add a tag"
+    },
+    commitments: {
+      clarifyTitle: "Clarify Your Thoughts",
+      clarifyDescription: "Transform your thoughts into clear, actionable commitments.",
+      clarifyButton: "Start Clarifying"
     }
   },
   ar: {
@@ -41,7 +51,9 @@ export const contentTranslations = {
       step2: {
         title: "تفريغ الأفكار",
         subtitle: "اُفرغ عقلك",
-        description: "اكتب كل ما يدور في ذهنك دون القلق بشأن التنظيم أو الهيكل."
+        description: "اكتب كل ما يدور في ذهنك دون القلق بشأن التنظيم أو الهيكل.",
+        readyTitle: "جاهز للبدء",
+        readyDescription: "بمجرد تسجيل بعض الأفكار، ستتمكن من توضيحها وتحويلها إلى التزامات قابلة للتنفيذ."
       },
       step3: {
         title: "وضح والتزم",
@@ -60,6 +72,14 @@ export const contentTranslations = {
       signInRequired: "سجل دخولك لعرض لوحة التحكم",
       signInDescription: "يرجى تسجيل الدخول للوصول إلى لوحة التحكم الشخصية وتتبع تقدمك.",
       continueWithGoogle: "المتابعة مع جوجل"
+    },
+    thoughts: {
+      addTag: "أضف علامة"
+    },
+    commitments: {
+      clarifyTitle: "وضح أفكارك",
+      clarifyDescription: "حول أفكارك إلى التزامات واضحة وقابلة للتنفيذ.",
+      clarifyButton: "ابدأ التوضيح"
     }
   }
 };
