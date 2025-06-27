@@ -1,220 +1,214 @@
 export const translations = {
-  en: {
-    home: {
-      title: "Mind Dump",
-    },
-    about: {
-      title: "About",
-    },
-    commitments: {
-      title: "Commitments",
-      clarifyTitle: "Clarify Your Commitment",
-      clarifyDescription: "Let's break down what you want to achieve",
-      clarifyButton: "Start Clarifying",
-    },
-    faq: {
-      title: "Frequently Asked Questions",
-      q1: "What is Mind Dump?",
-      a1: "Mind Dump is a tool to help you capture thoughts and turn them into actionable commitments.",
-      q2: "How do I use this app?",
-      a2: "Start by dumping your thoughts, then clarify them into specific commitments with clear outcomes.",
-      q3: "Is my data secure?",
-      a3: "Yes, all your data is securely stored and only accessible to you.",
-      exerciseTitle: "Essential Requirements for Managing Commitments",
-      exerciseText1: "Managing commitments well requires implementing some basic activities and behaviors:",
-      exerciseText2: "• First and foremost, if there's something on your mind, your mind isn't clear. Anything you consider unfinished in any way must be recorded in a trusted system outside your mind, or what I call the 'collection bucket,' which you know you'll come back to regularly and review.",
-      exerciseText3: "• Second, you must clarify exactly what your commitment is and decide what you need to do, if anything, to make progress toward fulfilling it.",
-      exerciseText4: "• Third, once you decide on all the actions you need to take, you must keep reminders of them organized in a system you review regularly.",
-      exerciseText5: "An important exercise to test this model: I suggest you write down the project or situation that's most on your mind at this moment. What bothers you the most, or distracts you, or interests you, or somehow consumes a significant part of your conscious attention?"
-    },
-    index: {
-      step1: {
-        title: "Brain Dump",
-        description: "Capture all your thoughts and ideas in one place",
-        buttonText: "Start Dumping"
-      },
-      step2: {
-        title: "Clarify Commitments",
-        description: "Transform your thoughts into clear, actionable commitments",
-        buttonText: "Clarify Now"
-      },
-      step3: {
-        title: "Track Progress",
-        description: "Monitor your commitments and celebrate completions",
-        buttonText: "View Progress"
-      }
-    },
-    welcome: {
-      title: "Welcome to Mind Dump",
-      subtitle: "Your digital space for capturing thoughts and creating commitments",
-      getStarted: "Get Started",
-      step1: {
-        title: "Capture Everything",
-        description: "Brain dump all your thoughts, ideas, and concerns"
-      },
-      step2: {
-        title: "Clarify & Commit",
-        description: "Transform thoughts into clear, actionable commitments"
-      },
-      step3: {
-        title: "Track & Complete",
-        description: "Monitor progress and celebrate achievements"
-      }
-    },
-    activeCommitments: {
-      title: "Active Commitments",
-      empty: "No active commitments yet. Start by clarifying some thoughts!",
-      complete: "Mark Complete"
-    },
-    pwa: {
-      button: {
-        install: "Install App",
-        installed: "App Installed"
-      },
-      banner: {
-        title: "Install Mind Dump",
-        subtitle: "Get quick access and work offline",
-        install: "Install"
-      },
-      install: {
-        title: "Install Mind Dump",
-        description: "Install our app for a better experience with offline access and quick launch.",
-        benefit1: "Lightning fast access",
-        benefit2: "Works offline",
-        benefit3: "Native app experience",
-        button: "Install Now",
-        later: "Maybe Later"
-      }
-    },
-    nav: {
-      home: "Home",
-      thoughts: "Thoughts",
-      completed: "Completed",
-      stats: "Stats",
-      faq: "FAQ",
-      profile: "Profile"
-    },
-    auth: {
-      welcome: "Welcome",
-      signOut: "Sign Out"
-    },
-    profile: {
-      title: "Profile Settings",
-      email: "Email",
-      emailNote: "Email cannot be changed",
-      fullName: "Full Name",
-      fullNamePlaceholder: "Enter your full name",
-      save: "Save Changes"
-    }
+  home: {
+    title: 'صفحة البداية',
   },
-  ar: {
-    home: {
-      title: "تفريغ الذهن",
+  about: {
+    title: 'عن',
+  },
+  commitments: {
+    title: 'تعهدات',
+    clarifyTitle: 'توضيح التعهدات',
+    clarifyDescription: 'حان الوقت الآن لتوضيح التعهدات التي قمت بتحديدها في الخطوة السابقة. قم بتحويل الأفكار المتناثرة إلى أهداف واضحة.',
+    clarifyButton: 'ابدأ التوضيح',
+  },
+  faq: {
+    title: 'أسئلة شائعة',
+    q1: 'ما هو صفاء الذهن؟',
+    a1: 'صفاء الذهن هو حالة ذهنية تتميز بالوضوح والتركيز والهدوء. إنها القدرة على التفكير بوضوح واتخاذ القرارات بثقة، دون تشتيت أو إرهاق.',
+    q2: 'لماذا صفاء الذهن مهم؟',
+    a2: 'صفاء الذهن مهم لأنه يسمح لك بالعيش حياة أكثر فعالية وإشباعًا. عندما يكون ذهنك صافيًا، يمكنك التركيز على أهدافك، واتخاذ قرارات أفضل، وإدارة التوتر بشكل أكثر فعالية.',
+    q3: 'كيف يمكنني تحقيق صفاء الذهن؟',
+    a3: 'هناك العديد من الأشياء التي يمكنك القيام بها لتحقيق صفاء الذهن، بما في ذلك:',
+    a3_1: 'ممارسة اليقظة الذهنية',
+    a3_2: 'قضاء الوقت في الطبيعة',
+    a3_3: 'الحصول على قسط كاف من النوم',
+    q4: 'ما هي بعض فوائد صفاء الذهن؟',
+    a4: 'هناك العديد من الفوائد لصفاء الذهن، بما في ذلك:',
+    a4_1: 'تحسين التركيز',
+    a4_2: 'تقليل التوتر',
+    a4_desc: 'بالإضافة إلى هذه الفوائد، يمكن أن يحسن صفاء الذهن أيضًا علاقاتك وصحتك العامة.',
+    q5: 'كيف أبدأ؟',
+    a5: 'ابدأ بتحديد ما يشتت ذهنك. بمجرد أن تعرف ما هي هذه الأشياء، يمكنك البدء في اتخاذ خطوات لتقليلها أو إزالتها.',
+    q6: 'ما هي بعض النصائح للحفاظ على صفاء الذهن؟',
+    a6: 'فيما يلي بعض النصائح للحفاظ على صفاء الذهن:',
+    a6_1: 'خصص وقتًا كل يوم لتهدئة ذهنك.',
+    a6_2: 'تجنب تعدد المهام.',
+    a6_3: 'اعتني بصحتك الجسدية.',
+    quoteTitle: 'اقتباس ملهم',
+    quoteIntro: 'فيما يلي بعض النقاط الرئيسية التي يجب تذكرها:',
+    quotePoint1: 'التركيز على الحاضر.',
+    quotePoint2: 'كن لطيفًا مع نفسك.',
+    quotePoint3: 'لا تحكم على أفكارك.',
+    exerciseTitle: 'تمرين بسيط',
+    exerciseText1: 'اجلس في مكان هادئ.',
+    exerciseText2: 'أغمض عينيك.',
+    exerciseText3: 'ركز على أنفاسك.',
+    exerciseText4: 'عندما يشتت ذهنك، أعد تركيزك على أنفاسك.',
+    exerciseText5: 'استمر في هذا التمرين لمدة 5-10 دقائق.',
+  },
+  index: {
+    step1: {
+      title: 'تفريغ الأفكار',
     },
-    about: {
-      title: "حول",
+    step2: {
+      title: 'تحديد الأولويات',
+      readyTitle: 'أنت على استعداد!',
+      readyDescription: 'ليس لديك أفكار مضافة بعد. ابدأ بتدوين بعض الأفكار المتناثرة.',
     },
-    commitments: {
-      title: "الالتزامات",
-      clarifyTitle: "وضح التزامك",
-      clarifyDescription: "دعنا نحلل ما تريد تحقيقه",
-      clarifyButton: "ابدأ التوضيح",
+  },
+  welcome: {
+    slide1: {
+      title: 'مرحبًا بك في صفاء الذهن',
+      description: 'أداة تساعدك على تنظيم أفكارك والتزاماتك.',
     },
-    faq: {
-      title: "الأسئلة الشائعة",
-      q1: "ما هو تفريغ الذهن؟",
-      a1: "تفريغ الذهن هو أداة لمساعدتك على التقاط الأفكار وتحويلها إلى التزامات قابلة للتنفيذ.",
-      q2: "كيف أستخدم هذا التطبيق؟",
-      a2: "ابدأ بتفريغ أفكارك، ثم وضحها إلى التزامات محددة بنتائج واضحة.",
-      q3: "هل بياناتي آمنة؟",
-      a3: "نعم، جميع بياناتك مخزنة بأمان ولا يمكن الوصول إليها إلا من قبلك.",
-      exerciseTitle: "المتطلبات الأساسية لإدارة الالتزامات",
-      exerciseText1: "إدارة الالتزامات بشكل جيد تتطلب تنفيذ بعض الأنشطة والسلوكيات الأساسية:",
-      exerciseText2: "• أولاً وقبل كل شيء، إذا كان هناك شيء يشغل بالك، فإن عقلك ليس صافيًا. أي شيء تعتبره غير مكتمل بأي شكل من الأشكال يجب أن يُسجل في نظام موثوق خارج عقلك، أو ما أسميه \"دلو التجميع\"، والذي تعلم أنك ستعود إليه بانتظام وتراجعه.",
-      exerciseText3: "• ثانيًا، يجب أن توضح بالضبط ما هو التزامك وتقرر ما الذي يجب عليك فعله، إن وجد، لتحقيق تقدم نحو الوفاء به.",
-      exerciseText4: "• ثالثًا، بمجرد أن تقرر جميع الإجراءات التي تحتاج إلى اتخاذها، يجب أن تحتفظ بتذكيرات بها منظمة في نظام تراجعه بانتظام.",
-      exerciseText5: "تمرين مهم لاختبار هذا النموذج: أقترح أن تكتب المشروع أو الوضع الذي يشغل بالك أكثر في هذه اللحظة. ما الذي يزعجك أكثر، أو يشتت انتباهك، أو يثير اهتمامك، أو يستهلك بطريقة أو بأخرى جزءًا كبيرًا من انتباهك الواعي؟"
+    slide2: {
+      title: 'تفريغ الأفكار',
+      description: 'ابدأ بتدوين كل ما يشغل بالك.',
     },
-    index: {
-      step1: {
-        title: "تفريغ الذهن",
-        description: "اجمع كل أفكارك وأفكارك في مكان واحد",
-        buttonText: "ابدأ التفريغ"
-      },
-      step2: {
-        title: "وضح الالتزامات",
-        description: "حول أفكارك إلى التزامات واضحة وقابلة للتنفيذ",
-        buttonText: "وضح الآن"
-      },
-      step3: {
-        title: "تتبع التقدم",
-        description: "راقب التزاماتك واحتفل بالإنجازات",
-        buttonText: "عرض التقدم"
-      }
+    slide3: {
+      title: 'تحديد الأهداف',
+      description: 'حوّل أفكارك إلى أهداف والتزامات واضحة.',
     },
-    welcome: {
-      title: "مرحبًا بك في تفريغ الذهن",
-      subtitle: "مساحتك الرقمية لالتقاط الأفكار وإنشاء الالتزامات",
-      getStarted: "ابدأ",
-      step1: {
-        title: "التقط كل شيء",
-        description: "فرغ كل أفكارك وأفكارك ومخاوفك"
-      },
-      step2: {
-        title: "وضح والتزم",
-        description: "حول الأفكار إلى التزامات واضحة وقابلة للتنفيذ"
-      },
-      step3: {
-        title: "تتبع وأكمل",
-        description: "راقب التقدم واحتفل بالإنجازات"
-      }
+    slide4: {
+      title: 'تنفيذ ومتابعة',
+      description: 'تابع تقدمك وحافظ على تركيزك.',
     },
-    activeCommitments: {
-      title: "الالتزامات النشطة",
-      empty: "لا توجد التزامات نشطة بعد. ابدأ بتوضيح بعض الأفكار!",
-      complete: "وضع علامة مكتملة"
+    previous: 'السابق',
+    next: 'التالي',
+    getStarted: 'ابدأ الآن',
+    skip: 'تخطي',
+    of: 'من',
+  },
+  activeCommitments: {
+    title: 'تعهدات نشطة',
+    empty: 'ليس لديك أي تعهدات نشطة حاليًا.',
+  },
+  pwa: {
+    install: {
+      title: 'تثبيت التطبيق',
+      description: 'احصل على تجربة أفضل عن طريق تثبيت تطبيقنا على جهازك. يمكنك الوصول إليه مباشرة من الشاشة الرئيسية!',
+      benefit1: 'وصول أسرع وأكثر سهولة',
+      benefit2: 'يعمل حتى بدون اتصال بالإنترنت',
+      benefit3: 'تجربة مثل التطبيقات الأصلية',
+      button: 'تثبيت الآن',
+      later: 'لاحقاً'
     },
-    pwa: {
-      button: {
-        install: "تثبيت التطبيق",
-        installed: "تم تثبيت التطبيق"
-      },
-      banner: {
-        title: "ثبت تفريغ الذهن",
-        subtitle: "احصل على وصول سريع واعمل دون اتصال",
-        install: "تثبيت"
-      },
-      install: {
-        title: "ثبت تفريغ الذهن",
-        description: "ثبت تطبيقنا للحصول على تجربة أفضل مع الوصول دون اتصال والإطلاق السريع.",
-        benefit1: "وصول سريع كالبرق",
-        benefit2: "يعمل دون اتصال",
-        benefit3: "تجربة تطبيق أصلي",
-        button: "ثبت الآن",
-        later: "ربما لاحقًا"
-      }
+    banner: {
+      title: 'احصل على التطبيق!',
+      subtitle: 'تثبيت للوصول السريع',
+      install: 'تثبيت'
     },
-    nav: {
-      home: "الرئيسية",
-      thoughts: "الأفكار",
-      completed: "مكتملة",
-      stats: "الإحصائيات",
-      faq: "الأسئلة الشائعة",
-      profile: "الملف الشخصي"
-    },
-    auth: {
-      welcome: "مرحبًا",
-      signOut: "تسجيل الخروج"
-    },
-    profile: {
-      title: "إعدادات الملف الشخصي",
-      email: "البريد الإلكتروني",
-      emailNote: "لا يمكن تغيير البريد الإلكتروني",
-      fullName: "الاسم الكامل",
-      fullNamePlaceholder: "أدخل اسمك الكامل",
-      save: "حفظ التغييرات"
+    button: {
+      install: 'تثبيت التطبيق',
+      installed: 'مثبت ✓'
     }
   }
 };
 
-export type TranslationKey = keyof typeof translations.en;
+// English translations
+export const englishTranslations = {
+  home: {
+    title: 'Home',
+  },
+  about: {
+    title: 'About',
+  },
+  commitments: {
+    title: 'Commitments',
+    clarifyTitle: 'Clarify Commitments',
+    clarifyDescription: 'Now it\'s time to clarify the commitments you identified in the previous step. Turn scattered thoughts into clear goals.',
+    clarifyButton: 'Start Clarifying',
+  },
+  faq: {
+    title: 'FAQ',
+    q1: 'What is Clarity of Mind?',
+    a1: 'Clarity of mind is a mental state characterized by clarity, focus, and calmness. It is the ability to think clearly and make decisions confidently, without distraction or fatigue.',
+    q2: 'Why is Clarity of Mind Important?',
+    a2: 'Clarity of mind is important because it allows you to live a more effective and fulfilling life. When your mind is clear, you can focus on your goals, make better decisions, and manage stress more effectively.',
+    q3: 'How Can I Achieve Clarity of Mind?',
+    a3: 'There are many things you can do to achieve clarity of mind, including:',
+    a3_1: 'Practice mindfulness',
+    a3_2: 'Spend time in nature',
+    a3_3: 'Get enough sleep',
+    q4: 'What are Some Benefits of Clarity of Mind?',
+    a4: 'There are many benefits to clarity of mind, including:',
+    a4_1: 'Improved focus',
+    a4_2: 'Reduced stress',
+    a4_desc: 'In addition to these benefits, clarity of mind can also improve your relationships and overall health.',
+    q5: 'How Do I Get Started?',
+    a5: 'Start by identifying what is distracting your mind. Once you know what these things are, you can start taking steps to reduce or eliminate them.',
+    q6: 'What are Some Tips for Maintaining Clarity of Mind?',
+    a6: 'Here are some tips for maintaining clarity of mind:',
+    a6_1: 'Set aside time each day to quiet your mind.',
+    a6_2: 'Avoid multitasking.',
+    a6_3: 'Take care of your physical health.',
+    quoteTitle: 'Inspiring Quote',
+    quoteIntro: 'Here are some key points to remember:',
+    quotePoint1: 'Focus on the present.',
+    quotePoint2: 'Be kind to yourself.',
+    quotePoint3: 'Don\'t judge your thoughts.',
+    exerciseTitle: 'Simple Exercise',
+    exerciseText1: 'Sit in a quiet place.',
+    exerciseText2: 'Close your eyes.',
+    exerciseText3: 'Focus on your breath.',
+    exerciseText4: 'When your mind wanders, refocus on your breath.',
+    exerciseText5: 'Continue this exercise for 5-10 minutes.',
+  },
+  index: {
+    step1: {
+      title: 'Brain Dump',
+    },
+    step2: {
+      title: 'Prioritize',
+      readyTitle: 'You are ready!',
+      readyDescription: 'You don\'t have any thoughts added yet. Start by writing down some scattered thoughts.',
+    },
+  },
+  welcome: {
+    slide1: {
+      title: 'Welcome to Clarity of Mind',
+      description: 'A tool to help you organize your thoughts and commitments.',
+    },
+    slide2: {
+      title: 'Brain Dump',
+      description: 'Start by writing down everything that\'s on your mind.',
+    },
+    slide3: {
+      title: 'Set Goals',
+      description: 'Turn your thoughts into clear goals and commitments.',
+    },
+    slide4: {
+      title: 'Execute and Track',
+      description: 'Track your progress and stay focused.',
+    },
+    previous: 'Previous',
+    next: 'Next',
+    getStarted: 'Get Started',
+    skip: 'Skip',
+    of: 'of',
+  },
+  activeCommitments: {
+    title: 'Active Commitments',
+    empty: 'You don\'t have any active commitments currently.',
+  },
+  pwa: {
+    install: {
+      title: 'Install App',
+      description: 'Get a better experience by installing our app on your device. Access it directly from your home screen!',
+      benefit1: 'Faster and easier access',
+      benefit2: 'Works even without internet',
+      benefit3: 'Native app-like experience',
+      button: 'Install Now',
+      later: 'Maybe Later'
+    },
+    banner: {
+      title: 'Get the App!',
+      subtitle: 'Install for quick access',
+      install: 'Install'
+    },
+    button: {
+      install: 'Install App',
+      installed: 'Installed ✓'
+    }
+  }
+};
