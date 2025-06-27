@@ -63,10 +63,10 @@ const Dashboard = () => {
         <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-xl">
           <CardHeader className="text-center pb-6">
             <CardTitle className="text-xl font-semibold text-sage-600 mb-2">
-              Sign in to view dashboard
+              {t('dashboard.signInRequired')}
             </CardTitle>
             <CardDescription className="text-sage-500">
-              Please sign in to access your personal dashboard and track your progress.
+              {t('dashboard.signInDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
@@ -75,7 +75,7 @@ const Dashboard = () => {
               className="w-full bg-sage-600 hover:bg-sage-700 text-white min-h-[48px] flex items-center justify-center gap-3"
             >
               <Chrome className="h-5 w-5" />
-              Continue with Google
+              {t('dashboard.continueWithGoogle')}
             </Button>
           </CardContent>
         </Card>
