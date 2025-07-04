@@ -9,36 +9,63 @@ import PWAActionPlan from './PWAActionPlan';
 
 const PWAInstallPrompt = () => {
   const { t } = useLanguage();
-  const { isInstallable, isInstalled, installSource, promptInstall } = usePWAInstall();
+  const { isInstallable, isInstalled, installSource, promptInstall, deferredPrompt } = usePWAInstall();
   const [isVisible, setIsVisible] = useState(false);
   const [showActionPlan, setShowActionPlan] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
+  const [debugInfo, setDebugInfo] = useState('');
+
+  // Debug information
+  useEffect(() => {
+    const info = `
+      Installable: ${isInstallable}
+      Installed: ${isInstalled}
+      Source: ${installSource}
+      DeferredPrompt: ${deferredPrompt}
+      UserAgent: ${navigator.userAgent.substring(0, 50)}...
+      Standalone: ${window.matchMedia('(display-mode: standalone)').matches}
+    `;
+    setDebugInfo(info);
+    console.log('PWA Debug Info:', info);
+  }, [isInstallable, isInstalled, installSource, deferredPrompt]);
 
   // Show prompt after a short delay if installable
   useEffect(() => {
     if (isInstallable && !isInstalled) {
       const timer = setTimeout(() => {
         setIsVisible(true);
-      }, 3000); // Show after 3 seconds
+        console.log('Showing PWA install prompt');
+      }, 3000);
 
       return () => clearTimeout(timer);
+    } else {
+      console.log('Not showing prompt:', { isInstallable, isInstalled });
     }
   }, [isInstallable, isInstalled]);
 
-  // Don't show if already installed or not installable
-  if (!isInstallable || isInstalled || !isVisible) {
+  // Don't show if already installed
+  if (isInstalled) {
+    console.log('PWA already installed, not showing prompt');
+    return null;
+  }
+
+  // Don't show if not installable and not visible
+  if (!isInstallable && !isVisible) {
     return null;
   }
 
   const handleInstall = async () => {
+    console.log('Install button clicked');
     setIsInstalling(true);
     
     try {
       const success = await promptInstall();
+      console.log('Install result:', success);
       if (success) {
         setIsVisible(false);
       } else {
         // If native prompt fails or is dismissed, show action plan
+        console.log('Native install failed, showing action plan');
         setShowActionPlan(true);
       }
     } catch (error) {
@@ -50,22 +77,31 @@ const PWAInstallPrompt = () => {
   };
 
   const handleShowActionPlan = () => {
+    console.log('Showing action plan');
     setShowActionPlan(true);
   };
 
   const getInstallButtonText = () => {
     if (isInstalling) return t('pwa.install.installing') || 'Installing...';
-    if (installSource === 'browser') return t('pwa.install.button') || 'Install Now';
+    if (installSource === 'browser' && deferredPrompt) return t('pwa.install.button') || 'Install Now';
     return t('pwa.install.howTo') || 'How to Install';
   };
 
   const getInstallIcon = () => {
     if (isInstalling) return Zap;
-    if (installSource === 'browser') return Download;
+    if (installSource === 'browser' && deferredPrompt) return Download;
     return installSource === 'ios' ? Smartphone : Monitor;
   };
 
   const InstallIcon = getInstallIcon();
+
+  // Force show for testing if in development
+  const isDevelopment = import.meta.env.DEV;
+  const shouldShow = isVisible || (isDevelopment && isInstallable);
+
+  if (!shouldShow) {
+    return null;
+  }
 
   return (
     <>
@@ -96,7 +132,7 @@ const PWAInstallPrompt = () => {
           </div>
 
           <div className="space-y-2">
-            {installSource === 'browser' ? (
+            {(installSource === 'browser' && deferredPrompt) ? (
               <Button
                 onClick={handleInstall}
                 disabled={isInstalling}
@@ -139,6 +175,13 @@ const PWAInstallPrompt = () => {
               <span>{t('pwa.features.fast') || 'Lightning Fast'}</span>
             </div>
           </div>
+
+          {isDevelopment && (
+            <details className="mt-2">
+              <summary className="text-xs text-gray-400 cursor-pointer">Debug Info</summary>
+              <pre className="text-xs text-gray-400 mt-1 whitespace-pre-wrap">{debugInfo}</pre>
+            </details>
+          )}
         </div>
       </Card>
 

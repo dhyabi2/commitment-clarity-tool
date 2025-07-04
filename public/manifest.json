@@ -4,11 +4,11 @@
   "short_name": "صفاء الذهن",
   "description": "أداة لتوضيح وإدارة التزاماتك - Transform scattered thoughts into clear commitments",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#6b7280",
   "orientation": "portrait-primary",
-  "scope": "/",
   "icons": [
     {
       "src": "/favicon.ico",
@@ -52,5 +52,10 @@
       "url": "/thoughts?shortcut=thoughts",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
-  ]
+  ],
+  "related_applications": [],
+  "display_override": ["window-controls-overlay"],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }

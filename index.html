@@ -41,25 +41,79 @@
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
           .then(function(registration) {
-            console.log('SW registered: ', registration);
+            console.log('SW registered successfully: ', registration);
             
             // Check for updates
             registration.addEventListener('updatefound', () => {
               console.log('SW update found');
+              const newWorker = registration.installing;
+              if (newWorker) {
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    console.log('New service worker available');
+                    // Optionally notify user about update
+                  }
+                });
+              }
             });
-          }, function(registrationError) {
+
+            // Check if there's a waiting service worker
+            if (registration.waiting) {
+              console.log('Service worker waiting to activate');
+            }
+          })
+          .catch(function(registrationError) {
             console.log('SW registration failed: ', registrationError);
           });
       });
+    } else {
+      console.log('Service workers not supported');
     }
 
     // Handle app shortcuts
     if (window.location.search.includes('shortcut=brain-dump')) {
-      // Could trigger specific brain dump action
       console.log('Opened via brain dump shortcut');
     } else if (window.location.search.includes('shortcut=thoughts')) {
-      // Could trigger specific thoughts action
       console.log('Opened via thoughts shortcut');
+    }
+
+    // PWA install prompt debugging
+    window.addEventListener('beforeinstallprompt', (e) => {
+      console.log('beforeinstallprompt event triggered');
+      console.log('Platforms:', e.platforms);
+    });
+
+    window.addEventListener('appinstalled', (e) => {
+      console.log('PWA was installed');
+    });
+
+    // Debug function to test PWA features
+    window.debugPWA = function() {
+      console.log('=== PWA Debug Info ===');
+      console.log('Service Worker supported:', 'serviceWorker' in navigator);
+      console.log('Display mode:', window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser');
+      console.log('iOS standalone:', window.navigator.standalone);
+      console.log('User Agent:', navigator.userAgent);
+      
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+          console.log('SW Registrations:', registrations.length);
+          registrations.forEach((reg, i) => {
+            console.log(`SW ${i}:`, reg.scope, reg.active?.state);
+          });
+        });
+      }
+      
+      caches.keys().then(cacheNames => {
+        console.log('Cache names:', cacheNames);
+      });
+    };
+
+    // Auto-run debug in development
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      setTimeout(() => {
+        window.debugPWA();
+      }, 2000);
     }
   </script>
 </body>
