@@ -30,14 +30,6 @@ export const usePWAInstall = () => {
       setIsInstallable(false);
       setDeferredPrompt(null);
       console.log('PWA installed successfully');
-      
-      // Track installation
-      if (typeof gtag !== 'undefined') {
-        gtag('event', 'pwa_install', {
-          event_category: 'engagement',
-          event_label: 'success'
-        });
-      }
     };
 
     window.addEventListener('beforeinstallprompt', handler as EventListener);
@@ -82,22 +74,7 @@ export const usePWAInstall = () => {
       if (choiceResult.outcome === 'accepted') {
         setDeferredPrompt(null);
         setIsInstallable(false);
-        
-        // Track successful prompt acceptance
-        if (typeof gtag !== 'undefined') {
-          gtag('event', 'pwa_install_prompt_accepted', {
-            event_category: 'engagement'
-          });
-        }
-        
         return true;
-      } else {
-        // Track prompt dismissal
-        if (typeof gtag !== 'undefined') {
-          gtag('event', 'pwa_install_prompt_dismissed', {
-            event_category: 'engagement'
-          });
-        }
       }
       return false;
     } catch (error) {
