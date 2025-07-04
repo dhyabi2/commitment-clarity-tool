@@ -6,11 +6,13 @@ export const pwaTranslations = {
         title: "Install App",
         subtitle: "Access offline & faster loading",
         button: "Install Now",
+        installing: "Installing...",
         howTo: "How to Install"
       },
       features: {
         mobile: "Mobile Ready",
-        offline: "Works Offline"
+        offline: "Works Offline",
+        fast: "Lightning Fast"
       },
       actionPlan: {
         title: "Install App - Action Plan",
@@ -93,11 +95,13 @@ export const pwaTranslations = {
         title: "تثبيت التطبيق",
         subtitle: "الوصول دون اتصال وتحميل أسرع",
         button: "ثبت الآن",
+        installing: "جاري التثبيت...",
         howTo: "كيفية التثبيت"
       },
       features: {
         mobile: "جاهز للجوال",
-        offline: "يعمل دون اتصال"
+        offline: "يعمل دون اتصال",
+        fast: "سريع البرق"
       },
       actionPlan: {
         title: "تثبيت التطبيق - خطة العمل",

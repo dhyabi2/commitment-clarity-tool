@@ -7,24 +7,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>صفاء الذهن</title>
 
-
   <!-- PWA Meta Tags -->
   <meta name="theme-color" content="#6b7280" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="صفاء الذهن" />
   <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="صفاء الذهن" />
+  <meta name="msapplication-TileColor" content="#6b7280" />
+  <meta name="msapplication-config" content="/browserconfig.xml" />
   
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json" />
   
-
+  <!-- Icons -->
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" href="/icon-192.png" sizes="192x192" type="image/png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+  
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
 
 <body>
   <div id="root"></div>
 
-<script type="module" src="/src/main.tsx"></script>
+  <script type="module" src="/src/main.tsx"></script>
   
   <script>
     // Register service worker for PWA
@@ -33,10 +42,24 @@
         navigator.serviceWorker.register('/sw.js')
           .then(function(registration) {
             console.log('SW registered: ', registration);
+            
+            // Check for updates
+            registration.addEventListener('updatefound', () => {
+              console.log('SW update found');
+            });
           }, function(registrationError) {
             console.log('SW registration failed: ', registrationError);
           });
       });
+    }
+
+    // Handle app shortcuts
+    if (window.location.search.includes('shortcut=brain-dump')) {
+      // Could trigger specific brain dump action
+      console.log('Opened via brain dump shortcut');
+    } else if (window.location.search.includes('shortcut=thoughts')) {
+      // Could trigger specific thoughts action
+      console.log('Opened via thoughts shortcut');
     }
   </script>
 </body>

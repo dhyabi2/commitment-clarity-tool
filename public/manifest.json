@@ -2,20 +2,55 @@
 {
   "name": "صفاء الذهن",
   "short_name": "صفاء الذهن",
-  "description": "أداة لتوضيح وإدارة التزاماتك",
+  "description": "أداة لتوضيح وإدارة التزاماتك - Transform scattered thoughts into clear commitments",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#6b7280",
   "orientation": "portrait-primary",
+  "scope": "/",
   "icons": [
     {
       "src": "/favicon.ico",
       "sizes": "48x48",
       "type": "image/x-icon"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
     }
   ],
-  "categories": ["productivity", "utilities"],
+  "categories": ["productivity", "utilities", "lifestyle"],
   "lang": "ar",
-  "dir": "rtl"
+  "dir": "rtl",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "إفراغ الذهن",
+      "short_name": "إفراغ الذهن",
+      "description": "ابدأ بإفراغ أفكارك",
+      "url": "/?shortcut=brain-dump",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "الأفكار",
+      "short_name": "الأفكار",
+      "description": "عرض جميع الأفكار",
+      "url": "/thoughts?shortcut=thoughts",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
 }
