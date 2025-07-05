@@ -1,4 +1,3 @@
-
 export const contentTranslations = {
   en: {
     index: {
@@ -54,6 +53,26 @@ export const contentTranslations = {
       completed: "Commitment completed! 🎉",
       completedDescription: "Congratulations on completing your commitment. Keep up the great work!",
       tip: "💡 Tip: Focus on completing one commitment at a time. You can edit the outcome or next action if your plans change."
+    },
+    dashboard: {
+      title: "Dashboard",
+      signInRequired: "Sign in required",
+      signInDescription: "Please sign in to view your dashboard and track your progress.",
+      continueWithGoogle: "Continue with Google",
+      timeline: "Activity Timeline",
+      timelineDesc: "Your thought and commitment activity over time",
+      completion: "Completion Rate",
+      completionDesc: "How many of your commitments you've completed",
+      daily: "Daily Activity",
+      dailyDesc: "Your recent daily activity patterns",
+      charts: {
+        thoughts: "Thoughts",
+        completedThoughts: "Completed Thoughts",
+        activeThoughts: "Active Thoughts",
+        commitments: "Commitments",
+        completed: "Completed",
+        pending: "Pending"
+      }
     },
     errors: {
       generic: "Something went wrong. Please try again.",
@@ -120,6 +139,26 @@ export const contentTranslations = {
       completed: "تم إكمال الالتزام! 🎉",
       completedDescription: "تهانينا على إكمال التزامك. استمر في العمل الرائع!",
       tip: "💡 نصيحة: ركز على إكمال التزام واحد في كل مرة. يمكنك تحرير النتيجة أو الإجراء التالي إذا تغيرت خططك."
+    },
+    dashboard: {
+      title: "لوحة القيادة",
+      signInRequired: "تسجيل الدخول مطلوب",
+      signInDescription: "يرجى تسجيل الدخول لعرض لوحة القيادة وتتبع تقدمك.",
+      continueWithGoogle: "المتابعة باستخدام جوجل",
+      timeline: "الجدول الزمني للنشاط",
+      timelineDesc: "نشاط أفكارك والتزاماتك عبر الزمن",
+      completion: "معدل الإكمال",
+      completionDesc: "كم من التزاماتك قد أكملتها",
+      daily: "النشاط اليومي",
+      dailyDesc: "أنماط نشاطك اليومية الحديثة",
+      charts: {
+        thoughts: "الأفكار",
+        completedThoughts: "الأفكار المكتملة",
+        activeThoughts: "الأفكار النشطة",
+        commitments: "الالتزامات",
+        completed: "مكتمل",
+        pending: "معلق"
+      }
     },
     errors: {
       generic: "حدث خطأ ما. يرجى المحاولة مرة أخرى.",

@@ -9,16 +9,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Chrome } from "lucide-react";
+import { Loader2, Chrome, UserX } from "lucide-react";
 import ActivityTimeline from "@/components/dashboard/ActivityTimeline";
 import CompletionRate from "@/components/dashboard/CompletionRate";
 import DailyActivity from "@/components/dashboard/DailyActivity";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAnonymousMode } from "@/hooks/useAnonymousMode";
 
 const Dashboard = () => {
   const { t, dir } = useLanguage();
   const { user, signInWithGoogle } = useAuth();
+  const { enableAnonymousMode } = useAnonymousMode();
   const isRTL = dir() === 'rtl';
 
   const { data: thoughts, isLoading: thoughtsLoading } = useQuery({
@@ -57,6 +59,12 @@ const Dashboard = () => {
     enabled: !!user?.id
   });
 
+  const handleAnonymousAccess = () => {
+    enableAnonymousMode();
+    // Redirect to thoughts page or reload
+    window.location.href = '/thoughts';
+  };
+
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-cream to-sage-50 flex items-center justify-center p-4">
@@ -69,13 +77,31 @@ const Dashboard = () => {
               {t('dashboard.signInDescription')}
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-center">
+          <CardContent className="space-y-4">
             <Button
               onClick={signInWithGoogle}
               className="w-full bg-sage-600 hover:bg-sage-700 text-white min-h-[48px] flex items-center justify-center gap-3"
             >
               <Chrome className="h-5 w-5" />
               {t('dashboard.continueWithGoogle')}
+            </Button>
+            
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white px-2 text-muted-foreground">{t('auth.or')}</span>
+              </div>
+            </div>
+
+            <Button
+              onClick={handleAnonymousAccess}
+              variant="outline"
+              className="w-full"
+            >
+              <UserX className="h-5 w-5 mr-2" />
+              {t('auth.continueAnonymously')}
             </Button>
           </CardContent>
         </Card>
