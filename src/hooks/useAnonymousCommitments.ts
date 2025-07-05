@@ -16,7 +16,12 @@ export const useAnonymousCommitments = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data;
+      
+      // Map database fields to UI fields
+      return data?.map(commitment => ({
+        ...commitment,
+        nextAction: commitment.nextaction
+      })) || [];
     },
     enabled: !!deviceId
   });
