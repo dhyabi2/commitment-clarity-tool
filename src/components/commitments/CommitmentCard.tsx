@@ -66,9 +66,9 @@ const CommitmentCard = ({
     const now = new Date();
     const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
     
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays === 0) return t('common.today');
+    if (diffDays === 1) return t('common.yesterday');
+    if (diffDays < 7) return t('common.daysAgo').replace('{days}', diffDays.toString());
     return date.toLocaleDateString();
   };
 
@@ -79,7 +79,7 @@ const CommitmentCard = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
           <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500">
             <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-            <span>Created {formatDate(commitment.created_at)}</span>
+            <span>{t('common.created')} {formatDate(commitment.created_at)}</span>
           </div>
           <div className="flex items-center justify-end">
             {/* Complete Button with Confirmation */}
