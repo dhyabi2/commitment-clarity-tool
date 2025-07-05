@@ -13,6 +13,9 @@ export const commitmentsTranslations = {
       incomplete: 'Incomplete',
       tip: 'Tip: Break down large outcomes into smaller, manageable next actions.',
       activeCommitments: 'Active Commitments',
+      clarifyTitle: 'Turn Thoughts into Commitments',
+      clarifyDescription: 'Transform your captured thoughts into clear, actionable commitments with defined outcomes and next steps.',
+      clarifyButton: 'Clarify Commitments',
     },
   },
   ar: {
@@ -28,6 +31,9 @@ export const commitmentsTranslations = {
       incomplete: 'غير مكتمل',
       tip: 'نصيحة: قسم النتائج الكبيرة إلى إجراءات تالية أصغر وقابلة للإدارة.',
       activeCommitments: 'الالتزامات النشطة',
+      clarifyTitle: 'حول الأفكار إلى التزامات',
+      clarifyDescription: 'حول أفكارك المُلتقطة إلى التزامات واضحة وقابلة للتنفيذ مع نتائج محددة وخطوات تالية.',
+      clarifyButton: 'توضيح الالتزامات',
     },
   },
 };

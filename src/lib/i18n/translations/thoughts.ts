@@ -3,6 +3,7 @@ export const thoughtsTranslations = {
   en: {
     thoughts: {
       title: 'Your Thoughts',
+      description: 'Capture and organize your thoughts, then turn them into actionable commitments.',
       captureTitle: 'Capture Your Thoughts',
       placeholder: 'What\'s on your mind? Dump all your thoughts here...',
       captureButton: 'Capture Thought',
@@ -17,6 +18,8 @@ export const thoughtsTranslations = {
       delete: 'Delete',
       complete: 'Complete',
       incomplete: 'Incomplete',
+      export: 'Export',
+      import: 'Import',
     },
     brainDump: {
       placeholder: 'Start dumping your thoughts here...',
@@ -27,6 +30,7 @@ export const thoughtsTranslations = {
   ar: {
     thoughts: {
       title: 'أفكارك',
+      description: 'التقط ونظم أفكارك، ثم حولها إلى التزامات قابلة للتنفيذ.',
       captureTitle: 'التقط أفكارك',
       placeholder: 'ما الذي يدور في ذهنك؟ أفرغ جميع أفكارك هنا...',
       captureButton: 'التقط الفكرة',
@@ -41,6 +45,8 @@ export const thoughtsTranslations = {
       delete: 'حذف',
       complete: 'مكتمل',
       incomplete: 'غير مكتمل',
+      export: 'تصدير',
+      import: 'استيراد',
     },
     brainDump: {
       placeholder: 'ابدأ بتفريغ أفكارك هنا...',

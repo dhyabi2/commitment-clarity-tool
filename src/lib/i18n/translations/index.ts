@@ -9,6 +9,7 @@ import { commitmentsTranslations } from './commitments';
 import { subscriptionTranslations } from './subscription';
 import { dashboardTranslations } from './dashboard';
 import { commonTranslations } from './common';
+import { componentsTranslations } from './components';
 
 // Helper function to merge translation objects
 const mergeTranslations = (lang: 'en' | 'ar') => {
@@ -22,7 +23,8 @@ const mergeTranslations = (lang: 'en' | 'ar') => {
     ...commitmentsTranslations[lang],
     ...subscriptionTranslations[lang],
     ...dashboardTranslations[lang],
-    ...commonTranslations[lang]
+    ...commonTranslations[lang],
+    ...componentsTranslations[lang]
   };
 };
 
