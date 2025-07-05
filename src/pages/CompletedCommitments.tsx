@@ -1,8 +1,10 @@
+
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Chrome, UserX } from "lucide-react";
@@ -11,6 +13,7 @@ import ThoughtsList from '@/components/thoughts/ThoughtsList';
 const CompletedCommitments = () => {
   const { toast } = useToast();
   const { user, signInWithGoogle } = useAuth();
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
@@ -119,10 +122,10 @@ const CompletedCommitments = () => {
         <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-xl">
           <CardHeader className="text-center pb-6">
             <CardTitle className="text-xl font-semibold text-sage-600 mb-2">
-              Sign in to view completed thoughts
+              {t('auth.signInToViewCompleted')}
             </CardTitle>
             <CardDescription className="text-sage-500">
-              Please sign in to access your completed thoughts and commitments.
+              {t('auth.signInCompletedDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -131,7 +134,7 @@ const CompletedCommitments = () => {
               className="w-full bg-sage-600 hover:bg-sage-700 text-white min-h-[48px] flex items-center justify-center gap-3"
             >
               <Chrome className="h-5 w-5" />
-              Continue with Google
+              {t('auth.signInWithGoogle')}
             </Button>
             
             <div className="relative">
@@ -139,7 +142,7 @@ const CompletedCommitments = () => {
                 <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-muted-foreground">Or</span>
+                <span className="bg-white px-2 text-muted-foreground">{t('auth.or')}</span>
               </div>
             </div>
 
@@ -149,7 +152,7 @@ const CompletedCommitments = () => {
               className="w-full"
             >
               <UserX className="h-4 w-4 mr-2" />
-              Continue Anonymously
+              {t('auth.continueAnonymously')}
             </Button>
           </CardContent>
         </Card>
@@ -175,9 +178,9 @@ const CompletedCommitments = () => {
     <div className="min-h-screen bg-cream p-4 pb-20 md:pb-4">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-sage-600 mb-2">Completed Thoughts</h1>
+          <h1 className="text-3xl font-bold text-sage-600 mb-2">{t('nav.completed')}</h1>
           <p className="text-sage-500 mb-6">
-            Review your completed thoughts and their associated commitments
+            {t('auth.signInCompletedDescription')}
           </p>
           <ThoughtsList 
             thoughts={thoughts || []}

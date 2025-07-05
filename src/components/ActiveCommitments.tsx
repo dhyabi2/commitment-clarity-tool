@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -147,15 +148,15 @@ const ActiveCommitments = () => {
     return (
       <div className="p-4 sm:p-6 text-center bg-gray-50 rounded-lg border border-gray-200 mx-2 sm:mx-0">
         <Lightbulb className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
-        <h3 className="text-base sm:text-lg font-medium text-gray-600 mb-2">Sign in to view commitments</h3>
-        <p className="text-sm sm:text-base text-gray-500 mb-4">Please sign in to see your active commitments and track your progress.</p>
+        <h3 className="text-base sm:text-lg font-medium text-gray-600 mb-2">{t('auth.signInToViewCommitments')}</h3>
+        <p className="text-sm sm:text-base text-gray-500 mb-4">{t('auth.signInCommitmentsDescription')}</p>
         <Button
           onClick={handleAnonymousAccess}
           variant="outline"
           className="w-full"
         >
           <UserX className="h-4 w-4 mr-2" />
-          Continue Anonymously
+          {t('auth.continueAnonymously')}
         </Button>
       </div>
     );
@@ -179,8 +180,8 @@ const ActiveCommitments = () => {
     return (
       <div className="p-4 sm:p-6 text-center bg-sage-50 rounded-lg border border-sage-200 mx-2 sm:mx-0">
         <Target className="h-10 w-10 sm:h-12 sm:w-12 text-sage-400 mx-auto mb-3 sm:mb-4" />
-        <h3 className="text-base sm:text-lg font-medium text-sage-600 mb-2">No active commitments</h3>
-        <p className="text-sm sm:text-base text-sage-500">You don't have any active commitments yet. Start by clarifying some of your thoughts into actionable commitments.</p>
+        <h3 className="text-base sm:text-lg font-medium text-sage-600 mb-2">{t('commitments.noActiveCommitments')}</h3>
+        <p className="text-sm sm:text-base text-sage-500">{t('commitments.noActiveCommitmentsDescription')}</p>
       </div>
     );
   }
@@ -191,7 +192,7 @@ const ActiveCommitments = () => {
         <div className="flex items-center gap-2 sm:gap-3">
           <Target className="h-5 w-5 sm:h-6 sm:w-6 text-sage-600 flex-shrink-0" />
           <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-sage-700">
-            Active Commitments
+            {t('commitments.activeCommitments')}
           </h2>
         </div>
         <span className="bg-sage-100 text-sage-600 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium self-start sm:self-auto">
@@ -218,7 +219,7 @@ const ActiveCommitments = () => {
       {activeCommitments.length > 0 && (
         <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-200">
           <p className="text-xs sm:text-sm text-blue-700 leading-relaxed">
-            💡 <strong>Tip:</strong> Focus on completing one commitment at a time. You can edit the outcome or next action if your plans change.
+            {t('commitments.tip')}
           </p>
         </div>
       )}

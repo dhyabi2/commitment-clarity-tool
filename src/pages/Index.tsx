@@ -11,7 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import AnonymousAccessButton from '@/components/home/AnonymousAccessButton';
 
 const Index = () => {
-  const { dir } = useLanguage();
+  const { dir, t } = useLanguage();
   const { user } = useAuth();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -46,7 +46,7 @@ const Index = () => {
           <Link to="/auth">
             <Button className="w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 shadow-sm min-h-[56px] text-lg font-medium flex items-center justify-center gap-3">
               <Chrome className="h-5 w-5" />
-              Sign In with Google
+              {t('auth.signInWithGoogle')}
             </Button>
           </Link>
           
@@ -55,7 +55,7 @@ const Index = () => {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-cream px-2 text-muted-foreground">Or</span>
+              <span className="bg-cream px-2 text-muted-foreground">{t('auth.or')}</span>
             </div>
           </div>
 

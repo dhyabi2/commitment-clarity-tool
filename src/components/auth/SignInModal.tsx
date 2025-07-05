@@ -17,13 +17,16 @@ interface SignInModalProps {
 const SignInModal: React.FC<SignInModalProps> = ({ 
   open, 
   onOpenChange, 
-  title = "Sign in required",
-  description = "Please sign in to use this feature and save your data securely."
+  title,
+  description
 }) => {
   const { signInWithGoogle } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = React.useState(false);
+
+  const modalTitle = title || t('auth.signInRequired');
+  const modalDescription = description || t('auth.signInDescription');
 
   const handleSignIn = async () => {
     try {
@@ -47,9 +50,9 @@ const SignInModal: React.FC<SignInModalProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center">{title}</DialogTitle>
+          <DialogTitle className="text-center">{modalTitle}</DialogTitle>
           <DialogDescription className="text-center text-gray-600">
-            {description}
+            {modalDescription}
           </DialogDescription>
         </DialogHeader>
         
@@ -64,7 +67,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
             ) : (
               <Chrome className="w-4 h-4 mr-2" />
             )}
-            Continue with Google
+            {t('auth.signInWithGoogle')}
           </Button>
           
           <div className="relative">
@@ -72,7 +75,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-muted-foreground">Or</span>
+              <span className="bg-white px-2 text-muted-foreground">{t('auth.or')}</span>
             </div>
           </div>
 
@@ -82,7 +85,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
             className="w-full"
           >
             <UserX className="w-4 h-4 mr-2" />
-            Continue Anonymously
+            {t('auth.continueAnonymously')}
           </Button>
           
           <Button 
@@ -90,12 +93,12 @@ const SignInModal: React.FC<SignInModalProps> = ({
             onClick={() => onOpenChange(false)}
             className="w-full"
           >
-            Maybe later
+            {t('auth.maybeOrLater')}
           </Button>
         </div>
         
         <p className="text-xs text-center text-gray-500 mt-4">
-          Your thoughts and commitments will be securely saved to your account or stored locally on this device.
+          {t('auth.anonymousNote')}
         </p>
       </DialogContent>
     </Dialog>
