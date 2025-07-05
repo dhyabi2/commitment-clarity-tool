@@ -5,7 +5,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import CommitmentCard from './commitments/CommitmentCard';
-import { Target, Lightbulb } from 'lucide-react';
+import { Target, Lightbulb, UserX } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface Commitment {
   id: number;
@@ -136,12 +137,26 @@ const ActiveCommitments = () => {
     setEditing({ id: null, field: null, value: '' });
   };
 
+  const handleAnonymousAccess = () => {
+    localStorage.setItem('anonymousMode', 'true');
+    // Refresh the page to apply anonymous mode
+    window.location.reload();
+  };
+
   if (!user) {
     return (
       <div className="p-4 sm:p-6 text-center bg-gray-50 rounded-lg border border-gray-200 mx-2 sm:mx-0">
         <Lightbulb className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
         <h3 className="text-base sm:text-lg font-medium text-gray-600 mb-2">Sign in to view commitments</h3>
-        <p className="text-sm sm:text-base text-gray-500">Please sign in to see your active commitments and track your progress.</p>
+        <p className="text-sm sm:text-base text-gray-500 mb-4">Please sign in to see your active commitments and track your progress.</p>
+        <Button
+          onClick={handleAnonymousAccess}
+          variant="outline"
+          className="w-full"
+        >
+          <UserX className="h-4 w-4 mr-2" />
+          Continue Anonymously
+        </Button>
       </div>
     );
   }
