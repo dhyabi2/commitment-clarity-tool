@@ -9,31 +9,48 @@ import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useAuth } from '@/contexts/AuthContext';
-import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useAnonymousMode } from '@/hooks/useAnonymousMode';
 import SignInModal from './auth/SignInModal';
+import { getDeviceId } from '@/utils/deviceId';
 
 const CommitmentClarifier = () => {
   const [step, setStep] = useState(1);
   const [outcome, setOutcome] = useState("");
   const [nextAction, setNextAction] = useState("");
+  const [showSignInModal, setShowSignInModal] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { t, dir } = useLanguage();
   const { user } = useAuth();
-  const { executeWithAuth, showSignInModal, setShowSignInModal, modalConfig } = useAuthGuard();
+  const { isAnonymous } = useAnonymousMode();
   const isRTL = dir() === 'rtl';
 
   const addCommitmentMutation = useMutation({
     mutationFn: async (commitment: { outcome: string; nextAction: string }) => {
-      if (!user?.id) throw new Error('User not authenticated');
-
-      const { data, error } = await supabase
-        .from('commitments')
-        .insert([{
+      let insertData;
+      
+      if (user) {
+        // Authenticated user
+        insertData = {
           outcome: commitment.outcome,
           nextaction: commitment.nextAction,
           user_id: user.id
-        }])
+        };
+      } else if (isAnonymous) {
+        // Anonymous user
+        const deviceId = getDeviceId();
+        insertData = {
+          outcome: commitment.outcome,
+          nextaction: commitment.nextAction,
+          device_id: deviceId
+        };
+      } else {
+        throw new Error('No authentication method available');
+      }
+
+      const { data, error } = await supabase
+        .from('commitments')
+        .insert([insertData])
         .select()
         .single();
       
@@ -68,18 +85,24 @@ const CommitmentClarifier = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (outcome && nextAction) {
-      executeWithAuth(
-        () => {
-          addCommitmentMutation.mutate({ outcome, nextAction });
-        },
-        { outcome, nextAction },
-        {
-          title: "Save your commitments",
-          description: "Sign in to track your outcomes and next actions. Stay organized and accountable across all your devices."
-        }
-      );
+    
+    if (!outcome || !nextAction) {
+      toast({
+        title: t('commitments.clarifier.errorTitle'),
+        description: "Please fill in both fields",
+        variant: "destructive",
+      });
+      return;
     }
+
+    // If user is not authenticated and not in anonymous mode, show sign-in modal
+    if (!user && !isAnonymous) {
+      setShowSignInModal(true);
+      return;
+    }
+
+    // Proceed with saving the commitment
+    addCommitmentMutation.mutate({ outcome, nextAction });
   };
 
   return (
@@ -125,7 +148,7 @@ const CommitmentClarifier = () => {
                 className="w-full sm:w-auto btn-primary text-base"
                 disabled={addCommitmentMutation.isPending}
               >
-                {t('commitments.clarifier.saveButton')}
+                {addCommitmentMutation.isPending ? t('common.saving') : t('commitments.clarifier.saveButton')}
               </Button>
             </form>
           )}
@@ -135,8 +158,8 @@ const CommitmentClarifier = () => {
       <SignInModal
         open={showSignInModal}
         onOpenChange={setShowSignInModal}
-        title={modalConfig.title}
-        description={modalConfig.description}
+        title={t('commitments.clarifier.title')}
+        description="Sign in to save your commitments securely across all your devices, or continue anonymously to store them locally."
       />
     </>
   );
