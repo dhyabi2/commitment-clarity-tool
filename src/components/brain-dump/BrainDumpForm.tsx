@@ -109,14 +109,6 @@ const BrainDumpForm = () => {
               )}
             </Button>
           </form>
-
-          {!user && (
-            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-700">
-                💡 Your thoughts are saved locally on this device. Sign in to sync across devices and never lose your data!
-              </p>
-            </div>
-          )}
         </CardContent>
       </Card>
 
