@@ -14,6 +14,15 @@ export const homeTranslations = {
       anonymousNote: 'Your thoughts are stored locally and not synced across devices.',
       continueToApp: 'Continue to App',
     },
+    index: {
+      step1: {
+        title: 'Dump Your Thoughts',
+      },
+      step2: {
+        readyTitle: 'Ready for Next Steps',
+        readyDescription: 'Once you\'ve dumped some thoughts, you\'ll be able to turn them into actionable commitments.',
+      },
+    },
   },
   ar: {
     home: {
@@ -28,6 +37,15 @@ export const homeTranslations = {
       step3Description: 'حول الأفكار إلى التزامات قابلة للتنفيذ وتتبع تقدمك.',
       anonymousNote: 'يتم تخزين أفكارك محلياً ولا تتم مزامنتها عبر الأجهزة.',
       continueToApp: 'متابعة إلى التطبيق',
+    },
+    index: {
+      step1: {
+        title: 'أفرغ أفكارك',
+      },
+      step2: {
+        readyTitle: 'جاهز للخطوات التالية',
+        readyDescription: 'بمجرد أن تفرغ بعض الأفكار، ستتمكن من تحويلها إلى التزامات قابلة للتنفيذ.',
+      },
     },
   },
 };
