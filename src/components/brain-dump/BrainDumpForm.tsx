@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -53,11 +54,6 @@ const BrainDumpForm = () => {
             <h2 className="text-xl sm:text-2xl font-semibold text-sage-700">
               {t('thoughts.captureTitle')}
             </h2>
-            {!user && (
-              <span className="text-sm bg-orange-100 text-orange-600 px-2 py-1 rounded-full">
-                Anonymous
-              </span>
-            )}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
