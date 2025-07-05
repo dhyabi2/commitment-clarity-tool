@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useAnonymousMode } from '@/hooks/useAnonymousMode';
 import SignInModal from '@/components/auth/SignInModal';
 import { getDeviceId } from '@/utils/deviceId';
+import { useQueryClient } from '@tanstack/react-query';
 
 const CommitmentClarifier = () => {
   const navigate = useNavigate();
@@ -20,6 +20,7 @@ const CommitmentClarifier = () => {
   const { t, dir } = useLanguage();
   const { user } = useAuth();
   const { isAnonymous } = useAnonymousMode();
+  const queryClient = useQueryClient();
   const [outcome, setOutcome] = useState('');
   const [nextAction, setNextAction] = useState('');
   const [showSignInModal, setShowSignInModal] = useState(false);
@@ -72,6 +73,11 @@ const CommitmentClarifier = () => {
         .insert([insertData]);
 
       if (error) throw error;
+
+      // Invalidate both authenticated and anonymous queries
+      queryClient.invalidateQueries({ queryKey: ['commitments'] });
+      const deviceId = getDeviceId();
+      queryClient.invalidateQueries({ queryKey: ['commitments', 'anonymous', deviceId] });
 
       toast({
         title: t('commitments.clarifier.successTitle'),

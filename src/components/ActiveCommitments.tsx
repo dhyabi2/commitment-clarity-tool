@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -5,6 +6,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAnonymousMode } from '@/hooks/useAnonymousMode';
+import { useAnonymousCommitments } from '@/hooks/useAnonymousCommitments';
+import { useAnonymousCommitmentsMutations } from '@/hooks/useAnonymousCommitmentsMutations';
 import CommitmentCard from './commitments/CommitmentCard';
 import { Target, Lightbulb, UserX } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -35,7 +38,8 @@ const ActiveCommitments = () => {
     value: '',
   });
 
-  const { data: commitments, isLoading } = useQuery({
+  // Use appropriate query based on authentication state
+  const authenticatedQuery = useQuery({
     queryKey: ['commitments', user?.id],
     queryFn: async () => {
       if (!user?.id) {
@@ -54,6 +58,13 @@ const ActiveCommitments = () => {
     enabled: !!user?.id
   });
 
+  const anonymousQuery = useAnonymousCommitments();
+  const anonymousMutations = useAnonymousCommitmentsMutations();
+
+  // Choose the appropriate data and mutations
+  const { data: commitments, isLoading } = user ? authenticatedQuery : anonymousQuery;
+
+  // Authenticated user mutations
   const updateCommitmentMutation = useMutation({
     mutationFn: async ({ id, field, value }: { id: number; field: string; value: string }) => {
       if (!user?.id) {
@@ -127,11 +138,21 @@ const ActiveCommitments = () => {
 
   const handleSave = () => {
     if (editing.id && editing.field) {
-      updateCommitmentMutation.mutate({
-        id: editing.id,
-        field: editing.field === 'nextAction' ? 'nextaction' : 'outcome',
-        value: editing.value,
-      });
+      const fieldName = editing.field === 'nextAction' ? 'nextaction' : 'outcome';
+      
+      if (user) {
+        updateCommitmentMutation.mutate({
+          id: editing.id,
+          field: fieldName,
+          value: editing.value,
+        });
+      } else {
+        anonymousMutations.updateCommitmentMutation.mutate({
+          id: editing.id,
+          field: fieldName,
+          value: editing.value,
+        });
+      }
     }
   };
 
@@ -139,10 +160,17 @@ const ActiveCommitments = () => {
     setEditing({ id: null, field: null, value: '' });
   };
 
+  const handleComplete = (id: number) => {
+    if (user) {
+      completeCommitmentMutation.mutate(id);
+    } else {
+      anonymousMutations.completeCommitmentMutation.mutate(id);
+    }
+  };
+
   const handleAnonymousAccess = () => {
     enableAnonymousMode();
-    // Navigate to thoughts page
-    window.location.href = '/thoughts';
+    window.location.reload(); // Refresh to show anonymous data
   };
 
   if (!user && !isAnonymous) {
@@ -159,16 +187,6 @@ const ActiveCommitments = () => {
           <UserX className="h-4 w-4 mr-2" />
           {t('auth.continueAnonymously')}
         </Button>
-      </div>
-    );
-  }
-
-  if (isAnonymous) {
-    return (
-      <div className="p-4 sm:p-6 text-center bg-blue-50 rounded-lg border border-blue-200 mx-2 sm:mx-0">
-        <Target className="h-10 w-10 sm:h-12 sm:w-12 text-blue-400 mx-auto mb-3 sm:mb-4" />
-        <h3 className="text-base sm:text-lg font-medium text-blue-600 mb-2">{t('auth.anonymousMode')}</h3>
-        <p className="text-sm sm:text-base text-blue-500">{t('auth.anonymousCommitmentsNote')}</p>
       </div>
     );
   }
@@ -197,6 +215,10 @@ const ActiveCommitments = () => {
     );
   }
 
+  const mutations = user 
+    ? { updateCommitmentMutation, completeCommitmentMutation }
+    : anonymousMutations;
+
   return (
     <div className="animate-fade-in px-2 sm:px-0">
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
@@ -220,9 +242,9 @@ const ActiveCommitments = () => {
             onEdit={handleEdit}
             onSave={handleSave}
             onCancel={handleCancel}
-            onComplete={(id) => completeCommitmentMutation.mutate(id)}
+            onComplete={handleComplete}
             setEditing={setEditing}
-            isPending={updateCommitmentMutation.isPending || completeCommitmentMutation.isPending}
+            isPending={mutations.updateCommitmentMutation.isPending || mutations.completeCommitmentMutation.isPending}
           />
         ))}
       </div>

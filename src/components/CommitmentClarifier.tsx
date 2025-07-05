@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,7 +57,11 @@ const CommitmentClarifier = () => {
       return data;
     },
     onSuccess: () => {
+      // Invalidate both authenticated and anonymous queries
       queryClient.invalidateQueries({ queryKey: ['commitments'] });
+      const deviceId = getDeviceId();
+      queryClient.invalidateQueries({ queryKey: ['commitments', 'anonymous', deviceId] });
+      
       toast({
         title: t('commitments.clarifier.successTitle'),
         description: t('commitments.clarifier.successDescription'),
