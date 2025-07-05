@@ -1,4 +1,5 @@
 
+
 export const contentTranslations = {
   en: {
     index: {
@@ -31,6 +32,11 @@ export const contentTranslations = {
       myThoughts: "My Thoughts",
       noThoughts: "No thoughts yet",
       noThoughtsDescription: "Start by capturing what's on your mind above.",
+      noThoughtsFound: "No thoughts found",
+      noThoughtsFoundDescription: "Start by capturing your thoughts in the brain dump area",
+      goToBrainDump: "Go to Brain Dump",
+      noCompletedThoughts: "No completed thoughts",
+      noCompletedThoughtsDescription: "Complete some thoughts to see them here",
       clarify: "Clarify",
       delete: "Delete",
       complete: "Complete",
@@ -67,6 +73,7 @@ export const contentTranslations = {
       signInRequired: "Sign in required",
       signInDescription: "Please sign in to view your dashboard and track your progress.",
       continueWithGoogle: "Continue with Google",
+      continueAnonymously: "Continue Anonymously",
       timeline: "Activity Timeline",
       timelineDesc: "Your thought and commitment activity over time",
       completion: "Completion Rate",
@@ -124,6 +131,11 @@ export const contentTranslations = {
       myThoughts: "أفكاري",
       noThoughts: "لا توجد أفكار بعد",
       noThoughtsDescription: "ابدأ بالتقاط ما يدور في ذهنك أعلاه.",
+      noThoughtsFound: "لم توجد أفكار",
+      noThoughtsFoundDescription: "ابدأ بالتقاط أفكارك في منطقة تفريغ الأفكار",
+      goToBrainDump: "اذهب إلى تفريغ الأفكار",
+      noCompletedThoughts: "لا توجد أفكار مكتملة",
+      noCompletedThoughtsDescription: "أكمل بعض الأفكار لرؤيتها هنا",
       clarify: "توضيح",
       delete: "حذف",
       complete: "إكمال",
@@ -160,6 +172,7 @@ export const contentTranslations = {
       signInRequired: "تسجيل الدخول مطلوب",
       signInDescription: "يرجى تسجيل الدخول لعرض لوحة القيادة وتتبع تقدمك.",
       continueWithGoogle: "المتابعة باستخدام جوجل",
+      continueAnonymously: "المتابعة بشكل مجهول",
       timeline: "الجدول الزمني للنشاط",
       timelineDesc: "نشاط أفكارك والتزاماتك عبر الزمن",
       completion: "معدل الإكمال",
@@ -187,3 +200,4 @@ export const contentTranslations = {
     }
   }
 };
+

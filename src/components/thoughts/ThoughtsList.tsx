@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRightCircle, Trash2, CheckCircle, Tag as TagIcon } from 'lucide-react';
 import { Input } from "@/components/ui/input";
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 interface Tag {
   id: number;
@@ -30,6 +32,7 @@ interface ThoughtsListProps {
 
 const ThoughtsList = ({ thoughts, onDelete, onToggleComplete, selectedTag, onTagClick }: ThoughtsListProps) => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [tagInput, setTagInput] = useState<string>("");
   const [editingThoughtId, setEditingThoughtId] = useState<number | null>(null);
 
@@ -37,18 +40,18 @@ const ThoughtsList = ({ thoughts, onDelete, onToggleComplete, selectedTag, onTag
     return (
       <Card className="p-8 text-center bg-white/50 backdrop-blur-sm">
         <h2 className="text-xl font-semibold text-sage-600 mb-2">
-          {thoughts.some(t => t.completed) ? 'No completed thoughts' : 'No thoughts found'}
+          {thoughts.some(t => t.completed) ? t('thoughts.noCompletedThoughts') : t('thoughts.noThoughtsFound')}
         </h2>
         <p className="text-sage-500 mb-4">
           {thoughts.some(t => t.completed) 
-            ? 'Complete some thoughts to see them here'
-            : 'Start by capturing your thoughts in the brain dump area'}
+            ? t('thoughts.noCompletedThoughtsDescription')
+            : t('thoughts.noThoughtsFoundDescription')}
         </p>
         <Button 
           onClick={() => navigate('/')} 
           className="bg-sage-500 hover:bg-sage-600"
         >
-          Go to Brain Dump
+          {t('thoughts.goToBrainDump')}
         </Button>
       </Card>
     );
@@ -81,7 +84,7 @@ const ThoughtsList = ({ thoughts, onDelete, onToggleComplete, selectedTag, onTag
             className="cursor-pointer"
             onClick={() => onTagClick(null)}
           >
-            All
+            {t('thoughts.allTags')}
           </Badge>
           {allTags.map(tag => (
             <Badge
@@ -138,7 +141,7 @@ const ThoughtsList = ({ thoughts, onDelete, onToggleComplete, selectedTag, onTag
                     className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                     onClick={() => navigate('/commitment-clarifier', { state: { thought: thought.content } })}
                   >
-                    Clarify <ArrowRightCircle className="ml-2 h-4 w-4" />
+                    {t('thoughts.clarify')} <ArrowRightCircle className="ml-2 h-4 w-4" />
                   </Button>
                 )}
               </div>
@@ -153,7 +156,7 @@ const ThoughtsList = ({ thoughts, onDelete, onToggleComplete, selectedTag, onTag
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyDown={(e) => handleTagInputKeyDown(e, thought.id)}
-                    placeholder="Add a tag and press Enter"
+                    placeholder={t('thoughts.addTag')}
                     className="flex-1"
                   />
                 </div>
