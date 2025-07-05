@@ -1,15 +1,13 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/contexts/AuthContext';
 import { getDeviceId } from '@/utils/deviceId';
 
-export const useThoughtsQuery = (selectedTag: string | null) => {
-  const { user } = useAuth();
+export const useDeviceThoughtsQuery = (selectedTag: string | null) => {
   const deviceId = getDeviceId();
   
   return useQuery({
-    queryKey: ['thoughts', 'active', selectedTag, user?.id, deviceId],
+    queryKey: ['device-thoughts', 'active', selectedTag, deviceId],
     queryFn: async () => {
       let query = supabase
         .from('thoughts')
@@ -20,14 +18,8 @@ export const useThoughtsQuery = (selectedTag: string | null) => {
           )
         `)
         .eq('completed', false)
+        .eq('device_id', deviceId)
         .order('created_at', { ascending: false });
-
-      // Filter by user or device based on authentication status
-      if (user?.id) {
-        query = query.eq('user_id', user.id);
-      } else {
-        query = query.eq('device_id', deviceId);
-      }
       
       const { data, error } = await query;
       

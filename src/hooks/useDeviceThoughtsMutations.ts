@@ -2,13 +2,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from '@/contexts/AuthContext';
 import { getDeviceId } from '@/utils/deviceId';
 
-export const useThoughtsMutations = () => {
+export const useDeviceThoughtsMutations = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
   const deviceId = getDeviceId();
 
   const addTagMutation = useMutation({
@@ -28,7 +26,7 @@ export const useThoughtsMutations = () => {
       if (relationError) throw relationError;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['thoughts'] });
+      queryClient.invalidateQueries({ queryKey: ['device-thoughts'] });
       toast({
         title: "Tag added",
         description: "The tag has been added to your thought.",
@@ -38,19 +36,16 @@ export const useThoughtsMutations = () => {
 
   const deleteThoughtMutation = useMutation({
     mutationFn: async (thoughtId: number) => {
-      let query = supabase.from('thoughts').delete().eq('id', thoughtId);
+      const { error } = await supabase
+        .from('thoughts')
+        .delete()
+        .eq('id', thoughtId)
+        .eq('device_id', deviceId);
       
-      if (user?.id) {
-        query = query.eq('user_id', user.id);
-      } else {
-        query = query.eq('device_id', deviceId);
-      }
-      
-      const { error } = await query;
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['thoughts'] });
+      queryClient.invalidateQueries({ queryKey: ['device-thoughts'] });
       toast({
         title: "Thought deleted",
         description: "Your thought has been successfully removed.",
@@ -60,20 +55,16 @@ export const useThoughtsMutations = () => {
 
   const toggleCompleteMutation = useMutation({
     mutationFn: async ({ thoughtId, completed }: { thoughtId: number; completed: boolean }) => {
-      let query = supabase.from('thoughts').update({ completed }).eq('id', thoughtId);
+      const { error } = await supabase
+        .from('thoughts')
+        .update({ completed })
+        .eq('id', thoughtId)
+        .eq('device_id', deviceId);
       
-      if (user?.id) {
-        query = query.eq('user_id', user.id);
-      } else {
-        query = query.eq('device_id', deviceId);
-      }
-      
-      const { error } = await query;
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['thoughts'] });
-      queryClient.invalidateQueries({ queryKey: ['completed-thoughts'] });
+      queryClient.invalidateQueries({ queryKey: ['device-thoughts'] });
       toast({
         title: "Thought updated",
         description: "The thought status has been updated.",

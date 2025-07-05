@@ -8,16 +8,14 @@ import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { TagInput } from '@/components/thoughts/TagInput';
 import { useBrainDumpMutation } from './useBrainDumpMutation';
 import { BrainDumpUpgradePrompt } from './BrainDumpUpgradePrompt';
-import { useAuthGuard } from '@/hooks/useAuthGuard';
-import SignInModal from '@/components/auth/SignInModal';
+import { useAuth } from '@/contexts/AuthContext';
 
 const BrainDumpForm = () => {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [thought, setThought] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
-
-  const { executeWithAuth, showSignInModal, setShowSignInModal, modalConfig } = useAuthGuard();
 
   const { addThoughtMutation } = useBrainDumpMutation({
     onSuccess: () => {
@@ -33,19 +31,10 @@ const BrainDumpForm = () => {
     e.preventDefault();
     if (!thought.trim()) return;
 
-    executeWithAuth(
-      () => {
-        addThoughtMutation.mutate({
-          content: thought.trim(),
-          tags
-        });
-      },
-      { thought: thought.trim(), tags },
-      {
-        title: "Sign in to capture your thoughts",
-        description: "Create an account to securely save your thoughts and access them from anywhere."
-      }
-    );
+    addThoughtMutation.mutate({
+      content: thought.trim(),
+      tags
+    });
   };
 
   const handleTagAdd = (tag: string) => {
@@ -65,6 +54,11 @@ const BrainDumpForm = () => {
             <h2 className="text-xl sm:text-2xl font-semibold text-sage-700">
               {t('thoughts.captureTitle')}
             </h2>
+            {!user && (
+              <span className="text-sm bg-orange-100 text-orange-600 px-2 py-1 rounded-full">
+                Anonymous
+              </span>
+            )}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -120,15 +114,16 @@ const BrainDumpForm = () => {
               )}
             </Button>
           </form>
+
+          {!user && (
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-700">
+                💡 Your thoughts are saved locally on this device. Sign in to sync across devices and never lose your data!
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
-
-      <SignInModal
-        open={showSignInModal}
-        onOpenChange={setShowSignInModal}
-        title={modalConfig.title}
-        description={modalConfig.description}
-      />
 
       {showUpgradePrompt && (
         <div className="mt-4">

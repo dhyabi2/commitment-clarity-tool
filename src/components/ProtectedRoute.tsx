@@ -1,20 +1,19 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import SignIn from '@/components/auth/SignIn';
-import WelcomePage from '@/components/welcome/WelcomePage';
 import { useWelcomeState } from '@/hooks/useWelcomeState';
 import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  requireAuth?: boolean;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth = false }) => {
   const { user, loading } = useAuth();
   const { hasSeenWelcome, markWelcomeAsCompleted } = useWelcomeState();
 
-  if (loading || hasSeenWelcome === null) {
+  if (loading || (user && hasSeenWelcome === null)) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-sage-500" />
@@ -22,12 +21,32 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
-  if (!user) {
-    return <SignIn />;
+  // If authentication is required but user is not logged in, redirect to sign in
+  if (requireAuth && !user) {
+    const SignIn = React.lazy(() => import('@/components/auth/SignIn'));
+    return (
+      <React.Suspense fallback={
+        <div className="min-h-screen bg-cream flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-sage-500" />
+        </div>
+      }>
+        <SignIn />
+      </React.Suspense>
+    );
   }
 
-  if (!hasSeenWelcome) {
-    return <WelcomePage onComplete={markWelcomeAsCompleted} />;
+  // Show welcome page for authenticated users who haven't seen it
+  if (user && !hasSeenWelcome) {
+    const WelcomePage = React.lazy(() => import('@/components/welcome/WelcomePage'));
+    return (
+      <React.Suspense fallback={
+        <div className="min-h-screen bg-cream flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-sage-500" />
+        </div>
+      }>
+        <WelcomePage onComplete={markWelcomeAsCompleted} />
+      </React.Suspense>
+    );
   }
 
   return <>{children}</>;

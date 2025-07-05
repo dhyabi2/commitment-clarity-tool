@@ -6,10 +6,9 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/lib/supabase';
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useAuth } from '@/contexts/AuthContext';
-import { useAuthGuard } from '@/hooks/useAuthGuard';
-import SignInModal from '@/components/auth/SignInModal';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThoughtsQuery } from '@/hooks/useThoughtsQuery';
+import { getDeviceId } from '@/utils/deviceId';
 import ProgressHeader from '@/components/commitment-flow/ProgressHeader';
 import ThoughtSelectionStep from '@/components/commitment-flow/ThoughtSelectionStep';
 import OutcomeDefinitionStep from '@/components/commitment-flow/OutcomeDefinitionStep';
@@ -27,26 +26,33 @@ const CommitmentFlow = () => {
   const { t, dir } = useLanguage();
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const { executeWithAuth, showSignInModal, setShowSignInModal, modalConfig } = useAuthGuard();
+  const deviceId = getDeviceId();
   const [step, setStep] = useState(1);
   const [selectedThought, setSelectedThought] = useState<Thought | null>(null);
   const [outcome, setOutcome] = useState('');
   const [nextAction, setNextAction] = useState('');
 
-  // Get user's thoughts
+  // Get user's thoughts (works for both authenticated and anonymous users)
   const { data: thoughts, isLoading: thoughtsLoading } = useThoughtsQuery(null);
 
   const addCommitmentMutation = useMutation({
     mutationFn: async (commitment: { outcome: string; nextAction: string; thoughtId?: number }) => {
-      if (!user?.id) throw new Error('User not authenticated');
+      const commitmentData: any = {
+        outcome: commitment.outcome,
+        nextaction: commitment.nextAction
+      };
+
+      if (user?.id) {
+        commitmentData.user_id = user.id;
+      } else {
+        commitmentData.device_id = deviceId;
+        // Update device session
+        await supabase.rpc('update_device_session', { p_device_id: deviceId });
+      }
 
       const { data, error } = await supabase
         .from('commitments')
-        .insert([{
-          outcome: commitment.outcome,
-          nextaction: commitment.nextAction,
-          user_id: user.id
-        }])
+        .insert([commitmentData])
         .select()
         .single();
       
@@ -54,11 +60,18 @@ const CommitmentFlow = () => {
 
       // Mark the thought as completed if we have a thought ID
       if (commitment.thoughtId) {
-        await supabase
+        let updateQuery = supabase
           .from('thoughts')
           .update({ completed: true })
-          .eq('id', commitment.thoughtId)
-          .eq('user_id', user.id);
+          .eq('id', commitment.thoughtId);
+
+        if (user?.id) {
+          updateQuery = updateQuery.eq('user_id', user.id);
+        } else {
+          updateQuery = updateQuery.eq('device_id', deviceId);
+        }
+
+        await updateQuery;
       }
 
       return data;
@@ -115,20 +128,11 @@ const CommitmentFlow = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedThought && outcome.trim() && nextAction.trim()) {
-      executeWithAuth(
-        () => {
-          addCommitmentMutation.mutate({ 
-            outcome, 
-            nextAction, 
-            thoughtId: selectedThought.id 
-          });
-        },
-        { selectedThought, outcome, nextAction },
-        {
-          title: "Save your commitments",
-          description: "Sign in to track your outcomes and next actions. Stay organized and accountable across all your devices."
-        }
-      );
+      addCommitmentMutation.mutate({ 
+        outcome, 
+        nextAction, 
+        thoughtId: selectedThought.id 
+      });
     }
   };
 
@@ -141,61 +145,59 @@ const CommitmentFlow = () => {
   }
 
   return (
-    <>
-      <div className="min-h-screen bg-cream p-4 pb-24 md:pb-6" dir={dir()}>
-        <div className="max-w-2xl mx-auto">
-          <ProgressHeader 
-            step={step}
-            totalSteps={3}
-            onBack={handleBack}
-          />
+    <div className="min-h-screen bg-cream p-4 pb-24 md:pb-6" dir={dir()}>
+      <div className="max-w-2xl mx-auto">
+        <ProgressHeader 
+          step={step}
+          totalSteps={3}
+          onBack={handleBack}
+        />
 
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <CardHeader className="pb-6">
-              {/* Step content will be rendered by step components */}
-            </CardHeader>
-            
-            <CardContent>
-              {step === 1 && (
-                <ThoughtSelectionStep
-                  thoughts={thoughts}
-                  selectedThought={selectedThought}
-                  onThoughtSelect={setSelectedThought}
-                  onNext={handleNext}
-                />
-              )}
+        <Card className="bg-white/80 backdrop-blur-sm">
+          <CardHeader className="pb-6">
+            {/* Step content will be rendered by step components */}
+            {!user && (
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                <p className="text-sm text-orange-700">
+                  💡 You're using anonymous mode. Your commitments are saved locally on this device.
+                </p>
+              </div>
+            )}
+          </CardHeader>
+          
+          <CardContent>
+            {step === 1 && (
+              <ThoughtSelectionStep
+                thoughts={thoughts}
+                selectedThought={selectedThought}
+                onThoughtSelect={setSelectedThought}
+                onNext={handleNext}
+              />
+            )}
 
-              {step === 2 && (
-                <OutcomeDefinitionStep
-                  selectedThought={selectedThought}
-                  outcome={outcome}
-                  onOutcomeChange={setOutcome}
-                  onNext={handleNext}
-                />
-              )}
+            {step === 2 && (
+              <OutcomeDefinitionStep
+                selectedThought={selectedThought}
+                outcome={outcome}
+                onOutcomeChange={setOutcome}
+                onNext={handleNext}
+              />
+            )}
 
-              {step === 3 && (
-                <NextActionStep
-                  selectedThought={selectedThought}
-                  outcome={outcome}
-                  nextAction={nextAction}
-                  onNextActionChange={setNextAction}
-                  onSubmit={handleSubmit}
-                  isPending={addCommitmentMutation.isPending}
-                />
-              )}
-            </CardContent>
-          </Card>
-        </div>
+            {step === 3 && (
+              <NextActionStep
+                selectedThought={selectedThought}
+                outcome={outcome}
+                nextAction={nextAction}
+                onNextActionChange={setNextAction}
+                onSubmit={handleSubmit}
+                isPending={addCommitmentMutation.isPending}
+              />
+            )}
+          </CardContent>
+        </Card>
       </div>
-
-      <SignInModal
-        open={showSignInModal}
-        onOpenChange={setShowSignInModal}
-        title={modalConfig.title}
-        description={modalConfig.description}
-      />
-    </>
+    </div>
   );
 };
 

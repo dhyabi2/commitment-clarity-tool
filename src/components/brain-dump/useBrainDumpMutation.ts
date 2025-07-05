@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/contexts/AuthContext';
+import { getDeviceId } from '@/utils/deviceId';
 
 interface BrainDumpData {
   content: string;
@@ -19,22 +20,24 @@ export const useBrainDumpMutation = ({
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const deviceId = getDeviceId();
 
   const addThoughtMutation = useMutation({
     mutationFn: async ({ content, tags }: BrainDumpData) => {
-      if (!user?.id) {
-        throw new Error('User not authenticated');
-      }
-
-      console.log('Checking if user can create thought...');
+      console.log('Checking if user/device can create thought...');
       
-      // Check if user can create thought (now handles unlimited usage internally)
-      const { data: canCreate, error: checkError } = await supabase
-        .rpc('can_create_thought', { p_user_id: user.id });
-
-      if (checkError) {
-        console.error('Error checking thought limit:', checkError);
-        throw checkError;
+      // Check limit based on authentication status
+      let canCreate = false;
+      if (user?.id) {
+        const { data, error: checkError } = await supabase
+          .rpc('can_create_thought', { p_user_id: user.id });
+        if (checkError) throw checkError;
+        canCreate = data;
+      } else {
+        const { data, error: checkError } = await supabase
+          .rpc('can_create_thought_by_device', { p_device_id: deviceId });
+        if (checkError) throw checkError;
+        canCreate = data;
       }
 
       console.log('Can create thought:', canCreate);
@@ -46,45 +49,52 @@ export const useBrainDumpMutation = ({
         throw error;
       }
 
-      console.log('Adding thought for user:', user.id);
-      console.log('Thought content:', content);
-      console.log('Tags:', tags);
+      console.log('Adding thought for user/device:', user?.id || deviceId);
 
-      // First, ensure the user has a profile
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', user.id)
-        .single();
+      // Create thought data based on authentication status
+      const thoughtData: any = { 
+        content, 
+        completed: false
+      };
 
-      if (profileError && profileError.code === 'PGRST116') {
-        // Profile doesn't exist, create it
-        console.log('Creating profile for user:', user.id);
-        const { error: createProfileError } = await supabase
+      if (user?.id) {
+        // First, ensure the user has a profile
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
-          .insert([{
-            id: user.id,
-            email: user.email,
-            full_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0],
-            avatar_url: user.user_metadata?.avatar_url
-          }]);
+          .select('id')
+          .eq('id', user.id)
+          .single();
 
-        if (createProfileError) {
-          console.error('Error creating profile:', createProfileError);
-          throw createProfileError;
+        if (profileError && profileError.code === 'PGRST116') {
+          console.log('Creating profile for user:', user.id);
+          const { error: createProfileError } = await supabase
+            .from('profiles')
+            .insert([{
+              id: user.id,
+              email: user.email,
+              full_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0],
+              avatar_url: user.user_metadata?.avatar_url
+            }]);
+
+          if (createProfileError) {
+            console.error('Error creating profile:', createProfileError);
+            throw createProfileError;
+          }
+        } else if (profileError) {
+          console.error('Error checking profile:', profileError);
+          throw profileError;
         }
-      } else if (profileError) {
-        console.error('Error checking profile:', profileError);
-        throw profileError;
+
+        thoughtData.user_id = user.id;
+      } else {
+        thoughtData.device_id = deviceId;
+        // Update device session
+        await supabase.rpc('update_device_session', { p_device_id: deviceId });
       }
 
       const { data: thought, error: thoughtError } = await supabase
         .from('thoughts')
-        .insert([{ 
-          content, 
-          completed: false,
-          user_id: user.id
-        }])
+        .insert([thoughtData])
         .select()
         .single();
 
@@ -95,12 +105,19 @@ export const useBrainDumpMutation = ({
 
       console.log('Thought created successfully:', thought);
 
-      // Increment usage count (still track usage even in unlimited mode for analytics)
-      const { error: usageError } = await supabase
-        .rpc('increment_usage_count', { p_user_id: user.id });
-
-      if (usageError) {
-        console.error('Error incrementing usage:', usageError);
+      // Increment usage count
+      if (user?.id) {
+        const { error: usageError } = await supabase
+          .rpc('increment_usage_count', { p_user_id: user.id });
+        if (usageError) {
+          console.error('Error incrementing usage:', usageError);
+        }
+      } else {
+        const { error: usageError } = await supabase
+          .rpc('increment_usage_count_by_device', { p_device_id: deviceId });
+        if (usageError) {
+          console.error('Error incrementing usage:', usageError);
+        }
       }
 
       if (tags.length > 0) {
@@ -159,20 +176,16 @@ export const useBrainDumpMutation = ({
     onError: (error: any) => {
       console.error('Error adding thought:', error);
       
-      // Handle limit reached error specifically
       if (error.name === 'LIMIT_REACHED' || error.message === 'Monthly thought limit reached') {
         onLimitReached?.();
         return;
       }
       
-      // Don't show error toasts for authentication errors - these are handled by the auth guard
-      if (error.message !== 'User not authenticated') {
-        toast({
-          title: "Error",
-          description: "Failed to add thought. Please try again.",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Error",
+        description: "Failed to add thought. Please try again.",
+        variant: "destructive",
+      });
     }
   });
 

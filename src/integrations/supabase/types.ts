@@ -95,6 +95,39 @@ export type Database = {
           },
         ]
       }
+      device_sessions: {
+        Row: {
+          commitments_count: number
+          created_at: string
+          device_id: string
+          first_seen: string
+          id: string
+          last_activity: string
+          thoughts_count: number
+          updated_at: string
+        }
+        Insert: {
+          commitments_count?: number
+          created_at?: string
+          device_id: string
+          first_seen?: string
+          id?: string
+          last_activity?: string
+          thoughts_count?: number
+          updated_at?: string
+        }
+        Update: {
+          commitments_count?: number
+          created_at?: string
+          device_id?: string
+          first_seen?: string
+          id?: string
+          last_activity?: string
+          thoughts_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
@@ -315,6 +348,7 @@ export type Database = {
       usage_tracking: {
         Row: {
           created_at: string
+          device_id: string | null
           id: string
           month_year: string
           thoughts_count: number
@@ -323,6 +357,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          device_id?: string | null
           id?: string
           month_year: string
           thoughts_count?: number
@@ -331,6 +366,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          device_id?: string | null
           id?: string
           month_year?: string
           thoughts_count?: number
@@ -372,8 +408,16 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: boolean
       }
+      can_create_thought_by_device: {
+        Args: { p_device_id: string }
+        Returns: boolean
+      }
       get_current_month_usage: {
         Args: { p_user_id: string }
+        Returns: number
+      }
+      get_current_month_usage_by_device: {
+        Args: { p_device_id: string }
         Returns: number
       }
       get_free_tier_limit: {
@@ -391,6 +435,18 @@ export type Database = {
       increment_usage_count: {
         Args: { p_user_id: string }
         Returns: number
+      }
+      increment_usage_count_by_device: {
+        Args: { p_device_id: string }
+        Returns: number
+      }
+      migrate_device_data_to_user: {
+        Args: { p_device_id: string; p_user_id: string }
+        Returns: undefined
+      }
+      update_device_session: {
+        Args: { p_device_id: string }
+        Returns: undefined
       }
       update_session_key: {
         Args:
