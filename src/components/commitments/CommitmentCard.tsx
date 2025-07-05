@@ -1,9 +1,8 @@
 
 import React from 'react';
 import { Card } from "@/components/ui/card";
-import { Check, Clock, X, Pencil, Save, Trash2 } from "lucide-react";
+import { Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   AlertDialog,
@@ -92,27 +91,26 @@ const CommitmentCard = ({
                   className="bg-green-50 border-green-200 text-green-700 hover:bg-green-100 hover:border-green-300 min-h-[44px] px-4 text-sm sm:text-base w-full sm:w-auto"
                   disabled={isPending}
                 >
-                  <Check className="h-4 w-4 mr-2 flex-shrink-0" />
-                  <span className="whitespace-nowrap">Mark Complete</span>
+                  {t('commitments.markComplete')}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent className="mx-4 rounded-lg">
                 <AlertDialogHeader>
-                  <AlertDialogTitle className="text-lg">Complete this commitment?</AlertDialogTitle>
+                  <AlertDialogTitle className="text-lg">{t('commitments.confirmCompletion')}</AlertDialogTitle>
                   <AlertDialogDescription className="text-base leading-relaxed">
-                    Are you sure you want to mark this commitment as complete? This action will move it to your completed commitments list.
+                    {t('commitments.confirmCompletionDescription')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-                  <AlertDialogCancel className="min-h-[48px] w-full sm:w-auto">Cancel</AlertDialogCancel>
+                  <AlertDialogCancel className="min-h-[48px] w-full sm:w-auto">{t('commitments.cancel')}</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={() => onComplete(commitment.id)}
                     className="bg-green-600 hover:bg-green-700 min-h-[48px] w-full sm:w-auto"
                   >
-                    Yes, Complete It
+                    {t('commitments.yesComplete')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
-              </AlertDialogContent>
+              </AlertDialogContent>  
             </AlertDialog>
           </div>
         </div>
@@ -120,15 +118,15 @@ const CommitmentCard = ({
         {/* Outcome Section */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs sm:text-sm font-medium text-gray-600 uppercase tracking-wide">Desired Outcome</h4>
+            <h4 className="text-xs sm:text-sm font-medium text-gray-600 uppercase tracking-wide">{t('commitments.outcome')}</h4>
             {editing.id !== commitment.id || editing.field !== 'outcome' ? (
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => onEdit(commitment, 'outcome')}
-                className="text-gray-400 hover:text-sage-600 min-h-[44px] min-w-[44px] p-2"
+                className="text-blue-600 border-blue-200 hover:bg-blue-50 min-h-[40px] px-3"
               >
-                <Pencil className="h-4 w-4" />
+                {t('commitments.editOutcome')}
               </Button>
             ) : null}
           </div>
@@ -148,8 +146,7 @@ const CommitmentCard = ({
                   disabled={isPending}
                   className="bg-sage-500 hover:bg-sage-600 min-h-[48px] flex-1 sm:flex-none"
                 >
-                  <Save className="h-4 w-4 mr-2" />
-                  Save
+                  {t('commitments.save')}
                 </Button>
                 <Button
                   variant="outline"
@@ -157,8 +154,7 @@ const CommitmentCard = ({
                   onClick={onCancel}
                   className="min-h-[48px] flex-1 sm:flex-none"
                 >
-                  <X className="h-4 w-4 mr-2" />
-                  Cancel
+                  {t('commitments.cancel')}
                 </Button>
               </div>
             </div>
@@ -172,15 +168,15 @@ const CommitmentCard = ({
         {/* Next Action Section */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs sm:text-sm font-medium text-gray-600 uppercase tracking-wide">Next Action</h4>
+            <h4 className="text-xs sm:text-sm font-medium text-gray-600 uppercase tracking-wide">{t('commitments.nextAction')}</h4>
             {editing.id !== commitment.id || editing.field !== 'nextAction' ? (
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => onEdit(commitment, 'nextAction')}
-                className="text-gray-400 hover:text-sage-600 min-h-[44px] min-w-[44px] p-2"
+                className="text-blue-600 border-blue-200 hover:bg-blue-50 min-h-[40px] px-3"
               >
-                <Pencil className="h-4 w-4" />
+                {t('commitments.editNextAction')}
               </Button>
             ) : null}
           </div>
@@ -200,8 +196,7 @@ const CommitmentCard = ({
                   disabled={isPending}
                   className="bg-sage-500 hover:bg-sage-600 min-h-[48px] flex-1 sm:flex-none"
                 >
-                  <Save className="h-4 w-4 mr-2" />
-                  Save
+                  {t('commitments.save')}
                 </Button>
                 <Button
                   variant="outline"
@@ -209,8 +204,7 @@ const CommitmentCard = ({
                   onClick={onCancel}
                   className="min-h-[48px] flex-1 sm:flex-none"
                 >
-                  <X className="h-4 w-4 mr-2" />
-                  Cancel
+                  {t('commitments.cancel')}
                 </Button>
               </div>
             </div>
