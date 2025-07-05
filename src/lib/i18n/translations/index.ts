@@ -1,6 +1,6 @@
 
 import { authTranslations } from './auth';
-import { pwaTranslations } from './pwa';
+import { pwaInstallTranslations } from './pwaInstall';
 import { faqTranslations } from './faq';
 import { navigationTranslations } from './navigation';
 import { homeTranslations } from './home';
@@ -19,7 +19,7 @@ import { welcomeTranslations } from './welcome';
 const mergeTranslations = (lang: 'en' | 'ar') => {
   return {
     ...authTranslations[lang],
-    ...pwaTranslations[lang],
+    ...pwaInstallTranslations[lang],
     ...faqTranslations[lang],
     ...navigationTranslations[lang],
     ...homeTranslations[lang],
