@@ -3,6 +3,10 @@ export const thoughtsTranslations = {
   en: {
     thoughts: {
       title: 'Your Thoughts',
+      captureTitle: 'Capture Your Thoughts',
+      placeholder: 'What\'s on your mind? Dump all your thoughts here...',
+      captureButton: 'Capture Thought',
+      capturing: 'Capturing...',
       emptyStateTitle: 'No thoughts yet',
       emptyStateDescription: 'Start dumping your thoughts to see them here.',
       deleteConfirmation: 'Are you sure you want to delete this thought?',
@@ -23,6 +27,10 @@ export const thoughtsTranslations = {
   ar: {
     thoughts: {
       title: 'أفكارك',
+      captureTitle: 'التقط أفكارك',
+      placeholder: 'ما الذي يدور في ذهنك؟ أفرغ جميع أفكارك هنا...',
+      captureButton: 'التقط الفكرة',
+      capturing: 'جاري الالتقاط...',
       emptyStateTitle: 'لا توجد أفكار بعد',
       emptyStateDescription: 'ابدأ بتفريغ أفكارك لرؤيتها هنا.',
       deleteConfirmation: 'هل أنت متأكد من أنك تريد حذف هذه الفكرة؟',
