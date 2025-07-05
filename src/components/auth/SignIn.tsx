@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { Loader2 } from 'lucide-react';
+import AnonymousAccessButton from '@/components/home/AnonymousAccessButton';
 
 const SignIn = () => {
   const { signInWithGoogle } = useAuth();
@@ -39,7 +40,7 @@ const SignIn = () => {
             {t('auth.signInDescription') || 'Sign in to access your thoughts and commitments'}
           </p>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4">
           <Button
             onClick={handleGoogleSignIn}
             disabled={loading}
@@ -71,6 +72,17 @@ const SignIn = () => {
               </>
             )}
           </Button>
+          
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-2 text-muted-foreground">Or</span>
+            </div>
+          </div>
+
+          <AnonymousAccessButton />
           
           <div className="text-center text-sm text-gray-500">
             {t('auth.termsText') || 'By signing in, you agree to our Terms of Service and Privacy Policy'}

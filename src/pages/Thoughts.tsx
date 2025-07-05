@@ -1,225 +1,143 @@
-import React, { useRef } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
-import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Chrome } from "lucide-react";
-import ThoughtCard from '@/components/thoughts/ThoughtCard';
-import { TagManager } from '@/components/thoughts/TagManager';
-import { convertToXML, parseXMLData } from '@/utils/xmlUtils';
+import React, { useState, useCallback } from 'react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
-import { ThoughtsHeader } from '@/components/thoughts/ThoughtsHeader';
-import { useThoughtsMutations } from '@/hooks/useThoughtsMutations';
-import { useThoughtsQuery } from '@/hooks/useThoughtsQuery';
+import { Plus, Search, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
-interface ImportedThought {
-  content: string;
-  completed: boolean;
-  device_id: string;
-  created_at: string;
-  tags: { name: string; }[];
-}
+import { useThoughtsQuery } from '@/hooks/useThoughtsQuery';
+import { useDeviceThoughtsQuery } from '@/hooks/useDeviceThoughtsQuery';
+import { useThoughtsMutations } from '@/hooks/useThoughtsMutations';
+import { useDeviceThoughtsMutations } from '@/hooks/useDeviceThoughtsMutations';
+
+import ThoughtCard from '@/components/thoughts/ThoughtCard';
+import TagList from '@/components/thoughts/TagList';
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { getDeviceId } from '@/utils/deviceId';
+import SignInModal from '@/components/auth/SignInModal';
 
 const Thoughts = () => {
-  const { toast } = useToast();
-  const { dir } = useLanguage();
-  const { user, signInWithGoogle } = useAuth();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedTag, setSelectedTag] = React.useState<string | null>(null);
+  const { user } = useAuth();
+  const { t, dir } = useLanguage();
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  
+  // Use appropriate query based on authentication status
+  const thoughtsQuery = user ? 
+    useThoughtsQuery(selectedTag) : 
+    useDeviceThoughtsQuery(selectedTag);
 
-  const { data: thoughts, isLoading } = useThoughtsQuery(selectedTag);
-  const { addTagMutation, deleteThoughtMutation, toggleCompleteMutation } = useThoughtsMutations();
+  const mutations = user ? 
+    useThoughtsMutations() : 
+    useDeviceThoughtsMutations();
 
-  // Extract unique tags from thoughts
-  const uniqueTags = React.useMemo(() => {
-    if (!thoughts) return [];
-    const tags = thoughts.flatMap(thought => 
-      thought.tags?.map(tag => tag.name) || []
-    );
-    return Array.from(new Set(tags)).sort();
-  }, [thoughts]);
+  const [open, setOpen] = React.useState(false)
+  const [newTag, setNewTag] = useState('');
+  const [thoughtId, setThoughtId] = useState<number | null>(null);
+  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
 
-  const handleExport = () => {
-    if (!thoughts || !user) return;
-    
-    const xmlContent = convertToXML(thoughts);
-    const blob = new Blob([xmlContent], { type: 'text/xml' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'thoughts.xml';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
-  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!user?.id) {
-      toast({
-        title: "Authentication required",
-        description: "Please sign in to import thoughts.",
-        variant: "destructive",
-      });
+  const handleAddTagClick = (id: number) => {
+    if (!user) {
+      setIsSignInModalOpen(true);
       return;
     }
-
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      try {
-        const xmlContent = e.target?.result as string;
-        const { thoughts: importedThoughts } = parseXMLData(xmlContent) as { thoughts: ImportedThought[] };
-        let importCount = 0;
-
-        for (const thought of importedThoughts) {
-          // Check for exact duplicate for this user
-          const { data: existingThought } = await supabase
-            .from('thoughts')
-            .select('id')
-            .eq('content', thought.content)
-            .eq('user_id', user.id)
-            .single();
-
-          if (existingThought) {
-            continue; // Skip if duplicate exists for this user
-          }
-
-          const { data: thoughtData, error: thoughtError } = await supabase
-            .from('thoughts')
-            .insert([{ 
-              content: thought.content, 
-              completed: thought.completed,
-              user_id: user.id,
-              created_at: thought.created_at
-            }])
-            .select()
-            .single();
-
-          if (thoughtError) throw thoughtError;
-
-          if (thought.tags && thought.tags.length > 0) {
-            const { error: tagError } = await supabase
-              .from('tags')
-              .upsert(
-                thought.tags.map(tag => ({ name: tag.name })),
-                { onConflict: 'name' }
-              );
-
-            if (tagError) throw tagError;
-
-            const { data: existingTags, error: existingTagsError } = await supabase
-              .from('tags')
-              .select('*')
-              .in('name', thought.tags.map(t => t.name));
-
-            if (existingTagsError) throw existingTagsError;
-
-            const { error: relationError } = await supabase
-              .from('thought_tags')
-              .insert(
-                existingTags.map(tag => ({
-                  thought_id: thoughtData.id,
-                  tag_id: tag.id
-                }))
-              );
-
-            if (relationError) throw relationError;
-          }
-          importCount++;
-        }
-
-        toast({
-          title: "Import successful",
-          description: `Imported ${importCount} thoughts.`,
-        });
-      } catch (error) {
-        toast({
-          title: "Import failed",
-          description: "There was an error importing your data. Please try again.",
-          variant: "destructive",
-        });
-      }
-    };
-    reader.readAsText(file);
+    setThoughtId(id);
+    setOpen(true);
   };
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-cream p-4 flex items-center justify-center" dir={dir()}>
-        <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-xl">
-          <CardHeader className="text-center pb-6">
-            <CardTitle className="text-xl font-semibold text-sage-600 mb-2">
-              Sign in to view your thoughts
-            </CardTitle>
-            <CardDescription className="text-sage-500">
-              Please sign in to access your thoughts and create new ones.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-center">
-            <Button
-              onClick={signInWithGoogle}
-              className="w-full bg-sage-600 hover:bg-sage-700 text-white min-h-[48px] flex items-center justify-center gap-3"
-            >
-              <Chrome className="h-5 w-5" />
-              Continue with Google
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  const handleAddTag = async () => {
+    if (!newTag.trim() || !thoughtId) return;
+    await mutations.addTagMutation.mutateAsync({ thoughtId, tagName: newTag.trim() });
+    setOpen(false);
+    setNewTag('');
+  };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-cream p-4" dir={dir()}>
-        <div className="max-w-4xl mx-auto">
-          <div className="animate-pulse space-y-4">
-            {[1, 2, 3].map((n) => (
-              <div key={n} className="h-32 bg-sage-100 rounded-lg" />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const handleTagClick = useCallback((tag: string) => {
+    setSelectedTag(prevTag => prevTag === tag ? null : tag);
+  }, []);
+
+  if (thoughtsQuery.isLoading) return <div>{t('loading') || 'Loading...'}</div>;
+  if (thoughtsQuery.isError) return <div>Error: {thoughtsQuery.error.message}</div>;
 
   return (
-    <div className="min-h-screen bg-cream p-4 pb-20 md:pb-4" dir={dir()}>
-      <div className="max-w-4xl mx-auto">
-        <ThoughtsHeader 
-          onExport={handleExport}
-          onImportClick={() => fileInputRef.current?.click()}
-        />
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleImport}
-          accept=".xml"
-          className="hidden"
-        />
-        <TagManager 
-          allTags={uniqueTags}
-          selectedTag={selectedTag}
-          onTagClick={setSelectedTag}
-        />
-        <div className="space-y-4">
-          {thoughts?.map(thought => (
+    <div dir={dir()}>
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">{t('thoughts.title') || 'Thoughts'}</h1>
+        {/* <Link to="/commitment-flow">
+          <Button>
+            <Plus className="mr-2 h-4 w-4" />
+            {t('thoughts.addCommitment') || 'Add Commitment'}
+          </Button>
+        </Link> */}
+      </div>
+
+      <TagList 
+        tags={thoughtsQuery.data?.reduce((allTags: string[], thought) => {
+          thought.tags?.forEach(tag => {
+            if (!allTags.includes(tag.name)) {
+              allTags.push(tag.name);
+            }
+          });
+          return allTags;
+        }, []) || []}
+        selectedTag={selectedTag}
+        onTagClick={handleTagClick}
+      />
+
+      {thoughtsQuery.data?.length === 0 ? (
+        <div className="text-gray-500 mt-4">
+          {t('thoughts.noThoughts') || 'No thoughts yet. Start dumping your mind!'}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {thoughtsQuery.data?.map(thought => (
             <ThoughtCard
               key={thought.id}
               thought={thought}
-              onDelete={(id) => deleteThoughtMutation.mutate(id)}
-              onToggleComplete={(id, completed) => toggleCompleteMutation.mutate({ thoughtId: id, completed })}
-              onAddTag={(thoughtId, tag) => addTagMutation.mutate({ thoughtId, tagName: tag })}
-              existingTags={uniqueTags}
+              onDelete={() => mutations.deleteThoughtMutation.mutate(thought.id)}
+              onToggleComplete={() => mutations.toggleCompleteMutation.mutate({ 
+                thoughtId: thought.id, 
+                completed: !thought.completed 
+              })}
+              onAddTag={() => handleAddTagClick(thought.id)}
             />
           ))}
         </div>
-      </div>
+      )}
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('thoughts.addTagTitle') || 'Add a tag'}</DialogTitle>
+            <DialogDescription>
+              {t('thoughts.addTagDescription') || 'Add a new tag to your thought to categorize it.'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">{t('thoughts.tagName') || 'Tag name'}</Label>
+              <Input id="name" value={newTag} onChange={(e) => setNewTag(e.target.value)} className="col-span-3" />
+            </div>
+          </div>
+          <Button onClick={handleAddTag}>{t('thoughts.addTagButton') || 'Add tag'}</Button>
+        </DialogContent>
+      </Dialog>
+
+      <SignInModal 
+        open={isSignInModalOpen} 
+        onOpenChange={setIsSignInModalOpen} 
+        title={t('auth.signInRequired') || "Sign in required"}
+        description={t('auth.signInDescriptionAction') || "Please sign in to use this feature and save your data securely."}
+      />
     </div>
   );
 };

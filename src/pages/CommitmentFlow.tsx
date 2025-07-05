@@ -1,202 +1,107 @@
-
 import React, { useState } from 'react';
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { useNavigate } from 'react-router-dom';
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from '@/lib/supabase';
-import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { useAuth } from '@/contexts/AuthContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useThoughtsQuery } from '@/hooks/useThoughtsQuery';
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { useToast } from "@/components/ui/use-toast"
+import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
 import { getDeviceId } from '@/utils/deviceId';
-import ProgressHeader from '@/components/commitment-flow/ProgressHeader';
-import ThoughtSelectionStep from '@/components/commitment-flow/ThoughtSelectionStep';
-import OutcomeDefinitionStep from '@/components/commitment-flow/OutcomeDefinitionStep';
-import NextActionStep from '@/components/commitment-flow/NextActionStep';
-
-interface Thought {
-  id: number;
-  content: string;
-  created_at: string;
-}
 
 const CommitmentFlow = () => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const { t, dir } = useLanguage();
   const { user } = useAuth();
-  const queryClient = useQueryClient();
   const deviceId = getDeviceId();
-  const [step, setStep] = useState(1);
-  const [selectedThought, setSelectedThought] = useState<Thought | null>(null);
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { t, dir } = useLanguage();
+
   const [outcome, setOutcome] = useState('');
-  const [nextAction, setNextAction] = useState('');
+  const [nextaction, setNextaction] = useState('');
 
-  // Get user's thoughts (works for both authenticated and anonymous users)
-  const { data: thoughts, isLoading: thoughtsLoading } = useThoughtsQuery(null);
+  const createCommitmentMutation = useMutation({
+    mutationFn: async (commitment: { outcome: string; nextaction: string }) => {
+      const data = user ? 
+        { ...commitment, user_id: user.id } :
+        { ...commitment, device_id: deviceId };
 
-  const addCommitmentMutation = useMutation({
-    mutationFn: async (commitment: { outcome: string; nextAction: string; thoughtId?: number }) => {
-      const commitmentData: any = {
-        outcome: commitment.outcome,
-        nextaction: commitment.nextAction
-      };
-
-      if (user?.id) {
-        commitmentData.user_id = user.id;
-      } else {
-        commitmentData.device_id = deviceId;
-        // Update device session
-        await supabase.rpc('update_device_session', { p_device_id: deviceId });
-      }
-
-      const { data, error } = await supabase
+      const { data: newCommitment, error } = await supabase
         .from('commitments')
-        .insert([commitmentData])
+        .insert([data])
         .select()
         .single();
-      
+
       if (error) throw error;
-
-      // Mark the thought as completed if we have a thought ID
-      if (commitment.thoughtId) {
-        let updateQuery = supabase
-          .from('thoughts')
-          .update({ completed: true })
-          .eq('id', commitment.thoughtId);
-
-        if (user?.id) {
-          updateQuery = updateQuery.eq('user_id', user.id);
-        } else {
-          updateQuery = updateQuery.eq('device_id', deviceId);
-        }
-
-        await updateQuery;
-      }
-
-      return data;
+      return newCommitment;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['commitments'] });
-      queryClient.invalidateQueries({ queryKey: ['thoughts'] });
+      queryClient.invalidateQueries({ queryKey: ['active-commitments'] });
       toast({
-        title: t('commitments.clarifier.successTitle'),
-        description: t('commitments.clarifier.successDescription'),
+        title: t('commitment.success') || "Commitment created!",
+        description: t('commitment.successDescription') || "Your commitment has been successfully created.",
       });
-      navigate('/');
+      navigate('/thoughts');
     },
     onError: (error) => {
+      console.error('Error creating commitment:', error);
       toast({
-        title: t('commitments.clarifier.errorTitle'),
-        description: t('commitments.clarifier.errorDescription'),
+        title: t('commitment.error') || "Error",
+        description: t('commitment.errorDescription') || "Failed to create commitment. Please try again.",
         variant: "destructive",
       });
-      console.error('Error saving commitment:', error);
     }
   });
 
-  // Check if user has thoughts, redirect if none
-  React.useEffect(() => {
-    if (!thoughtsLoading && thoughts && thoughts.length === 0) {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!outcome.trim() || !nextaction.trim()) {
       toast({
-        title: "No thoughts to clarify",
-        description: "Please add some thoughts first before creating commitments.",
+        title: t('commitment.validationError') || "Error",
+        description: t('commitment.validationErrorDescription') || "Please fill in both the outcome and next action.",
         variant: "destructive",
       });
-      navigate('/');
+      return;
     }
-  }, [thoughts, thoughtsLoading, navigate, toast]);
 
-  const handleNext = () => {
-    if (step === 1 && selectedThought) {
-      setStep(2);
-    } else if (step === 2 && outcome.trim()) {
-      setStep(3);
-    }
+    await createCommitmentMutation.mutateAsync({
+      outcome: outcome.trim(),
+      nextaction: nextaction.trim()
+    });
   };
-
-  const handleBack = () => {
-    if (step === 3) {
-      setStep(2);
-    } else if (step === 2) {
-      setStep(1);
-    } else {
-      navigate('/');
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (selectedThought && outcome.trim() && nextAction.trim()) {
-      addCommitmentMutation.mutate({ 
-        outcome, 
-        nextAction, 
-        thoughtId: selectedThought.id 
-      });
-    }
-  };
-
-  if (thoughtsLoading) {
-    return (
-      <div className="min-h-screen bg-cream p-4 flex items-center justify-center">
-        <div className="text-sage-600">Loading your thoughts...</div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-cream p-4 pb-24 md:pb-6" dir={dir()}>
-      <div className="max-w-2xl mx-auto">
-        <ProgressHeader 
-          step={step}
-          totalSteps={3}
-          onBack={handleBack}
-        />
-
-        <Card className="bg-white/80 backdrop-blur-sm">
-          <CardHeader className="pb-6">
-            {/* Step content will be rendered by step components */}
-            {!user && (
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
-                <p className="text-sm text-orange-700">
-                  💡 You're using anonymous mode. Your commitments are saved locally on this device.
-                </p>
-              </div>
-            )}
-          </CardHeader>
-          
-          <CardContent>
-            {step === 1 && (
-              <ThoughtSelectionStep
-                thoughts={thoughts}
-                selectedThought={selectedThought}
-                onThoughtSelect={setSelectedThought}
-                onNext={handleNext}
-              />
-            )}
-
-            {step === 2 && (
-              <OutcomeDefinitionStep
-                selectedThought={selectedThought}
-                outcome={outcome}
-                onOutcomeChange={setOutcome}
-                onNext={handleNext}
-              />
-            )}
-
-            {step === 3 && (
-              <NextActionStep
-                selectedThought={selectedThought}
-                outcome={outcome}
-                nextAction={nextAction}
-                onNextActionChange={setNextAction}
-                onSubmit={handleSubmit}
-                isPending={addCommitmentMutation.isPending}
-              />
-            )}
-          </CardContent>
-        </Card>
-      </div>
+    <div dir={dir()}>
+      <h2 className="text-2xl font-semibold mb-4">{t('commitment.title') || 'Create a New Commitment'}</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <Label htmlFor="outcome">{t('commitment.outcomeLabel') || 'Desired Outcome'}</Label>
+          <Input
+            type="text"
+            id="outcome"
+            value={outcome}
+            onChange={(e) => setOutcome(e.target.value)}
+            placeholder={t('commitment.outcomePlaceholder') || 'e.g., Launch a new product'}
+          />
+        </div>
+        <div>
+          <Label htmlFor="nextaction">{t('commitment.nextActionLabel') || 'Next Action'}</Label>
+          <Textarea
+            id="nextaction"
+            value={nextaction}
+            onChange={(e) => setNextaction(e.target.value)}
+            placeholder={t('commitment.nextActionPlaceholder') || 'e.g., Schedule a meeting with the engineering team'}
+          />
+        </div>
+        <div>
+          <Button type="submit" className="bg-sage-600 hover:bg-sage-700 text-white">
+            {t('commitment.createButton') || 'Create Commitment'}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 };

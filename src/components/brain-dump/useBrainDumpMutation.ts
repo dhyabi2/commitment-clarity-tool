@@ -24,149 +24,204 @@ export const useBrainDumpMutation = ({
 
   const addThoughtMutation = useMutation({
     mutationFn: async ({ content, tags }: BrainDumpData) => {
-      console.log('Checking if user/device can create thought...');
-      
-      // Check limit based on authentication status
-      let canCreate = false;
-      if (user?.id) {
-        const { data, error: checkError } = await supabase
+      console.log('Adding thought...', { user: !!user, deviceId });
+
+      // Determine if user is authenticated or anonymous
+      if (user) {
+        // Authenticated user path
+        console.log('Checking if user can create thought...', user.id);
+        
+        const { data: canCreate, error: checkError } = await supabase
           .rpc('can_create_thought', { p_user_id: user.id });
-        if (checkError) throw checkError;
-        canCreate = data;
-      } else {
-        const { data, error: checkError } = await supabase
-          .rpc('can_create_thought_by_device', { p_device_id: deviceId });
-        if (checkError) throw checkError;
-        canCreate = data;
-      }
 
-      console.log('Can create thought:', canCreate);
+        if (checkError) {
+          console.error('Error checking thought limit:', checkError);
+          throw checkError;
+        }
 
-      if (!canCreate) {
-        console.log('Monthly thought limit reached, triggering onLimitReached');
-        const error = new Error('Monthly thought limit reached');
-        error.name = 'LIMIT_REACHED';
-        throw error;
-      }
+        console.log('User can create thought:', canCreate);
 
-      console.log('Adding thought for user/device:', user?.id || deviceId);
+        if (!canCreate) {
+          console.log('Monthly thought limit reached, triggering onLimitReached');
+          const error = new Error('Monthly thought limit reached');
+          error.name = 'LIMIT_REACHED';
+          throw error;
+        }
 
-      // Create thought data based on authentication status
-      const thoughtData: any = { 
-        content, 
-        completed: false
-      };
+        console.log('Adding thought for user:', user.id);
+        console.log('Thought content:', content);
+        console.log('Tags:', tags);
 
-      if (user?.id) {
-        // First, ensure the user has a profile
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('id', user.id)
+        const { data: thought, error: thoughtError } = await supabase
+          .from('thoughts')
+          .insert([{ 
+            content, 
+            completed: false,
+            user_id: user.id
+          }])
+          .select()
           .single();
 
-        if (profileError && profileError.code === 'PGRST116') {
-          console.log('Creating profile for user:', user.id);
-          const { error: createProfileError } = await supabase
-            .from('profiles')
-            .insert([{
-              id: user.id,
-              email: user.email,
-              full_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0],
-              avatar_url: user.user_metadata?.avatar_url
-            }]);
-
-          if (createProfileError) {
-            console.error('Error creating profile:', createProfileError);
-            throw createProfileError;
-          }
-        } else if (profileError) {
-          console.error('Error checking profile:', profileError);
-          throw profileError;
+        if (thoughtError) {
+          console.error('Error inserting thought:', thoughtError);
+          throw thoughtError;
         }
 
-        thoughtData.user_id = user.id;
-      } else {
-        thoughtData.device_id = deviceId;
-        // Update device session
-        await supabase.rpc('update_device_session', { p_device_id: deviceId });
-      }
+        console.log('Thought created successfully:', thought);
 
-      const { data: thought, error: thoughtError } = await supabase
-        .from('thoughts')
-        .insert([thoughtData])
-        .select()
-        .single();
-
-      if (thoughtError) {
-        console.error('Error inserting thought:', thoughtError);
-        throw thoughtError;
-      }
-
-      console.log('Thought created successfully:', thought);
-
-      // Increment usage count
-      if (user?.id) {
+        // Increment usage count for user
         const { error: usageError } = await supabase
           .rpc('increment_usage_count', { p_user_id: user.id });
+
         if (usageError) {
           console.error('Error incrementing usage:', usageError);
         }
+
+        if (tags.length > 0) {
+          console.log('Adding tags:', tags);
+          
+          const { error: tagError } = await supabase
+            .from('tags')
+            .upsert(
+              tags.map(tag => ({ name: tag })),
+              { onConflict: 'name' }
+            );
+
+          if (tagError) {
+            console.error('Error upserting tags:', tagError);
+            throw tagError;
+          }
+
+          const { data: existingTags, error: existingTagsError } = await supabase
+            .from('tags')
+            .select('*')
+            .in('name', tags);
+
+          if (existingTagsError) {
+            console.error('Error fetching existing tags:', existingTagsError);
+            throw existingTagsError;
+          }
+
+          const { error: relationError } = await supabase
+            .from('thought_tags')
+            .insert(
+              existingTags.map(tag => ({
+                thought_id: thought.id,
+                tag_id: tag.id
+              }))
+            );
+
+          if (relationError) {
+            console.error('Error creating thought-tag relations:', relationError);
+            throw relationError;
+          }
+
+          console.log('Tags added successfully');
+        }
+
+        return thought;
       } else {
+        // Anonymous device path
+        console.log('Checking if device can create thought...', deviceId);
+        
+        const { data: canCreate, error: checkError } = await supabase
+          .rpc('can_create_thought_by_device', { p_device_id: deviceId });
+
+        if (checkError) {
+          console.error('Error checking thought limit:', checkError);
+          throw checkError;
+        }
+
+        console.log('Device can create thought:', canCreate);
+
+        if (!canCreate) {
+          console.log('Monthly thought limit reached for device, triggering onLimitReached');
+          const error = new Error('Monthly thought limit reached');
+          error.name = 'LIMIT_REACHED';
+          throw error;
+        }
+
+        console.log('Adding thought for device:', deviceId);
+        console.log('Thought content:', content);
+        console.log('Tags:', tags);
+
+        // Update device session
+        await supabase.rpc('update_device_session', { p_device_id: deviceId });
+
+        const { data: thought, error: thoughtError } = await supabase
+          .from('thoughts')
+          .insert([{ 
+            content, 
+            completed: false,
+            device_id: deviceId
+          }])
+          .select()
+          .single();
+
+        if (thoughtError) {
+          console.error('Error inserting thought:', thoughtError);
+          throw thoughtError;
+        }
+
+        console.log('Thought created successfully:', thought);
+
+        // Increment usage count for device
         const { error: usageError } = await supabase
           .rpc('increment_usage_count_by_device', { p_device_id: deviceId });
+
         if (usageError) {
           console.error('Error incrementing usage:', usageError);
         }
+
+        if (tags.length > 0) {
+          console.log('Adding tags:', tags);
+          
+          const { error: tagError } = await supabase
+            .from('tags')
+            .upsert(
+              tags.map(tag => ({ name: tag })),
+              { onConflict: 'name' }
+            );
+
+          if (tagError) {
+            console.error('Error upserting tags:', tagError);
+            throw tagError;
+          }
+
+          const { data: existingTags, error: existingTagsError } = await supabase
+            .from('tags')
+            .select('*')
+            .in('name', tags);
+
+          if (existingTagsError) {
+            console.error('Error fetching existing tags:', existingTagsError);
+            throw existingTagsError;
+          }
+
+          const { error: relationError } = await supabase
+            .from('thought_tags')
+            .insert(
+              existingTags.map(tag => ({
+                thought_id: thought.id,
+                tag_id: tag.id
+              }))
+            );
+
+          if (relationError) {
+            console.error('Error creating thought-tag relations:', relationError);
+            throw relationError;
+          }
+
+          console.log('Tags added successfully');
+        }
+
+        return thought;
       }
-
-      if (tags.length > 0) {
-        console.log('Adding tags:', tags);
-        
-        const { error: tagError } = await supabase
-          .from('tags')
-          .upsert(
-            tags.map(tag => ({ name: tag })),
-            { onConflict: 'name' }
-          );
-
-        if (tagError) {
-          console.error('Error upserting tags:', tagError);
-          throw tagError;
-        }
-
-        const { data: existingTags, error: existingTagsError } = await supabase
-          .from('tags')
-          .select('*')
-          .in('name', tags);
-
-        if (existingTagsError) {
-          console.error('Error fetching existing tags:', existingTagsError);
-          throw existingTagsError;
-        }
-
-        const { error: relationError } = await supabase
-          .from('thought_tags')
-          .insert(
-            existingTags.map(tag => ({
-              thought_id: thought.id,
-              tag_id: tag.id
-            }))
-          );
-
-        if (relationError) {
-          console.error('Error creating thought-tag relations:', relationError);
-          throw relationError;
-        }
-
-        console.log('Tags added successfully');
-      }
-
-      return thought;
     },
     onSuccess: () => {
+      // Invalidate queries for both authenticated and anonymous users
       queryClient.invalidateQueries({ queryKey: ['thoughts'] });
-      queryClient.invalidateQueries({ queryKey: ['usage'] });
+      queryClient.invalidateQueries({ queryKey: ['device-thoughts'] });
       toast({
         title: "Thought added",
         description: "Your thought has been captured successfully.",

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,15 +10,15 @@ import { BrainDumpUpgradePrompt } from './BrainDumpUpgradePrompt';
 import { useAuth } from '@/contexts/AuthContext';
 
 const BrainDumpForm = () => {
-  const { t } = useLanguage();
+  const { t, dir } = useLanguage();
   const { user } = useAuth();
-  const [thought, setThought] = useState('');
+  const [content, setContent] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
 
   const { addThoughtMutation } = useBrainDumpMutation({
     onSuccess: () => {
-      setThought('');
+      setContent('');
       setTags([]);
     },
     onLimitReached: () => {
@@ -27,13 +26,13 @@ const BrainDumpForm = () => {
     }
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!thought.trim()) return;
+    if (!content.trim()) return;
 
-    addThoughtMutation.mutate({
-      content: thought.trim(),
-      tags
+    await addThoughtMutation.mutateAsync({
+      content: content.trim(),
+      tags: tags.map(tag => tag.trim()).filter(tag => tag.length > 0)
     });
   };
 
@@ -64,8 +63,8 @@ const BrainDumpForm = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Textarea
-                value={thought}
-                onChange={(e) => setThought(e.target.value)}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
                 placeholder={t('thoughts.placeholder')}
                 className="min-h-[120px] resize-none border-sage-200 focus:border-sage-400 focus:ring-sage-200 bg-white/70"
                 disabled={addThoughtMutation.isPending}
@@ -101,7 +100,7 @@ const BrainDumpForm = () => {
 
             <Button
               type="submit"
-              disabled={!thought.trim() || addThoughtMutation.isPending}
+              disabled={!content.trim() || addThoughtMutation.isPending}
               className="w-full bg-sage-500 hover:bg-sage-600 text-white font-medium py-3 text-base transition-colors"
             >
               {addThoughtMutation.isPending ? (
