@@ -1,5 +1,3 @@
-
-
 export const contentTranslations = {
   en: {
     index: {
@@ -66,7 +64,24 @@ export const contentTranslations = {
       cancel: "Cancel",
       completed: "Commitment completed! 🎉",
       completedDescription: "Congratulations on completing your commitment. Keep up the great work!",
-      tip: "💡 Tip: Focus on completing one commitment at a time. You can edit the outcome or next action if your plans change."
+      tip: "💡 Tip: Focus on completing one commitment at a time. You can edit the outcome or next action if your plans change.",
+      clarifier: {
+        title: "Clarify Your Commitment",
+        description: "Transform your thought into a clear, actionable commitment with specific outcomes and next steps.",
+        outcomeLabel: "What specific outcome do you want to achieve?",
+        outcomePlaceholder: "e.g., Launch a new product feature, Complete the quarterly report, Organize my workspace...",
+        outcomeQuestion: "What specific outcome do you want to achieve?",
+        nextActionLabel: "What's your next action to move forward?",
+        nextActionPlaceholder: "e.g., Schedule a meeting with the team, Research market trends, Buy organizational supplies...",
+        nextActionQuestion: "What's your next action to move forward?",
+        nextButton: "Next",
+        saveButton: "Save Commitment",
+        submitButton: "Create Commitment",
+        successTitle: "Commitment Created!",
+        successDescription: "Your commitment has been successfully created and added to your active commitments.",
+        errorTitle: "Error",
+        errorDescription: "Failed to create commitment. Please try again."
+      }
     },
     dashboard: {
       title: "Dashboard",
@@ -88,6 +103,9 @@ export const contentTranslations = {
         completed: "Completed",
         pending: "Pending"
       }
+    },
+    common: {
+      back: "Back"
     },
     errors: {
       generic: "Something went wrong. Please try again.",
@@ -165,7 +183,24 @@ export const contentTranslations = {
       cancel: "إلغاء",
       completed: "تم إكمال الالتزام! 🎉",
       completedDescription: "تهانينا على إكمال التزامك. استمر في العمل الرائع!",
-      tip: "💡 نصيحة: ركز على إكمال التزام واحد في كل مرة. يمكنك تحرير النتيجة أو الإجراء التالي إذا تغيرت خططك."
+      tip: "💡 نصيحة: ركز على إكمال التزام واحد في كل مرة. يمكنك تحرير النتيجة أو الإجراء التالي إذا تغيرت خططك.",
+      clarifier: {
+        title: "وضح التزامك",
+        description: "حول فكرتك إلى التزام واضح وقابل للتنفيذ مع نتائج محددة وخطوات تالية.",
+        outcomeLabel: "ما النتيجة المحددة التي تريد تحقيقها؟",
+        outcomePlaceholder: "مثال: إطلاق ميزة منتج جديدة، إكمال التقرير الفصلي، تنظيم مساحة العمل...",
+        outcomeQuestion: "ما النتيجة المحددة التي تريد تحقيقها؟",
+        nextActionLabel: "ما إجراءك التالي للمضي قدماً؟",
+        nextActionPlaceholder: "مثال: جدولة اجتماع مع الفريق، البحث في اتجاهات السوق، شراء لوازم التنظيم...",
+        nextActionQuestion: "ما إجراءك التالي للمضي قدماً؟",
+        nextButton: "التالي",
+        saveButton: "حفظ الالتزام",
+        submitButton: "إنشاء الالتزام",
+        successTitle: "تم إنشاء الالتزام!",
+        successDescription: "تم إنشاء التزامك بنجاح وإضافته إلى التزاماتك النشطة.",
+        errorTitle: "خطأ",
+        errorDescription: "فشل في إنشاء الالتزام. يرجى المحاولة مرة أخرى."
+      }
     },
     dashboard: {
       title: "لوحة القيادة",
@@ -188,6 +223,9 @@ export const contentTranslations = {
         pending: "معلق"
       }
     },
+    common: {
+      back: "رجوع"
+    },
     errors: {
       generic: "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
       network: "خطأ في الشبكة. يرجى التحقق من اتصالك.",
@@ -200,4 +238,3 @@ export const contentTranslations = {
     }
   }
 };
-
