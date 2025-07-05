@@ -6,6 +6,7 @@ import { Chrome, Loader2, UserX } from "lucide-react";
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useAnonymousMode } from '@/hooks/useAnonymousMode';
+import { useNavigate } from 'react-router-dom';
 
 interface SignInModalProps {
   open: boolean;
@@ -23,6 +24,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
   const { signInWithGoogle, user } = useAuth();
   const { t } = useLanguage();
   const { isAnonymous, enableAnonymousMode } = useAnonymousMode();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = React.useState(false);
 
   const modalTitle = title || t('auth.signInRequired');
@@ -47,8 +49,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
   const handleAnonymousAccess = () => {
     enableAnonymousMode();
     onOpenChange(false);
-    // Navigate to thoughts page
-    window.location.href = '/thoughts';
+    navigate('/thoughts');
   };
 
   return (
@@ -79,7 +80,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
             </div>
-            <div className="relative flex justify center text-xs uppercase">
+            <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-white px-2 text-muted-foreground">{t('auth.or')}</span>
             </div>
           </div>

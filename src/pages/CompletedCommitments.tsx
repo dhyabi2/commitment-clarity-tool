@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
@@ -5,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useAnonymousMode } from '@/hooks/useAnonymousMode';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Chrome, UserX } from "lucide-react";
@@ -15,6 +17,7 @@ const CompletedCommitments = () => {
   const { user, signInWithGoogle } = useAuth();
   const { t } = useLanguage();
   const { isAnonymous, enableAnonymousMode } = useAnonymousMode();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
@@ -113,25 +116,15 @@ const CompletedCommitments = () => {
 
   const handleAnonymousAccess = () => {
     enableAnonymousMode();
-    // Refresh the page to apply anonymous mode
-    window.location.reload();
+    navigate('/thoughts');
   };
 
-  // If in anonymous mode, redirect to thoughts page
-  if (isAnonymous) {
-    React.useEffect(() => {
-      window.location.href = '/thoughts';
-    }, []);
-    
-    return (
-      <div className="min-h-screen bg-cream p-4 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-sage-600 mb-4">{t('auth.anonymousNote')}</p>
-          <p className="text-sage-500">Redirecting to your thoughts...</p>
-        </div>
-      </div>
-    );
-  }
+  // Redirect anonymous users to thoughts page
+  React.useEffect(() => {
+    if (isAnonymous) {
+      navigate('/thoughts');
+    }
+  }, [isAnonymous, navigate]);
 
   if (!user) {
     return (

@@ -5,8 +5,8 @@ import { gsap } from 'gsap';
 import WelcomeSteps from '@/components/home/WelcomeSteps';
 import ElegantLanguageSwitcher from '@/components/ElegantLanguageSwitcher';
 import { Button } from "@/components/ui/button";
-import { Link } from 'react-router-dom';
-import { Chrome, UserX } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Chrome } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAnonymousMode } from '@/hooks/useAnonymousMode';
 import AnonymousAccessButton from '@/components/home/AnonymousAccessButton';
@@ -16,6 +16,7 @@ const Index = () => {
   const { user } = useAuth();
   const { isAnonymous } = useAnonymousMode();
   const containerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -28,6 +29,22 @@ const Index = () => {
 
     return () => ctx.revert();
   }, []);
+
+  // Redirect authenticated users or anonymous users to thoughts page
+  useEffect(() => {
+    if (user || isAnonymous) {
+      navigate('/thoughts');
+    }
+  }, [user, isAnonymous, navigate]);
+
+  // Don't render anything if user is authenticated or anonymous (will redirect)
+  if (user || isAnonymous) {
+    return (
+      <div className="min-h-screen bg-cream flex items-center justify-center">
+        <div className="text-sage-600">Redirecting...</div>
+      </div>
+    );
+  }
 
   return (
     <div 
@@ -42,44 +59,26 @@ const Index = () => {
       
       <WelcomeSteps />
       
-      {/* Authentication Options - Only show if user is not logged in and not in anonymous mode */}
-      {!user && !isAnonymous && (
-        <div className="max-w-md mx-auto mt-8 space-y-4">
-          <Link to="/auth">
-            <Button className="w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 shadow-sm min-h-[56px] text-lg font-medium flex items-center justify-center gap-3">
-              <Chrome className="h-5 w-5" />
-              {t('auth.signInWithGoogle')}
-            </Button>
-          </Link>
-          
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-cream px-2 text-muted-foreground">{t('auth.or')}</span>
-            </div>
+      {/* Authentication Options - Only show for non-authenticated, non-anonymous users */}
+      <div className="max-w-md mx-auto mt-8 space-y-4">
+        <Link to="/auth">
+          <Button className="w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 shadow-sm min-h-[56px] text-lg font-medium flex items-center justify-center gap-3">
+            <Chrome className="h-5 w-5" />
+            {t('auth.signInWithGoogle')}
+          </Button>
+        </Link>
+        
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
           </div>
-
-          <AnonymousAccessButton />
-        </div>
-      )}
-
-      {/* Show message for anonymous users */}
-      {isAnonymous && (
-        <div className="max-w-md mx-auto mt-8 text-center">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-blue-800 font-medium mb-2">
-              {t('auth.anonymousNote')}
-            </p>
-            <Link to="/thoughts">
-              <Button className="w-full bg-sage-500 hover:bg-sage-600 text-white">
-                {t('home.continueToApp')}
-              </Button>
-            </Link>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-cream px-2 text-muted-foreground">{t('auth.or')}</span>
           </div>
         </div>
-      )}
+
+        <AnonymousAccessButton />
+      </div>
     </div>
   );
 };

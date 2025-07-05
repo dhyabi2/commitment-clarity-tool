@@ -4,7 +4,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useWelcomeState } from '@/hooks/useWelcomeState';
 import { useAnonymousMode } from '@/hooks/useAnonymousMode';
 import { Loader2 } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -15,15 +14,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth =
   const { user, loading } = useAuth();
   const { hasSeenWelcome, markWelcomeAsCompleted } = useWelcomeState();
   const { isAnonymous } = useAnonymousMode();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  React.useEffect(() => {
-    // If user is anonymous and on the home page, redirect to thoughts
-    if (isAnonymous && location.pathname === '/') {
-      navigate('/thoughts');
-    }
-  }, [isAnonymous, location.pathname, navigate]);
 
   if (loading || (user && hasSeenWelcome === null)) {
     return (

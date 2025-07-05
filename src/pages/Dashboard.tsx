@@ -16,11 +16,13 @@ import DailyActivity from "@/components/dashboard/DailyActivity";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAnonymousMode } from "@/hooks/useAnonymousMode";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const { t, dir } = useLanguage();
   const { user, signInWithGoogle } = useAuth();
   const { isAnonymous, enableAnonymousMode } = useAnonymousMode();
+  const navigate = useNavigate();
   const isRTL = dir() === 'rtl';
 
   const { data: thoughts, isLoading: thoughtsLoading } = useQuery({
@@ -61,9 +63,15 @@ const Dashboard = () => {
 
   const handleAnonymousAccess = () => {
     enableAnonymousMode();
-    // Redirect to thoughts page
-    window.location.href = '/thoughts';
+    navigate('/thoughts');
   };
+
+  // Redirect anonymous users to thoughts page
+  React.useEffect(() => {
+    if (isAnonymous) {
+      navigate('/thoughts');
+    }
+  }, [isAnonymous, navigate]);
 
   // Don't show sign-in prompt if already in anonymous mode
   if (!user && !isAnonymous) {
@@ -106,22 +114,6 @@ const Dashboard = () => {
             </Button>
           </CardContent>
         </Card>
-      </div>
-    );
-  }
-
-  // If in anonymous mode, redirect to thoughts page
-  if (isAnonymous) {
-    React.useEffect(() => {
-      window.location.href = '/thoughts';
-    }, []);
-    
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-cream to-sage-50 flex items-center justify-center p-4">
-        <div className="text-center">
-          <p className="text-sage-600 mb-4">{t('auth.anonymousNote')}</p>
-          <p className="text-sage-500">Redirecting to your thoughts...</p>
-        </div>
       </div>
     );
   }
