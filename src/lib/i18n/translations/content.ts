@@ -1,3 +1,4 @@
+
 export const contentTranslations = {
   en: {
     index: {
@@ -8,7 +9,9 @@ export const contentTranslations = {
       },
       step2: {
         title: "Brain Dump",
-        description: "Write down everything on your mind without worrying about structure or organization."
+        description: "Write down everything on your mind without worrying about structure or organization.",
+        readyTitle: "Ready to Get Started?",
+        readyDescription: "Start by capturing your first thought above to begin your journey of clarity and commitment."
       },
       step3: {
         title: "Clarify & Commit",
@@ -23,6 +26,8 @@ export const contentTranslations = {
       brainDump: "Brain Dump",
       placeholder: "What's on your mind? Write down your thoughts, ideas, concerns, or anything you want to clarify...",
       submit: "Capture Thought",
+      captureTitle: "Capture Your Thoughts",
+      captureButton: "Capture Thought",
       myThoughts: "My Thoughts",
       noThoughts: "No thoughts yet",
       noThoughtsDescription: "Start by capturing what's on your mind above.",
@@ -44,6 +49,9 @@ export const contentTranslations = {
       activeCommitments: "Active Commitments",
       noActiveCommitments: "No active commitments",
       noActiveCommitmentsDescription: "You don't have any active commitments yet. Start by clarifying some of your thoughts into actionable commitments.",
+      clarifyTitle: "Time to Clarify",
+      clarifyDescription: "Great! You have thoughts ready to be clarified into actionable commitments.",
+      clarifyButton: "Clarify Your Thoughts",
       outcome: "Outcome",
       nextAction: "Next Action",
       complete: "Complete",
@@ -94,7 +102,9 @@ export const contentTranslations = {
       },
       step2: {
         title: "تفريغ الأفكار",
-        description: "اكتب كل ما يدور في ذهنك دون القلق بشأن الهيكل أو التنظيم."
+        description: "اكتب كل ما يدور في ذهنك دون القلق بشأن الهيكل أو التنظيم.",
+        readyTitle: "جاهز للبدء؟",
+        readyDescription: "ابدأ بالتقاط فكرتك الأولى أعلاه لبدء رحلتك نحو الوضوح والالتزام."
       },
       step3: {
         title: "التوضيح والالتزام",
@@ -109,6 +119,8 @@ export const contentTranslations = {
       brainDump: "تفريغ الأفكار",
       placeholder: "ما الذي يدور في ذهنك؟ اكتب أفكارك وأفكارك ومخاوفك أو أي شيء تريد توضيحه...",
       submit: "التقاط الفكرة",
+      captureTitle: "التقط أفكارك",
+      captureButton: "التقاط الفكرة",
       myThoughts: "أفكاري",
       noThoughts: "لا توجد أفكار بعد",
       noThoughtsDescription: "ابدأ بالتقاط ما يدور في ذهنك أعلاه.",
@@ -130,6 +142,9 @@ export const contentTranslations = {
       activeCommitments: "الالتزامات النشطة",
       noActiveCommitments: "لا توجد التزامات نشطة",
       noActiveCommitmentsDescription: "ليس لديك أي التزامات نشطة بعد. ابدأ بتوضيح بعض أفكارك إلى التزامات قابلة للتنفيذ.",
+      clarifyTitle: "حان وقت التوضيح",
+      clarifyDescription: "رائع! لديك أفكار جاهزة ليتم توضيحها إلى التزامات قابلة للتنفيذ.",
+      clarifyButton: "وضح أفكارك",
       outcome: "النتيجة",
       nextAction: "الإجراء التالي",
       complete: "إكمال",
