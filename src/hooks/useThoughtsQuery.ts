@@ -2,16 +2,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
-import { useAnonymousMode } from '@/hooks/useAnonymousMode';
 import { getDeviceId } from '@/utils/deviceId';
 
 export const useThoughtsQuery = (selectedTag: string | null) => {
   const { user } = useAuth();
-  const { isAnonymous } = useAnonymousMode();
   const deviceId = getDeviceId();
   
   return useQuery({
-    queryKey: ['thoughts', 'active', selectedTag, user?.id, deviceId, isAnonymous],
+    queryKey: ['thoughts', 'active', selectedTag, user?.id, deviceId],
     queryFn: async () => {
       let query = supabase
         .from('thoughts')
@@ -25,23 +23,17 @@ export const useThoughtsQuery = (selectedTag: string | null) => {
         .order('created_at', { ascending: false });
 
       // Filter by user or device based on authentication status
-      if (user?.id && !isAnonymous) {
+      if (user?.id) {
         query = query.eq('user_id', user.id);
-      } else if (isAnonymous || !user) {
-        query = query.eq('device_id', deviceId);
       } else {
-        // No user and not anonymous - return empty array
-        return [];
+        query = query.eq('device_id', deviceId);
       }
       
       const { data, error } = await query;
       
-      if (error) {
-        console.error('Error fetching thoughts:', error);
-        throw error;
-      }
+      if (error) throw error;
 
-      const transformedData = (data || []).map(thought => ({
+      const transformedData = data.map(thought => ({
         ...thought,
         tags: thought.tags
           ?.map(t => t.tag)
@@ -56,8 +48,6 @@ export const useThoughtsQuery = (selectedTag: string | null) => {
       }
 
       return transformedData;
-    },
-    enabled: !!(user || isAnonymous), // Only run query if user is authenticated or in anonymous mode
-    staleTime: 30000, // Cache for 30 seconds
+    }
   });
 };

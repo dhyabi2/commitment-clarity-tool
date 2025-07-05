@@ -6,7 +6,6 @@ import { Crown, AlertTriangle, UserX } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useAnonymousMode } from "@/hooks/useAnonymousMode";
-import { useNavigate } from "react-router-dom";
 import { SubscriptionModal } from "../subscription/SubscriptionModal";
 
 interface BrainDumpUpgradePromptProps {
@@ -21,7 +20,6 @@ export const BrainDumpUpgradePrompt: React.FC<BrainDumpUpgradePromptProps> = ({
   const { t } = useLanguage();
   const { usage, maxFreeThoughts, isUnlimitedFree } = useSubscription();
   const { isAnonymous, enableAnonymousMode } = useAnonymousMode();
-  const navigate = useNavigate();
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
 
   // Don't show upgrade prompt if unlimited free usage is enabled or already in anonymous mode
@@ -30,7 +28,8 @@ export const BrainDumpUpgradePrompt: React.FC<BrainDumpUpgradePromptProps> = ({
   const handleAnonymousAccess = () => {
     enableAnonymousMode();
     onOpenChange(false);
-    navigate('/thoughts');
+    // Navigate to thoughts page
+    window.location.href = '/thoughts';
   };
 
   return (

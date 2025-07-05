@@ -2,8 +2,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { useAnonymousMode } from '@/hooks/useAnonymousMode';
-import { useAnonymousMigration } from '@/hooks/useAnonymousMigration';
 
 interface AuthContextType {
   user: User | null;
@@ -33,36 +31,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const { disableAnonymousMode } = useAnonymousMode();
-  const { migrateAnonymousDataMutation, checkHasAnonymousData } = useAnonymousMigration();
 
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, !!session);
-        
         setSession(session);
-        const newUser = session?.user ?? null;
-        setUser(newUser);
-        
-        // Handle user sign-in with potential anonymous data migration
-        if (event === 'SIGNED_IN' && newUser) {
-          console.log('User signed in, checking for anonymous data to migrate...');
-          
-          // Check if there's anonymous data to migrate
-          const hasAnonymousData = await checkHasAnonymousData();
-          
-          if (hasAnonymousData) {
-            console.log('Found anonymous data, starting migration...');
-            // Migrate anonymous data to the new user account
-            migrateAnonymousDataMutation.mutate(newUser.id);
-          }
-          
-          // Disable anonymous mode when user signs in
-          disableAnonymousMode();
-        }
-        
+        setUser(session?.user ?? null);
         setLoading(false);
       }
     );
@@ -75,10 +50,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     return () => subscription.unsubscribe();
-  }, [disableAnonymousMode, migrateAnonymousDataMutation, checkHasAnonymousData]);
+  }, []);
 
   const signInWithGoogle = async () => {
-    const redirectUrl = window.location.origin;
+    const redirectUrl = 'https://mind-dump.com/';
     
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -99,10 +74,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error('Error signing out:', error);
       throw error;
     }
-    
-    // Clear user state immediately on sign out
-    setUser(null);
-    setSession(null);
   };
 
   const value = {

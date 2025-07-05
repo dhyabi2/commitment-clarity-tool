@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/contexts/AuthContext';
-import { useAnonymousMode } from '@/hooks/useAnonymousMode';
 import { getDeviceId } from '@/utils/deviceId';
 
 interface BrainDumpData {
@@ -21,21 +20,16 @@ export const useBrainDumpMutation = ({
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const { isAnonymous } = useAnonymousMode();
   const deviceId = getDeviceId();
 
   const addThoughtMutation = useMutation({
     mutationFn: async ({ content, tags }: BrainDumpData) => {
-      console.log('Adding thought...', { 
-        hasUser: !!user, 
-        isAnonymous, 
-        deviceId: deviceId.substring(0, 8) + '...' 
-      });
+      console.log('Adding thought...', { user: !!user, deviceId });
 
       // Determine if user is authenticated or anonymous
-      if (user && !isAnonymous) {
+      if (user) {
         // Authenticated user path
-        console.log('Processing as authenticated user...', user.id);
+        console.log('Checking if user can create thought...', user.id);
         
         const { data: canCreate, error: checkError } = await supabase
           .rpc('can_create_thought', { p_user_id: user.id });
@@ -53,6 +47,10 @@ export const useBrainDumpMutation = ({
           error.name = 'LIMIT_REACHED';
           throw error;
         }
+
+        console.log('Adding thought for user:', user.id);
+        console.log('Thought content:', content);
+        console.log('Tags:', tags);
 
         const { data: thought, error: thoughtError } = await supabase
           .from('thoughts')
@@ -79,15 +77,52 @@ export const useBrainDumpMutation = ({
           console.error('Error incrementing usage:', usageError);
         }
 
-        // Handle tags if provided
         if (tags.length > 0) {
-          await handleTags(tags, thought.id);
+          console.log('Adding tags:', tags);
+          
+          const { error: tagError } = await supabase
+            .from('tags')
+            .upsert(
+              tags.map(tag => ({ name: tag })),
+              { onConflict: 'name' }
+            );
+
+          if (tagError) {
+            console.error('Error upserting tags:', tagError);
+            throw tagError;
+          }
+
+          const { data: existingTags, error: existingTagsError } = await supabase
+            .from('tags')
+            .select('*')
+            .in('name', tags);
+
+          if (existingTagsError) {
+            console.error('Error fetching existing tags:', existingTagsError);
+            throw existingTagsError;
+          }
+
+          const { error: relationError } = await supabase
+            .from('thought_tags')
+            .insert(
+              existingTags.map(tag => ({
+                thought_id: thought.id,
+                tag_id: tag.id
+              }))
+            );
+
+          if (relationError) {
+            console.error('Error creating thought-tag relations:', relationError);
+            throw relationError;
+          }
+
+          console.log('Tags added successfully');
         }
 
         return thought;
       } else {
         // Anonymous device path
-        console.log('Processing as anonymous user...', deviceId.substring(0, 8) + '...');
+        console.log('Checking if device can create thought...', deviceId);
         
         const { data: canCreate, error: checkError } = await supabase
           .rpc('can_create_thought_by_device', { p_device_id: deviceId });
@@ -105,6 +140,10 @@ export const useBrainDumpMutation = ({
           error.name = 'LIMIT_REACHED';
           throw error;
         }
+
+        console.log('Adding thought for device:', deviceId);
+        console.log('Thought content:', content);
+        console.log('Tags:', tags);
 
         // Update device session
         await supabase.rpc('update_device_session', { p_device_id: deviceId });
@@ -134,9 +173,46 @@ export const useBrainDumpMutation = ({
           console.error('Error incrementing usage:', usageError);
         }
 
-        // Handle tags if provided
         if (tags.length > 0) {
-          await handleTags(tags, thought.id);
+          console.log('Adding tags:', tags);
+          
+          const { error: tagError } = await supabase
+            .from('tags')
+            .upsert(
+              tags.map(tag => ({ name: tag })),
+              { onConflict: 'name' }
+            );
+
+          if (tagError) {
+            console.error('Error upserting tags:', tagError);
+            throw tagError;
+          }
+
+          const { data: existingTags, error: existingTagsError } = await supabase
+            .from('tags')
+            .select('*')
+            .in('name', tags);
+
+          if (existingTagsError) {
+            console.error('Error fetching existing tags:', existingTagsError);
+            throw existingTagsError;
+          }
+
+          const { error: relationError } = await supabase
+            .from('thought_tags')
+            .insert(
+              existingTags.map(tag => ({
+                thought_id: thought.id,
+                tag_id: tag.id
+              }))
+            );
+
+          if (relationError) {
+            console.error('Error creating thought-tag relations:', relationError);
+            throw relationError;
+          }
+
+          console.log('Tags added successfully');
         }
 
         return thought;
@@ -145,6 +221,7 @@ export const useBrainDumpMutation = ({
     onSuccess: () => {
       // Invalidate queries for both authenticated and anonymous users
       queryClient.invalidateQueries({ queryKey: ['thoughts'] });
+      queryClient.invalidateQueries({ queryKey: ['device-thoughts'] });
       toast({
         title: "Thought added",
         description: "Your thought has been captured successfully.",
@@ -166,54 +243,6 @@ export const useBrainDumpMutation = ({
       });
     }
   });
-
-  // Helper function to handle tags
-  const handleTags = async (tags: string[], thoughtId: number) => {
-    try {
-      console.log('Adding tags:', tags);
-      
-      const { error: tagError } = await supabase
-        .from('tags')
-        .upsert(
-          tags.map(tag => ({ name: tag })),
-          { onConflict: 'name' }
-        );
-
-      if (tagError) {
-        console.error('Error upserting tags:', tagError);
-        throw tagError;
-      }
-
-      const { data: existingTags, error: existingTagsError } = await supabase
-        .from('tags')
-        .select('*')
-        .in('name', tags);
-
-      if (existingTagsError) {
-        console.error('Error fetching existing tags:', existingTagsError);
-        throw existingTagsError;
-      }
-
-      const { error: relationError } = await supabase
-        .from('thought_tags')
-        .insert(
-          existingTags.map(tag => ({
-            thought_id: thoughtId,
-            tag_id: tag.id
-          }))
-        );
-
-      if (relationError) {
-        console.error('Error creating thought-tag relations:', relationError);
-        throw relationError;
-      }
-
-      console.log('Tags added successfully');
-    } catch (error) {
-      console.error('Error handling tags:', error);
-      // Don't throw here - tags are secondary to the main thought creation
-    }
-  };
 
   return { addThoughtMutation };
 };
