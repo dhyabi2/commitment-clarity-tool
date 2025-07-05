@@ -18,13 +18,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth =
   const navigate = useNavigate();
   const location = useLocation();
 
-  React.useEffect(() => {
-    // If user is anonymous and on the home page, redirect to thoughts
-    if (isAnonymous && location.pathname === '/') {
-      navigate('/thoughts');
-    }
-  }, [isAnonymous, location.pathname, navigate]);
-
+  // Show loading while auth state is being determined
   if (loading || (user && hasSeenWelcome === null)) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
@@ -33,17 +27,20 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth =
     );
   }
 
-  // If authentication is required but user is not logged in and not in anonymous mode, redirect to sign in
+  // Handle authentication requirements
   if (requireAuth && !user && !isAnonymous) {
-    const SignIn = React.lazy(() => import('@/components/auth/SignIn'));
+    // Redirect to home page for sign-in
+    React.useEffect(() => {
+      navigate('/');
+    }, [navigate]);
+    
     return (
-      <React.Suspense fallback={
-        <div className="min-h-screen bg-cream flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-sage-500" />
+      <div className="min-h-screen bg-cream flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-sage-600 mb-2">Authentication required</p>
+          <p className="text-sage-500">Redirecting to sign in...</p>
         </div>
-      }>
-        <SignIn />
-      </React.Suspense>
+      </div>
     );
   }
 
