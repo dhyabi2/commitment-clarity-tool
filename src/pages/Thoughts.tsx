@@ -19,7 +19,7 @@ const Thoughts = () => {
   const { exportData } = useSecureImportExport();
 
   // Use appropriate hooks based on anonymous mode
-  const thoughtsQuery = isAnonymous ? useDeviceThoughtsQuery() : useThoughtsQuery();
+  const thoughtsQuery = isAnonymous ? useDeviceThoughtsQuery(selectedTag) : useThoughtsQuery(selectedTag);
   const thoughtsMutations = isAnonymous ? useDeviceThoughtsMutations() : useThoughtsMutations();
 
   const thoughts = thoughtsQuery.data || [];
@@ -70,8 +70,8 @@ const Thoughts = () => {
         <div className="lg:col-span-3 space-y-6">
           <ThoughtsList 
             thoughts={filteredThoughts}
-            onDelete={thoughtsMutations.deleteThought}
-            onToggleComplete={thoughtsMutations.toggleComplete}
+            onDelete={thoughtsMutations.deleteThoughtMutation.mutate}
+            onToggleComplete={(id, completed) => thoughtsMutations.toggleCompleteMutation.mutate({ thoughtId: id, completed })}
             selectedTag={selectedTag}
             onTagClick={setSelectedTag}
           />
