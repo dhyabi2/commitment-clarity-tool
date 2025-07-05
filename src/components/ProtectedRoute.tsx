@@ -2,6 +2,7 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWelcomeState } from '@/hooks/useWelcomeState';
+import { useAnonymousMode } from '@/hooks/useAnonymousMode';
 import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
@@ -12,6 +13,7 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth = false }) => {
   const { user, loading } = useAuth();
   const { hasSeenWelcome, markWelcomeAsCompleted } = useWelcomeState();
+  const { isAnonymous } = useAnonymousMode();
 
   if (loading || (user && hasSeenWelcome === null)) {
     return (
@@ -21,8 +23,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth =
     );
   }
 
-  // If authentication is required but user is not logged in, redirect to sign in
-  if (requireAuth && !user) {
+  // If authentication is required but user is not logged in and not in anonymous mode, redirect to sign in
+  if (requireAuth && !user && !isAnonymous) {
     const SignIn = React.lazy(() => import('@/components/auth/SignIn'));
     return (
       <React.Suspense fallback={

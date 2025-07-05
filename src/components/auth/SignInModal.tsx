@@ -2,9 +2,10 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Chrome, Loader2 } from "lucide-react";
+import { Chrome, Loader2, UserX } from "lucide-react";
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { useNavigate } from 'react-router-dom';
 
 interface SignInModalProps {
   open: boolean;
@@ -21,6 +22,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
 }) => {
   const { signInWithGoogle } = useAuth();
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = React.useState(false);
 
   const handleSignIn = async () => {
@@ -32,6 +34,13 @@ const SignInModal: React.FC<SignInModalProps> = ({
       console.error('Sign in error:', error);
       setIsLoading(false);
     }
+  };
+
+  const handleAnonymousAccess = () => {
+    localStorage.setItem('anonymousMode', 'true');
+    onOpenChange(false);
+    // Refresh the page to apply anonymous mode
+    window.location.reload();
   };
 
   return (
@@ -58,8 +67,26 @@ const SignInModal: React.FC<SignInModalProps> = ({
             Continue with Google
           </Button>
           
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-2 text-muted-foreground">Or</span>
+            </div>
+          </div>
+
           <Button 
-            variant="outline" 
+            onClick={handleAnonymousAccess}
+            variant="outline"
+            className="w-full"
+          >
+            <UserX className="w-4 h-4 mr-2" />
+            Continue Anonymously
+          </Button>
+          
+          <Button 
+            variant="ghost" 
             onClick={() => onOpenChange(false)}
             className="w-full"
           >
@@ -68,7 +95,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
         </div>
         
         <p className="text-xs text-center text-gray-500 mt-4">
-          Your thoughts and commitments will be securely saved to your account.
+          Your thoughts and commitments will be securely saved to your account or stored locally on this device.
         </p>
       </DialogContent>
     </Dialog>
