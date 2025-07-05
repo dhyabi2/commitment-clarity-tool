@@ -74,7 +74,7 @@ const Index = () => {
             </p>
             <Link to="/thoughts">
               <Button className="w-full bg-sage-500 hover:bg-sage-600 text-white">
-                Continue to App
+                {t('home.continueToApp')}
               </Button>
             </Link>
           </div>
