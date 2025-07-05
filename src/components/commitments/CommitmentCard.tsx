@@ -50,39 +50,41 @@ const CommitmentCard = ({
   };
 
   return (
-    <Card className="commitment-card p-3 sm:p-6 border-l-4 border-l-sage-400 hover:shadow-md transition-all duration-200">
-      <div className="space-y-3 sm:space-y-4">
+    <Card className="commitment-card p-4 sm:p-6 border-l-4 border-l-sage-400 hover:shadow-md transition-all duration-200">
+      <div className="space-y-4 sm:space-y-6">
         <DateHeader
           createdAt={commitment.created_at}
           onComplete={() => onComplete(commitment.id)}
           isPending={isPending}
         />
 
-        <CommitmentSection
-          title={t('commitments.outcome')}
-          content={commitment.outcome}
-          field="outcome"
-          isEditing={editing.id === commitment.id && editing.field === 'outcome'}
-          editValue={editing.value}
-          onEdit={() => onEdit(commitment, 'outcome')}
-          onSave={onSave}
-          onCancel={onCancel}
-          onEditValueChange={handleEditValueChange}
-          isPending={isPending}
-        />
+        <div className="space-y-5">
+          <CommitmentSection
+            title={t('commitments.outcome')}
+            content={commitment.outcome}
+            field="outcome"
+            isEditing={editing.id === commitment.id && editing.field === 'outcome'}
+            editValue={editing.value}
+            onEdit={() => onEdit(commitment, 'outcome')}
+            onSave={onSave}
+            onCancel={onCancel}
+            onEditValueChange={handleEditValueChange}
+            isPending={isPending}
+          />
 
-        <CommitmentSection
-          title={t('commitments.nextAction')}
-          content={commitment.nextAction}
-          field="nextAction"
-          isEditing={editing.id === commitment.id && editing.field === 'nextAction'}
-          editValue={editing.value}
-          onEdit={() => onEdit(commitment, 'nextAction')}
-          onSave={onSave}
-          onCancel={onCancel}
-          onEditValueChange={handleEditValueChange}
-          isPending={isPending}
-        />
+          <CommitmentSection
+            title={t('commitments.nextAction')}
+            content={commitment.nextAction}
+            field="nextAction"
+            isEditing={editing.id === commitment.id && editing.field === 'nextAction'}
+            editValue={editing.value}
+            onEdit={() => onEdit(commitment, 'nextAction')}
+            onSave={onSave}
+            onCancel={onCancel}
+            onEditValueChange={handleEditValueChange}
+            isPending={isPending}
+          />
+        </div>
       </div>
     </Card>
   );

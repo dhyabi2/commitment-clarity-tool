@@ -77,13 +77,24 @@ const CommitmentSection = ({
           </div>
         </div>
       ) : (
-        <div className={field === 'nextAction' ? 
-          "bg-blue-50 p-3 rounded-lg border-l-4 border-l-blue-400" : 
-          "text-base leading-relaxed text-gray-800 bg-gray-50 p-3 rounded-lg"
-        }>
-          <p className="text-base leading-relaxed text-gray-800">
-            {content}
-          </p>
+        <div className={`p-4 rounded-lg border-l-4 ${
+          field === 'nextAction' 
+            ? "bg-blue-50 border-l-blue-500" 
+            : "bg-gray-50 border-l-sage-400"
+        }`}>
+          <div className="space-y-2">
+            {field === 'nextAction' && (
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span className="text-xs font-medium text-blue-700 uppercase tracking-wide">
+                  {t('commitments.nextAction')}
+                </span>
+              </div>
+            )}
+            <p className="text-base leading-relaxed text-gray-800">
+              {content}
+            </p>
+          </div>
         </div>
       )}
     </div>
