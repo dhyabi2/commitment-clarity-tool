@@ -43,7 +43,7 @@ export const BrainDumpUpgradePrompt: React.FC<BrainDumpUpgradePromptProps> = ({
         </CardHeader>
         <CardContent className="space-y-3">
           <p className="text-sm text-red-700">
-            {t('subscription.limitReachedDescription', { usage, maxFreeThoughts })}
+            {t('subscription.limitReachedDescription').replace('{usage}', usage.toString()).replace('{maxFreeThoughts}', maxFreeThoughts.toString())}
           </p>
           <div className="flex flex-col gap-3">
             <Button

@@ -3,7 +3,7 @@ import { authTranslations } from './auth';
 import { pwaTranslations } from './pwa';
 import { faqTranslations } from './faq';
 import { navigationTranslations } from './navigation';
-import { contentTranslations } from './content';
+import { content } from './content';
 
 // Helper function to merge translation objects
 const mergeTranslations = (lang: 'en' | 'ar') => {
@@ -12,7 +12,7 @@ const mergeTranslations = (lang: 'en' | 'ar') => {
     ...pwaTranslations[lang],
     ...faqTranslations[lang],
     ...navigationTranslations[lang],
-    ...contentTranslations[lang]
+    ...content[lang]
   };
 };
 
