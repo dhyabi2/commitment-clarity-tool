@@ -1,6 +1,13 @@
 
 import { useState, useEffect } from 'react';
 
+// Extend Navigator interface to include iOS-specific properties
+declare global {
+  interface Navigator {
+    standalone?: boolean;
+  }
+}
+
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
   readonly userChoice: Promise<{
@@ -26,7 +33,7 @@ export const usePWAInstall = () => {
         return true;
       }
       
-      // Check if running as PWA on mobile
+      // Check if running as PWA on iOS Safari
       if (window.navigator.standalone === true) {
         setIsInstalled(true);
         console.log('PWA is running in iOS standalone mode');
@@ -87,7 +94,7 @@ export const usePWAInstall = () => {
       window.removeEventListener('beforeinstallprompt', handler as EventListener);
       window.removeEventListener('appinstalled', installedHandler);
     };
-  }, []);
+  }, [deferredPrompt]);
 
   const promptInstall = async () => {
     console.log('promptInstall called', { deferredPrompt, installSource });
