@@ -1,0 +1,71 @@
+
+export const brainDumpTranslations = {
+  en: {
+    brainDump: {
+      title: 'Brain Dump',
+      subtitle: 'Capture all your thoughts without judgment',
+      description: 'Let your mind flow freely. Write down everything that comes to mind - ideas, tasks, worries, or inspirations.',
+      placeholder: 'Start dumping your thoughts here...',
+      addThought: 'Add Thought',
+      capturing: 'Capturing...',
+      thoughtCaptured: 'Thought captured successfully',
+      emptyThought: 'Please enter a thought before capturing',
+      tips: {
+        title: 'Tips for effective brain dumping:',
+        tip1: 'Don\'t filter or judge your thoughts',
+        tip2: 'Write quickly without worrying about grammar',
+        tip3: 'Include both big ideas and small tasks',
+        tip4: 'Let one thought lead to another',
+        tip5: 'Review and organize later',
+      },
+      upgrade: {
+        title: 'Unlock Unlimited Thoughts',
+        description: 'Upgrade to Premium for unlimited thoughts and advanced features.',
+        upgradeButton: 'Upgrade to Premium',
+        currentUsage: 'Used {current} of {limit} thoughts this month',
+        remainingThoughts: '{remaining} thoughts remaining',
+      },
+      quickActions: {
+        title: 'Quick Actions',
+        clarifySelected: 'Turn into Commitment',
+        markComplete: 'Mark as Complete',
+        addTags: 'Add Tags',
+        export: 'Export Thoughts',
+      },
+    },
+  },
+  ar: {
+    brainDump: {
+      title: 'تفريغ الأفكار',
+      subtitle: 'التقط جميع أفكارك دون حكم',
+      description: 'دع عقلك يتدفق بحرية. اكتب كل ما يخطر ببالك - أفكار، مهام، همول، أو إلهامات.',
+      placeholder: 'ابدأ بتفريغ أفكارك هنا...',
+      addThought: 'إضافة فكرة',
+      capturing: 'جاري الالتقاط...',
+      thoughtCaptured: 'تم التقاط الفكرة بنجاح',
+      emptyThought: 'يرجى إدخال فكرة قبل الالتقاط',
+      tips: {
+        title: 'نصائح لتفريغ الأفكار بفعالية:',
+        tip1: 'لا تفلتر أو تحكم على أفكارك',
+        tip2: 'اكتب بسرعة دون القلق بشأن القواعد',
+        tip3: 'اشمل الأفكار الكبيرة والمهام الصغيرة',
+        tip4: 'دع فكرة واحدة تقود إلى أخرى',
+        tip5: 'راجع ونظم لاحقاً',
+      },
+      upgrade: {
+        title: 'فتح الأفكار غير المحدودة',
+        description: 'ترقية إلى البرنامج المميز للحصول على أفكار غير محدودة وميزات متقدمة.',
+        upgradeButton: 'ترقية إلى البرنامج المميز',
+        currentUsage: 'استخدمت {current} من {limit} فكرة هذا الشهر',
+        remainingThoughts: '{remaining} فكرة متبقية',
+      },
+      quickActions: {
+        title: 'إجراءات سريعة',
+        clarifySelected: 'تحويل إلى التزام',
+        markComplete: 'تمييز كمكتمل',
+        addTags: 'إضافة علامات',
+        export: 'تصدير الأفكار',
+      },
+    },
+  },
+};

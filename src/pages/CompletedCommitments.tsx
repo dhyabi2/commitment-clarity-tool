@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
@@ -77,8 +78,8 @@ const CompletedCommitments = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['thoughts'] });
       toast({
-        title: "Thought deleted",
-        description: "Your thought has been successfully removed.",
+        title: t('thoughts.delete'),
+        description: t('common.changesSaved'),
       });
     }
   });
@@ -101,8 +102,8 @@ const CompletedCommitments = () => {
       queryClient.invalidateQueries({ queryKey: ['thoughts'] });
       queryClient.invalidateQueries({ queryKey: ['completed-thoughts'] });
       toast({
-        title: "Thought updated",
-        description: "The thought status has been updated.",
+        title: t('thoughts.complete'),
+        description: t('common.changesSaved'),
       });
     }
   });
@@ -113,7 +114,6 @@ const CompletedCommitments = () => {
 
   const handleAnonymousAccess = () => {
     enableAnonymousMode();
-    // Refresh the page to apply anonymous mode
     window.location.reload();
   };
 
@@ -127,7 +127,7 @@ const CompletedCommitments = () => {
       <div className="min-h-screen bg-cream p-4 flex items-center justify-center">
         <div className="text-center">
           <p className="text-sage-600 mb-4">{t('auth.anonymousNote')}</p>
-          <p className="text-sage-500">Redirecting to your thoughts...</p>
+          <p className="text-sage-500">{t('auth.redirectingToThoughts')}</p>
         </div>
       </div>
     );

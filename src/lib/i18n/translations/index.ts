@@ -10,6 +10,10 @@ import { subscriptionTranslations } from './subscription';
 import { dashboardTranslations } from './dashboard';
 import { commonTranslations } from './common';
 import { componentsTranslations } from './components';
+import { profileTranslations } from './profile';
+import { commitmentFlowTranslations } from './commitmentFlow';
+import { brainDumpTranslations } from './brainDump';
+import { welcomeTranslations } from './welcome';
 
 // Helper function to merge translation objects
 const mergeTranslations = (lang: 'en' | 'ar') => {
@@ -24,7 +28,11 @@ const mergeTranslations = (lang: 'en' | 'ar') => {
     ...subscriptionTranslations[lang],
     ...dashboardTranslations[lang],
     ...commonTranslations[lang],
-    ...componentsTranslations[lang]
+    ...componentsTranslations[lang],
+    ...profileTranslations[lang],
+    ...commitmentFlowTranslations[lang],
+    ...brainDumpTranslations[lang],
+    ...welcomeTranslations[lang],
   };
 };
 
