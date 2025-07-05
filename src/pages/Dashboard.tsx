@@ -20,7 +20,7 @@ import { useAnonymousMode } from "@/hooks/useAnonymousMode";
 const Dashboard = () => {
   const { t, dir } = useLanguage();
   const { user, signInWithGoogle } = useAuth();
-  const { enableAnonymousMode } = useAnonymousMode();
+  const { isAnonymous, enableAnonymousMode } = useAnonymousMode();
   const isRTL = dir() === 'rtl';
 
   const { data: thoughts, isLoading: thoughtsLoading } = useQuery({
@@ -61,11 +61,12 @@ const Dashboard = () => {
 
   const handleAnonymousAccess = () => {
     enableAnonymousMode();
-    // Redirect to thoughts page or reload
+    // Redirect to thoughts page
     window.location.href = '/thoughts';
   };
 
-  if (!user) {
+  // Don't show sign-in prompt if already in anonymous mode
+  if (!user && !isAnonymous) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-cream to-sage-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-xl">
@@ -105,6 +106,22 @@ const Dashboard = () => {
             </Button>
           </CardContent>
         </Card>
+      </div>
+    );
+  }
+
+  // If in anonymous mode, redirect to thoughts page
+  if (isAnonymous) {
+    React.useEffect(() => {
+      window.location.href = '/thoughts';
+    }, []);
+    
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-cream to-sage-50 flex items-center justify-center p-4">
+        <div className="text-center">
+          <p className="text-sage-600 mb-4">{t('auth.anonymousNote')}</p>
+          <p className="text-sage-500">Redirecting to your thoughts...</p>
+        </div>
       </div>
     );
   }

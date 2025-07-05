@@ -110,6 +110,21 @@ export const contentTranslations = {
         pending: "Pending"
       }
     },
+    auth: {
+      signInRequired: "Sign in required",
+      signInDescription: "Please sign in to use this feature and save your data securely.",
+      signInWithGoogle: "Continue with Google",
+      continueAnonymously: "Continue Anonymously",
+      or: "or",
+      maybeOrLater: "Maybe later",
+      anonymousNote: "Anonymous mode stores data locally on your device only.",
+      signInToViewCompleted: "Sign in to view completed thoughts",
+      signInCompletedDescription: "Your completed thoughts are saved securely in your account."
+    },
+    subscription: {
+      limitReached: "Monthly Limit Reached",
+      upgradeNow: "Upgrade to Premium"
+    },
     common: {
       back: "Back"
     },
@@ -234,6 +249,21 @@ export const contentTranslations = {
         completed: "مكتمل",
         pending: "معلق"
       }
+    },
+    auth: {
+      signInRequired: "تسجيل الدخول مطلوب",
+      signInDescription: "يرجى تسجيل الدخول لاستخدام هذه الميزة وحفظ بياناتك بأمان.",
+      signInWithGoogle: "المتابعة باستخدام جوجل",
+      continueAnonymously: "المتابعة بشكل مجهول",
+      or: "أو",
+      maybeOrLater: "ربما لاحقاً",
+      anonymousNote: "الوضع المجهول يحفظ البيانات محلياً على جهازك فقط.",
+      signInToViewCompleted: "سجل الدخول لعرض الأفكار المكتملة",
+      signInCompletedDescription: "يتم حفظ أفكارك المكتملة بأمان في حسابك."
+    },
+    subscription: {
+      limitReached: "تم الوصول للحد الشهري",
+      upgradeNow: "الترقية للمميز"
     },
     common: {
       back: "رجوع"

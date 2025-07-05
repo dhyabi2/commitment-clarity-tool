@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Crown, AlertTriangle, UserX } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useAnonymousMode } from "@/hooks/useAnonymousMode";
 import { SubscriptionModal } from "../subscription/SubscriptionModal";
 
 interface BrainDumpUpgradePromptProps {
@@ -18,13 +19,14 @@ export const BrainDumpUpgradePrompt: React.FC<BrainDumpUpgradePromptProps> = ({
 }) => {
   const { t } = useLanguage();
   const { usage, maxFreeThoughts, isUnlimitedFree } = useSubscription();
+  const { isAnonymous, enableAnonymousMode } = useAnonymousMode();
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
 
-  // Don't show upgrade prompt if unlimited free usage is enabled
-  if (!open || isUnlimitedFree) return null;
+  // Don't show upgrade prompt if unlimited free usage is enabled or already in anonymous mode
+  if (!open || isUnlimitedFree || isAnonymous) return null;
 
   const handleAnonymousAccess = () => {
-    localStorage.setItem('anonymousMode', 'true');
+    enableAnonymousMode();
     onOpenChange(false);
     // Refresh the page to apply anonymous mode
     window.location.reload();
@@ -57,14 +59,14 @@ export const BrainDumpUpgradePrompt: React.FC<BrainDumpUpgradePromptProps> = ({
               className="w-full"
             >
               <UserX className="w-4 h-4 mr-2" />
-              Continue Anonymously
+              {t('auth.continueAnonymously')}
             </Button>
             <Button
               variant="ghost"
               onClick={() => onOpenChange(false)}
               className="w-full"
             >
-              Maybe later
+              {t('auth.maybeOrLater')}
             </Button>
           </div>
         </CardContent>

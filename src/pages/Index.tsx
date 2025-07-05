@@ -8,11 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Link } from 'react-router-dom';
 import { Chrome, UserX } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAnonymousMode } from '@/hooks/useAnonymousMode';
 import AnonymousAccessButton from '@/components/home/AnonymousAccessButton';
 
 const Index = () => {
   const { dir, t } = useLanguage();
   const { user } = useAuth();
+  const { isAnonymous } = useAnonymousMode();
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,8 +42,8 @@ const Index = () => {
       
       <WelcomeSteps />
       
-      {/* Authentication Options */}
-      {!user && (
+      {/* Authentication Options - Only show if user is not logged in and not in anonymous mode */}
+      {!user && !isAnonymous && (
         <div className="max-w-md mx-auto mt-8 space-y-4">
           <Link to="/auth">
             <Button className="w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 shadow-sm min-h-[56px] text-lg font-medium flex items-center justify-center gap-3">
@@ -60,6 +62,22 @@ const Index = () => {
           </div>
 
           <AnonymousAccessButton />
+        </div>
+      )}
+
+      {/* Show message for anonymous users */}
+      {isAnonymous && (
+        <div className="max-w-md mx-auto mt-8 text-center">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p className="text-blue-800 font-medium mb-2">
+              {t('auth.anonymousNote')}
+            </p>
+            <Link to="/thoughts">
+              <Button className="w-full bg-sage-500 hover:bg-sage-600 text-white">
+                Continue to App
+              </Button>
+            </Link>
+          </div>
         </div>
       )}
     </div>

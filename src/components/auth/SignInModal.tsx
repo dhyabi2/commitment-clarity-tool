@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Chrome, Loader2, UserX } from "lucide-react";
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
-import { useNavigate } from 'react-router-dom';
+import { useAnonymousMode } from '@/hooks/useAnonymousMode';
 
 interface SignInModalProps {
   open: boolean;
@@ -20,13 +20,18 @@ const SignInModal: React.FC<SignInModalProps> = ({
   title,
   description
 }) => {
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle, user } = useAuth();
   const { t } = useLanguage();
-  const navigate = useNavigate();
+  const { isAnonymous, enableAnonymousMode } = useAnonymousMode();
   const [isLoading, setIsLoading] = React.useState(false);
 
   const modalTitle = title || t('auth.signInRequired');
   const modalDescription = description || t('auth.signInDescription');
+
+  // Don't show modal if user is authenticated or already in anonymous mode
+  if (user || isAnonymous) {
+    return null;
+  }
 
   const handleSignIn = async () => {
     try {
@@ -40,7 +45,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
   };
 
   const handleAnonymousAccess = () => {
-    localStorage.setItem('anonymousMode', 'true');
+    enableAnonymousMode();
     onOpenChange(false);
     // Refresh the page to apply anonymous mode
     window.location.reload();
