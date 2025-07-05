@@ -21,7 +21,6 @@ export const usePWAInstall = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstallable, setIsInstallable] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
-  const [installSource, setInstallSource] = useState<'browser' | 'ios' | 'android' | null>(null);
 
   useEffect(() => {
     // Check if app is already installed
@@ -45,12 +44,12 @@ export const usePWAInstall = () => {
 
     const isCurrentlyInstalled = checkIfInstalled();
 
-    const handler = (e: BeforeInstallPromptEvent) => {
+    const handler = (e: Event) => {
+      const event = e as BeforeInstallPromptEvent;
       console.log('beforeinstallprompt event fired');
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(event);
       setIsInstallable(true);
-      setInstallSource('browser');
       console.log('PWA install prompt available');
     };
 
@@ -63,44 +62,31 @@ export const usePWAInstall = () => {
 
     // Only set up event listeners if not already installed
     if (!isCurrentlyInstalled) {
-      window.addEventListener('beforeinstallprompt', handler as EventListener);
+      window.addEventListener('beforeinstallprompt', handler);
       window.addEventListener('appinstalled', installedHandler);
-
-      // Detect device type for manual installation instructions
-      const userAgent = navigator.userAgent.toLowerCase();
-      const isIOS = /ipad|iphone|ipod/.test(userAgent) && !(window as any).MSStream;
-      const isAndroid = /android/.test(userAgent);
-      const isSafari = /safari/.test(userAgent) && !/chrome/.test(userAgent);
       
-      console.log('Device detection:', { isIOS, isAndroid, isSafari, userAgent });
-      
-      if (isIOS && isSafari && !isCurrentlyInstalled) {
-        console.log('iOS Safari detected - showing manual install option');
-        setInstallSource('ios');
-        setIsInstallable(true);
-      } else if (isAndroid && !isCurrentlyInstalled) {
-        console.log('Android detected - will show manual install if no native prompt');
-        setInstallSource('android');
-        // We'll set installable to true after a delay if no native prompt appears
+      // For development/testing - show install option after delay
+      if (import.meta.env.DEV) {
         setTimeout(() => {
-          if (!deferredPrompt) {
+          if (!deferredPrompt && !isCurrentlyInstalled) {
+            console.log('Dev mode: Making PWA installable for testing');
             setIsInstallable(true);
           }
-        }, 3000);
+        }, 2000);
       }
     }
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handler as EventListener);
+      window.removeEventListener('beforeinstallprompt', handler);
       window.removeEventListener('appinstalled', installedHandler);
     };
-  }, [deferredPrompt]);
+  }, []);
 
   const promptInstall = async () => {
-    console.log('promptInstall called', { deferredPrompt, installSource });
+    console.log('promptInstall called', { deferredPrompt });
     
     if (!deferredPrompt) {
-      console.log('No install prompt available - showing manual instructions');
+      console.log('No install prompt available');
       return false;
     }
 
@@ -123,16 +109,10 @@ export const usePWAInstall = () => {
     }
   };
 
-  const canInstall = () => {
-    return isInstallable && !isInstalled;
-  };
-
   return {
-    isInstallable: canInstall(),
+    isInstallable,
     isInstalled,
-    installSource,
     promptInstall,
-    canInstall,
     deferredPrompt: !!deferredPrompt
   };
 };
