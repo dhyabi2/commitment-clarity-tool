@@ -57,7 +57,7 @@ const Index = () => {
       
       <WelcomeSteps />
       
-      {/* Authentication Options - Prioritize Google Sign-In */}
+      {/* Authentication Options - Only show if not anonymous */}
       {!isAnonymous && (
         <div className="max-w-md mx-auto mt-8 space-y-4">
           {/* Primary: Google Sign-In */}
@@ -101,26 +101,6 @@ const Index = () => {
           <p className="text-xs text-center text-gray-500 mt-4 leading-relaxed">
             {t('auth.anonymousNote')}
           </p>
-        </div>
-      )}
-
-      {/* Anonymous User - Show Continue Option */}
-      {isAnonymous && (
-        <div className="max-w-md mx-auto mt-8">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-            <UserX className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-            <h3 className="font-semibold text-blue-800 mb-2">
-              {t('auth.anonymousMode')}
-            </h3>
-            <p className="text-blue-700 text-sm mb-4">
-              {t('auth.anonymousNote')}
-            </p>
-            <Link to="/thoughts">
-              <Button className="w-full bg-sage-500 hover:bg-sage-600 text-white">
-                {t('home.continueToApp')}
-              </Button>
-            </Link>
-          </div>
         </div>
       )}
     </div>
