@@ -28,8 +28,8 @@ export const BrainDumpUpgradePrompt: React.FC<BrainDumpUpgradePromptProps> = ({
   const handleAnonymousAccess = () => {
     enableAnonymousMode();
     onOpenChange(false);
-    // Refresh the page to apply anonymous mode
-    window.location.reload();
+    // Navigate to thoughts page
+    window.location.href = '/thoughts';
   };
 
   return (
@@ -43,7 +43,7 @@ export const BrainDumpUpgradePrompt: React.FC<BrainDumpUpgradePromptProps> = ({
         </CardHeader>
         <CardContent className="space-y-3">
           <p className="text-sm text-red-700">
-            You've used {usage}/{maxFreeThoughts} thoughts this month. Upgrade to Premium for unlimited thoughts or continue anonymously with local storage.
+            {t('subscription.limitReachedDescription', { usage, maxFreeThoughts })}
           </p>
           <div className="flex flex-col gap-3">
             <Button

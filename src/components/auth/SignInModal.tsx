@@ -47,8 +47,8 @@ const SignInModal: React.FC<SignInModalProps> = ({
   const handleAnonymousAccess = () => {
     enableAnonymousMode();
     onOpenChange(false);
-    // Refresh the page to apply anonymous mode
-    window.location.reload();
+    // Navigate to thoughts page
+    window.location.href = '/thoughts';
   };
 
   return (
@@ -79,7 +79,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
+            <div className="relative flex justify center text-xs uppercase">
               <span className="bg-white px-2 text-muted-foreground">{t('auth.or')}</span>
             </div>
           </div>

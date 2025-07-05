@@ -4,14 +4,15 @@ import { Button } from "@/components/ui/button";
 import { UserX } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { useAnonymousMode } from '@/hooks/useAnonymousMode';
 
 const AnonymousAccessButton = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { enableAnonymousMode } = useAnonymousMode();
 
   const handleAnonymousAccess = () => {
-    // Set a flag in localStorage to indicate anonymous mode
-    localStorage.setItem('anonymousMode', 'true');
+    enableAnonymousMode();
     navigate('/thoughts');
   };
 

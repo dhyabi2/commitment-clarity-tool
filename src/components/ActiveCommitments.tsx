@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAnonymousMode } from '@/hooks/useAnonymousMode';
 import CommitmentCard from './commitments/CommitmentCard';
 import { Target, Lightbulb, UserX } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,7 @@ const ActiveCommitments = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const { user } = useAuth();
+  const { isAnonymous, enableAnonymousMode } = useAnonymousMode();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState<EditingState>({
     id: null,
@@ -139,12 +140,12 @@ const ActiveCommitments = () => {
   };
 
   const handleAnonymousAccess = () => {
-    localStorage.setItem('anonymousMode', 'true');
-    // Refresh the page to apply anonymous mode
-    window.location.reload();
+    enableAnonymousMode();
+    // Navigate to thoughts page
+    window.location.href = '/thoughts';
   };
 
-  if (!user) {
+  if (!user && !isAnonymous) {
     return (
       <div className="p-4 sm:p-6 text-center bg-gray-50 rounded-lg border border-gray-200 mx-2 sm:mx-0">
         <Lightbulb className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
@@ -158,6 +159,16 @@ const ActiveCommitments = () => {
           <UserX className="h-4 w-4 mr-2" />
           {t('auth.continueAnonymously')}
         </Button>
+      </div>
+    );
+  }
+
+  if (isAnonymous) {
+    return (
+      <div className="p-4 sm:p-6 text-center bg-blue-50 rounded-lg border border-blue-200 mx-2 sm:mx-0">
+        <Target className="h-10 w-10 sm:h-12 sm:w-12 text-blue-400 mx-auto mb-3 sm:mb-4" />
+        <h3 className="text-base sm:text-lg font-medium text-blue-600 mb-2">{t('auth.anonymousMode')}</h3>
+        <p className="text-sm sm:text-base text-blue-500">{t('auth.anonymousCommitmentsNote')}</p>
       </div>
     );
   }
