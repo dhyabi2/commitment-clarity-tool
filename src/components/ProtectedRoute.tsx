@@ -5,6 +5,7 @@ import { useWelcomeState } from '@/hooks/useWelcomeState';
 import { useAnonymousMode } from '@/hooks/useAnonymousMode';
 import { Loader2 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import AnonymousDataMigrationPrompt from '@/components/auth/AnonymousDataMigrationPrompt';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -12,7 +13,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth = false }) => {
-  const { user, loading } = useAuth();
+  const { user, loading, hasAnonymousData } = useAuth();
   const { hasSeenWelcome, markWelcomeAsCompleted } = useWelcomeState();
   const { isAnonymous } = useAnonymousMode();
   const navigate = useNavigate();
@@ -40,6 +41,20 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth =
           <p className="text-sage-600 mb-2">Authentication required</p>
           <p className="text-sage-500">Redirecting to sign in...</p>
         </div>
+      </div>
+    );
+  }
+
+  // Show data migration prompt for authenticated users with anonymous data
+  if (user && hasAnonymousData && location.pathname !== '/') {
+    return (
+      <div className="min-h-screen bg-cream flex items-center justify-center p-4">
+        <AnonymousDataMigrationPrompt 
+          onSkip={() => {
+            // Continue to the app without migrating
+            window.location.reload();
+          }}
+        />
       </div>
     );
   }
