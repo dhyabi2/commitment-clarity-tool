@@ -17,30 +17,49 @@ import { welcomeTranslations } from './welcome';
 import { signInModalTranslations } from './signInModal';
 import { notificationsTranslations } from './notifications';
 
-// Helper function to merge translation objects
-const mergeTranslations = (lang: 'en' | 'ar') => {
-  return {
-    ...authTranslations[lang],
-    ...pwaInstallTranslations[lang],
-    ...faqTranslations[lang],
-    ...navigationTranslations[lang],
-    ...homeTranslations[lang],
-    ...thoughtsTranslations[lang],
-    ...commitmentsTranslations[lang],
-    ...subscriptionTranslations[lang],
-    ...dashboardTranslations[lang],
-    ...commonTranslations[lang],
-    ...componentsTranslations[lang],
-    ...profileTranslations[lang],
-    ...commitmentFlowTranslations[lang],
-    ...brainDumpTranslations[lang],
-    ...welcomeTranslations[lang],
-    ...signInModalTranslations[lang],
-    ...notificationsTranslations[lang],
-  };
+// Create English translations by merging all modules
+const enTranslations = {
+  ...authTranslations.en,
+  ...pwaInstallTranslations.en,
+  ...faqTranslations.en,
+  ...navigationTranslations.en,
+  ...homeTranslations.en,
+  ...thoughtsTranslations.en,
+  ...commitmentsTranslations.en,
+  ...subscriptionTranslations.en,
+  ...dashboardTranslations.en,
+  ...commonTranslations.en,
+  ...componentsTranslations.en,
+  ...profileTranslations.en,
+  ...commitmentFlowTranslations.en,
+  ...brainDumpTranslations.en,
+  ...welcomeTranslations.en,
+  ...signInModalTranslations.en,
+  ...notificationsTranslations.en,
+};
+
+// Create Arabic translations by merging all modules
+const arTranslations = {
+  ...authTranslations.ar,
+  ...pwaInstallTranslations.ar,
+  ...faqTranslations.ar,
+  ...navigationTranslations.ar,
+  ...homeTranslations.ar,
+  ...thoughtsTranslations.ar,
+  ...commitmentsTranslations.ar,
+  ...subscriptionTranslations.ar,
+  ...dashboardTranslations.ar,
+  ...commonTranslations.ar,
+  ...componentsTranslations.ar,
+  ...profileTranslations.ar,
+  ...commitmentFlowTranslations.ar,
+  ...brainDumpTranslations.ar,
+  ...welcomeTranslations.ar,
+  ...signInModalTranslations.ar,
+  ...notificationsTranslations.ar,
 };
 
 export const translations = {
-  en: mergeTranslations('en'),
-  ar: mergeTranslations('ar')
+  en: enTranslations,
+  ar: arTranslations
 };
