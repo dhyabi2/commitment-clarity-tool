@@ -72,10 +72,10 @@ const Dashboard = () => {
         <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-xl">
           <CardHeader className="text-center pb-6">
             <CardTitle className="text-xl font-semibold text-sage-600 mb-2">
-              {t('dashboard.signInRequired')}
+              {t('dashboardAuth.signInRequired')}
             </CardTitle>
             <CardDescription className="text-sage-500">
-              {t('dashboard.signInDescription')}
+              {t('dashboardAuth.signInDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -84,7 +84,7 @@ const Dashboard = () => {
               className="w-full bg-sage-600 hover:bg-sage-700 text-white min-h-[48px] flex items-center justify-center gap-3"
             >
               <Chrome className="h-5 w-5" />
-              {t('dashboard.continueWithGoogle')}
+              {t('dashboardAuth.continueWithGoogle')}
             </Button>
             
             <div className="relative">
@@ -92,7 +92,7 @@ const Dashboard = () => {
                 <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-muted-foreground">{t('auth.or')}</span>
+                <span className="bg-white px-2 text-muted-foreground">{t('dashboardAuth.or')}</span>
               </div>
             </div>
 
@@ -102,7 +102,7 @@ const Dashboard = () => {
               className="w-full"
             >
               <UserX className="h-5 w-5 mr-2" />
-              {t('auth.continueAnonymously')}
+              {t('dashboardAuth.continueAnonymously')}
             </Button>
           </CardContent>
         </Card>
@@ -119,8 +119,8 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen bg-gradient-to-b from-cream to-sage-50 flex items-center justify-center p-4">
         <div className="text-center">
-          <p className="text-sage-600 mb-4">{t('auth.anonymousNote')}</p>
-          <p className="text-sage-500">Redirecting to your thoughts...</p>
+          <p className="text-sage-600 mb-4">{t('dashboardAuth.anonymousNote')}</p>
+          <p className="text-sage-500">{t('dashboardAuth.redirectingToThoughts')}</p>
         </div>
       </div>
     );

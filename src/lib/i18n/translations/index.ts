@@ -16,6 +16,8 @@ import { brainDumpTranslations } from './brainDump';
 import { welcomeTranslations } from './welcome';
 import { signInModalTranslations } from './signInModal';
 import { notificationsTranslations } from './notifications';
+import { completedCommitmentsTranslations } from './completedCommitments';
+import { dashboardAuthTranslations } from './dashboardAuth';
 
 // Create English translations by merging all modules
 const enTranslations = {
@@ -36,6 +38,8 @@ const enTranslations = {
   ...welcomeTranslations.en,
   ...signInModalTranslations.en,
   ...notificationsTranslations.en,
+  ...completedCommitmentsTranslations.en,
+  ...dashboardAuthTranslations.en,
 };
 
 // Create Arabic translations by merging all modules
@@ -57,6 +61,8 @@ const arTranslations = {
   ...welcomeTranslations.ar,
   ...signInModalTranslations.ar,
   ...notificationsTranslations.ar,
+  ...completedCommitmentsTranslations.ar,
+  ...dashboardAuthTranslations.ar,
 };
 
 export const translations = {
