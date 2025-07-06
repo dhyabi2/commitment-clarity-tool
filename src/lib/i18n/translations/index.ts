@@ -14,6 +14,8 @@ import { profileTranslations } from './profile';
 import { commitmentFlowTranslations } from './commitmentFlow';
 import { brainDumpTranslations } from './brainDump';
 import { welcomeTranslations } from './welcome';
+import { signInModalTranslations } from './signInModal';
+import { notificationsTranslations } from './notifications';
 
 // Helper function to merge translation objects
 const mergeTranslations = (lang: 'en' | 'ar') => {
@@ -33,6 +35,8 @@ const mergeTranslations = (lang: 'en' | 'ar') => {
     ...commitmentFlowTranslations[lang],
     ...brainDumpTranslations[lang],
     ...welcomeTranslations[lang],
+    ...signInModalTranslations[lang],
+    ...notificationsTranslations[lang],
   };
 };
 

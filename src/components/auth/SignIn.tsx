@@ -20,8 +20,8 @@ const SignIn = () => {
       await signInWithGoogle();
     } catch (error) {
       toast({
-        title: t('auth.errorTitle') || "Error",
-        description: t('auth.signInError') || "Failed to sign in. Please try again.",
+        title: t('notifications.signInError'),
+        description: t('notifications.signInErrorDescription'),
         variant: "destructive",
       });
     } finally {
@@ -34,10 +34,10 @@ const SignIn = () => {
       <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-xl">
         <CardHeader className="text-center pb-8">
           <CardTitle className="text-3xl font-bold text-sage-600 mb-4">
-            {t('auth.welcome') || 'Welcome to Mind Garden'}
+            {t('auth.welcome')}
           </CardTitle>
           <p className="text-sage-500 text-lg">
-            {t('auth.signInDescription') || 'Sign in to access your thoughts and commitments'}
+            {t('auth.signInDescription')}
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -68,7 +68,7 @@ const SignIn = () => {
                     fill="#EA4335"
                   />
                 </svg>
-                {t('auth.signInWithGoogle') || 'Continue with Google'}
+                {t('signInModal.signInWithGoogle')}
               </>
             )}
           </Button>
@@ -78,14 +78,14 @@ const SignIn = () => {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-muted-foreground">Or</span>
+              <span className="bg-white px-2 text-muted-foreground">{t('signInModal.or')}</span>
             </div>
           </div>
 
           <AnonymousAccessButton />
           
           <div className="text-center text-sm text-gray-500">
-            {t('auth.termsText') || 'By signing in, you agree to our Terms of Service and Privacy Policy'}
+            {t('auth.termsText')}
           </div>
         </CardContent>
       </Card>

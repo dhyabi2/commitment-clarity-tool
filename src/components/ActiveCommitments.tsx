@@ -87,15 +87,15 @@ const ActiveCommitments = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['commitments'] });
       toast({
-        title: "Commitment updated",
-        description: "Your commitment has been successfully updated.",
+        title: t('notifications.commitmentUpdated'),
+        description: t('notifications.commitmentUpdatedDescription'),
       });
       setEditing({ id: null, field: null, value: '' });
     },
     onError: (error) => {
       toast({
-        title: "Update failed",
-        description: "There was an error updating your commitment. Please try again.",
+        title: t('notifications.commitmentUpdateFailed'),
+        description: t('notifications.commitmentUpdateFailedDescription'),
         variant: "destructive",
       });
       console.error('Error updating commitment:', error);
@@ -119,14 +119,14 @@ const ActiveCommitments = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['commitments'] });
       toast({
-        title: "Commitment completed! 🎉",
-        description: "Congratulations on completing your commitment. Keep up the great work!",
+        title: t('notifications.commitmentCompleted'),
+        description: t('notifications.commitmentCompletedDescription'),
       });
     },
     onError: (error) => {
       toast({
-        title: "Error completing commitment",
-        description: "There was an error marking your commitment as complete. Please try again.",
+        title: t('notifications.commitmentCompleteFailed'),
+        description: t('notifications.commitmentCompleteFailedDescription'),
         variant: "destructive",
       });
       console.error('Error completing commitment:', error);

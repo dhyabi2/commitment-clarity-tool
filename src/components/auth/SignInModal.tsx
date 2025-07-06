@@ -25,8 +25,8 @@ const SignInModal: React.FC<SignInModalProps> = ({
   const { isAnonymous, enableAnonymousMode } = useAnonymousMode();
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const modalTitle = title || t('auth.signInRequired');
-  const modalDescription = description || t('auth.signInDescription');
+  const modalTitle = title || t('signInModal.signInRequired');
+  const modalDescription = description || t('signInModal.signInDescription');
 
   // Don't show modal if user is authenticated or already in anonymous mode
   if (user || isAnonymous) {
@@ -72,7 +72,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
             ) : (
               <Chrome className="w-4 h-4 mr-2" />
             )}
-            {t('auth.signInWithGoogle')}
+            {t('signInModal.signInWithGoogle')}
           </Button>
           
           <div className="relative">
@@ -80,7 +80,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify center text-xs uppercase">
-              <span className="bg-white px-2 text-muted-foreground">{t('auth.or')}</span>
+              <span className="bg-white px-2 text-muted-foreground">{t('signInModal.or')}</span>
             </div>
           </div>
 
@@ -90,7 +90,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
             className="w-full"
           >
             <UserX className="w-4 h-4 mr-2" />
-            {t('auth.continueAnonymously')}
+            {t('signInModal.continueAnonymously')}
           </Button>
           
           <Button 
@@ -98,12 +98,12 @@ const SignInModal: React.FC<SignInModalProps> = ({
             onClick={() => onOpenChange(false)}
             className="w-full"
           >
-            {t('auth.maybeOrLater')}
+            {t('signInModal.maybeOrLater')}
           </Button>
         </div>
         
         <p className="text-xs text-center text-gray-500 mt-4">
-          {t('auth.anonymousNote')}
+          {t('signInModal.anonymousNote')}
         </p>
       </DialogContent>
     </Dialog>
