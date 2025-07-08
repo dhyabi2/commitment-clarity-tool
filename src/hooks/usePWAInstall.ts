@@ -1,45 +1,8 @@
 
 import { useState, useEffect } from 'react';
-
-// Extend Navigator interface to include iOS-specific properties
-declare global {
-  interface Navigator {
-    standalone?: boolean;
-  }
-}
-
-interface BeforeInstallPromptEvent extends Event {
-  readonly platforms: string[];
-  readonly userChoice: Promise<{
-    outcome: 'accepted' | 'dismissed';
-    platform: string;
-  }>;
-  prompt(): Promise<void>;
-}
-
-// Cookie utilities for PWA state persistence
-const PWA_COOKIE_NAME = 'pwa_install_state';
-
-const setCookie = (name: string, value: string, days: number = 30) => {
-  const expires = new Date();
-  expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
-};
-
-const getCookie = (name: string): string | null => {
-  const nameEQ = name + "=";
-  const ca = document.cookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-  }
-  return null;
-};
-
-const deleteCookie = (name: string) => {
-  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-};
+import { detectPWAInstallation } from '@/utils/pwaDetection';
+import { setPWAStateCookie, deletePWAStateCookie } from '@/utils/pwaState';
+import { BeforeInstallPromptEvent } from '@/types/pwa';
 
 export const usePWAInstall = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
@@ -47,56 +10,12 @@ export const usePWAInstall = () => {
   const [isInstalled, setIsInstalled] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false); // Session-based dismissal only
 
-  // Comprehensive PWA installation detection
-  const detectPWAInstallation = (): boolean => {
-    // Method 1: Check display mode (most reliable for installed PWAs)
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      console.log('PWA detected: Running in standalone mode');
-      return true;
-    }
-
-    // Method 2: iOS Safari standalone mode
-    if (window.navigator.standalone === true) {
-      console.log('PWA detected: iOS standalone mode');
-      return true;
-    }
-
-    // Method 3: Check for PWA-specific CSS media queries
-    if (window.matchMedia('(display-mode: minimal-ui)').matches ||
-        window.matchMedia('(display-mode: window-controls-overlay)').matches) {
-      console.log('PWA detected: Enhanced display mode');
-      return true;
-    }
-
-    // Method 4: Check document referrer for PWA launches
-    if (document.referrer.startsWith('android-app://')) {
-      console.log('PWA detected: Android app referrer');
-      return true;
-    }
-
-    // Method 5: Check for installation-specific URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('utm_source') === 'pwa' || urlParams.get('source') === 'pwa') {
-      console.log('PWA detected: Installation URL parameters');
-      return true;
-    }
-
-    // Method 6: Check cookie state for previous installations
-    const cookieState = getCookie(PWA_COOKIE_NAME);
-    if (cookieState === 'installed') {
-      console.log('PWA detected: Cookie indicates previous installation');
-      return true;
-    }
-
-    return false;
-  };
-
   // Set installation state with cookie persistence
   const markAsInstalled = () => {
     setIsInstalled(true);
     setIsInstallable(false);
     setDeferredPrompt(null);
-    setCookie(PWA_COOKIE_NAME, 'installed', 365); // 1 year
+    setPWAStateCookie('installed', 365); // 1 year
     console.log('PWA marked as installed with cookie persistence');
   };
 
@@ -234,14 +153,14 @@ export const usePWAInstall = () => {
         return true;
       } else {
         // User cancelled - set cookie to remember they attempted install
-        setCookie(PWA_COOKIE_NAME, 'attempted', 7); // 1 week
+        setPWAStateCookie('attempted', 7); // 1 week
         markAsDismissed();
         return false;
       }
     } catch (error) {
       console.error('Install prompt failed:', error);
       // Set cookie even on error to remember the attempt
-      setCookie(PWA_COOKIE_NAME, 'attempted', 7); // 1 week
+      setPWAStateCookie('attempted', 7); // 1 week
       markAsDismissed();
       return false;
     }
@@ -255,7 +174,7 @@ export const usePWAInstall = () => {
   // Debug function for development
   const resetPWAState = () => {
     if (import.meta.env.DEV) {
-      deleteCookie(PWA_COOKIE_NAME);
+      deletePWAStateCookie();
       setIsInstalled(false);
       setIsInstallable(false);
       setIsDismissed(false);
