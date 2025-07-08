@@ -19,7 +19,6 @@ interface BeforeInstallPromptEvent extends Event {
 
 // Cookie utilities for PWA state persistence
 const PWA_COOKIE_NAME = 'pwa_install_state';
-const PWA_DISMISSED_COOKIE = 'pwa_dismissed';
 
 const setCookie = (name: string, value: string, days: number = 30) => {
   const expires = new Date();
@@ -46,7 +45,7 @@ export const usePWAInstall = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstallable, setIsInstallable] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
-  const [isDismissed, setIsDismissed] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false); // Session-based dismissal only
 
   // Comprehensive PWA installation detection
   const detectPWAInstallation = (): boolean => {
@@ -82,20 +81,14 @@ export const usePWAInstall = () => {
       return true;
     }
 
-    // Method 6: Check cookie state
+    // Method 6: Check cookie state for previous installations
     const cookieState = getCookie(PWA_COOKIE_NAME);
     if (cookieState === 'installed') {
-      console.log('PWA detected: Cookie indicates installation');
+      console.log('PWA detected: Cookie indicates previous installation');
       return true;
     }
 
     return false;
-  };
-
-  // Check if user has dismissed the install prompt
-  const checkDismissalState = (): boolean => {
-    const dismissed = getCookie(PWA_DISMISSED_COOKIE);
-    return dismissed === 'true';
   };
 
   // Set installation state with cookie persistence
@@ -104,24 +97,21 @@ export const usePWAInstall = () => {
     setIsInstallable(false);
     setDeferredPrompt(null);
     setCookie(PWA_COOKIE_NAME, 'installed', 365); // 1 year
-    deleteCookie(PWA_DISMISSED_COOKIE); // Clear dismissal state
     console.log('PWA marked as installed with cookie persistence');
   };
 
-  // Mark prompt as dismissed
+  // Mark prompt as dismissed (session-based only, no cookies)
   const markAsDismissed = () => {
     setIsDismissed(true);
-    setCookie(PWA_DISMISSED_COOKIE, 'true', 7); // 1 week
-    console.log('PWA install prompt dismissed');
+    console.log('PWA install prompt dismissed for this session');
   };
 
   useEffect(() => {
     // Initial detection
     const isCurrentlyInstalled = detectPWAInstallation();
-    const isCurrentlyDismissed = checkDismissalState();
     
     setIsInstalled(isCurrentlyInstalled);
-    setIsDismissed(isCurrentlyDismissed);
+    setIsDismissed(false); // Always reset dismissal on page load
 
     // If already installed, don't show installable state
     if (isCurrentlyInstalled) {
@@ -139,11 +129,9 @@ export const usePWAInstall = () => {
       e.preventDefault();
       setDeferredPrompt(event);
       
-      // Only show as installable if not dismissed recently
-      if (!isCurrentlyDismissed) {
-        setIsInstallable(true);
-        console.log('PWA install prompt available');
-      }
+      // Always show as installable when event fires (no dismissal check)
+      setIsInstallable(true);
+      console.log('PWA install prompt available');
     };
 
     const installedHandler = () => {
@@ -183,7 +171,7 @@ export const usePWAInstall = () => {
     }
 
     // Development mode simulation with delay
-    if (import.meta.env.DEV && !isCurrentlyInstalled && !isCurrentlyDismissed) {
+    if (import.meta.env.DEV && !isCurrentlyInstalled) {
       const devTimer = setTimeout(() => {
         if (!deferredPrompt && !isCurrentlyInstalled) {
           console.log('Dev mode: Making PWA installable for testing');
@@ -216,7 +204,7 @@ export const usePWAInstall = () => {
         standaloneQuery.removeListener(handleDisplayModeChange);
       }
     };
-  }, [isInstalled, isDismissed]);
+  }, [isInstalled]);
 
   const promptInstall = async (): Promise<boolean> => {
     console.log('promptInstall called', { 
@@ -245,18 +233,22 @@ export const usePWAInstall = () => {
         markAsInstalled();
         return true;
       } else {
+        // User cancelled - set cookie to remember they attempted install
+        setCookie(PWA_COOKIE_NAME, 'attempted', 7); // 1 week
         markAsDismissed();
         return false;
       }
     } catch (error) {
       console.error('Install prompt failed:', error);
+      // Set cookie even on error to remember the attempt
+      setCookie(PWA_COOKIE_NAME, 'attempted', 7); // 1 week
       markAsDismissed();
       return false;
     }
   };
 
   const dismissPrompt = () => {
-    markAsDismissed();
+    markAsDismissed(); // Only session-based dismissal
     setIsInstallable(false);
   };
 
@@ -264,7 +256,6 @@ export const usePWAInstall = () => {
   const resetPWAState = () => {
     if (import.meta.env.DEV) {
       deleteCookie(PWA_COOKIE_NAME);
-      deleteCookie(PWA_DISMISSED_COOKIE);
       setIsInstalled(false);
       setIsInstallable(false);
       setIsDismissed(false);

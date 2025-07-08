@@ -20,7 +20,7 @@ const PWAInstallPrompt = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
 
-  // Show prompt with delay if installable and not dismissed
+  // Show prompt with delay if installable and not dismissed for this session
   useEffect(() => {
     if (isInstallable && !isInstalled && !isDismissed) {
       const timer = setTimeout(() => {
@@ -32,7 +32,7 @@ const PWAInstallPrompt = () => {
           hasDeferredPrompt: deferredPrompt,
           timestamp: new Date().toISOString()
         });
-      }, 2000); // Reduced delay for better UX
+      }, 2000);
 
       return () => clearTimeout(timer);
     } else {
@@ -46,9 +46,9 @@ const PWAInstallPrompt = () => {
     return null;
   }
 
-  // Don't render if dismissed recently
-  if (isDismissed && !import.meta.env.DEV) {
-    console.log('PWA prompt dismissed recently, not showing');
+  // Don't render if dismissed for this session (but will show again on page reload)
+  if (isDismissed) {
+    console.log('PWA prompt dismissed for this session');
     return null;
   }
 
@@ -64,12 +64,8 @@ const PWAInstallPrompt = () => {
       const success = await promptInstall();
       console.log('Install result:', success);
       
-      if (success) {
-        setIsVisible(false);
-      } else {
-        // Installation failed or was cancelled
-        setIsVisible(false);
-      }
+      // Always hide the prompt after install attempt
+      setIsVisible(false);
     } catch (error) {
       console.error('Install failed:', error);
       setIsVisible(false);
@@ -79,9 +75,9 @@ const PWAInstallPrompt = () => {
   };
 
   const handleDismiss = () => {
-    dismissPrompt();
+    dismissPrompt(); // Only dismisses for current session
     setIsVisible(false);
-    console.log('PWA prompt dismissed by user');
+    console.log('PWA prompt dismissed by user (session only)');
   };
 
   // Show in development mode for testing, or if conditions are met
