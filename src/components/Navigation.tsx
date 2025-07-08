@@ -125,6 +125,11 @@ const Navigation = () => {
               </Tooltip>
             ))}
             
+            {/* Language Switcher for Mobile */}
+            <div className="p-3">
+              <ElegantLanguageSwitcher />
+            </div>
+            
             {/* PWA Install Icon for Mobile */}
             <Tooltip>
               <TooltipTrigger asChild>
