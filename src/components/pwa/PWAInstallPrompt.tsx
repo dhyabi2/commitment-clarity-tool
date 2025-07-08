@@ -1,44 +1,58 @@
 
 import React from 'react';
-import { usePWAInstallPrompt } from '@/hooks/usePWAInstallPrompt';
 import PWAInstallCard from './PWAInstallCard';
 import PWAManualInstructions from './PWAManualInstructions';
 
-const PWAInstallPrompt = () => {
-  const {
-    shouldShow,
-    isInstalling,
-    showManualInstructions,
-    handleInstall,
-    handleDismiss
-  } = usePWAInstallPrompt();
+interface PWAInstallPromptProps {
+  isVisible: boolean;
+  isInstalling: boolean;
+  showManualInstructions: boolean;
+  onInstall: () => void;
+  onDismiss: () => void;
+}
 
+const PWAInstallPrompt = ({ 
+  isVisible, 
+  isInstalling, 
+  showManualInstructions, 
+  onInstall, 
+  onDismiss 
+}: PWAInstallPromptProps) => {
   console.log('PWAInstallPrompt render:', {
-    shouldShow,
+    isVisible,
     isInstalling,
     showManualInstructions,
     timestamp: new Date().toISOString()
   });
 
-  if (!shouldShow) {
-    console.log('PWAInstallPrompt: Not showing because shouldShow is false');
+  if (!isVisible) {
+    console.log('PWAInstallPrompt: Not showing because isVisible is false');
     return null;
   }
 
-  console.log('PWAInstallPrompt: Rendering prompt');
+  console.log('PWAInstallPrompt: Rendering popup');
 
   return (
     <>
-      <PWAInstallCard
-        isInstalling={isInstalling}
-        showManualInstructions={showManualInstructions}
-        onInstall={handleInstall}
-        onDismiss={handleDismiss}
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-black/50 z-40" 
+        onClick={onDismiss}
       />
+      
+      {/* Popup positioned in center */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <PWAInstallCard
+          isInstalling={isInstalling}
+          showManualInstructions={showManualInstructions}
+          onInstall={onInstall}
+          onDismiss={onDismiss}
+        />
+      </div>
 
       {/* Manual installation instructions for iOS */}
       {showManualInstructions && (
-        <PWAManualInstructions onDismiss={handleDismiss} />
+        <PWAManualInstructions onDismiss={onDismiss} />
       )}
     </>
   );

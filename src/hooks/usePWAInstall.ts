@@ -8,7 +8,6 @@ export const usePWAInstall = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstallable, setIsInstallable] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
-  const [isDismissed, setIsDismissed] = useState(false); // Session-based dismissal only
 
   // Set installation state with cookie persistence
   const markAsInstalled = () => {
@@ -19,18 +18,11 @@ export const usePWAInstall = () => {
     console.log('PWA marked as installed with cookie persistence');
   };
 
-  // Mark prompt as dismissed (session-based only, no cookies)
-  const markAsDismissed = () => {
-    setIsDismissed(true);
-    console.log('PWA install prompt dismissed for this session');
-  };
-
   useEffect(() => {
     // Initial detection
     const isCurrentlyInstalled = detectPWAInstallation();
     
     setIsInstalled(isCurrentlyInstalled);
-    setIsDismissed(false); // Always reset dismissal on page load
 
     // If already installed, don't show installable state
     if (isCurrentlyInstalled) {
@@ -53,8 +45,6 @@ export const usePWAInstall = () => {
       
       e.preventDefault();
       setDeferredPrompt(event);
-      
-      // Always show as installable when event fires (no dismissal check)
       setIsInstallable(true);
       console.log('PWA install prompt available - setting installable to true');
     };
@@ -95,12 +85,12 @@ export const usePWAInstall = () => {
       standaloneQuery.addListener(handleDisplayModeChange);
     }
 
-    // Development mode simulation with delay - ALWAYS show in dev if not installed
+    // Development mode simulation - make installable for testing
     if (import.meta.env.DEV && !isCurrentlyInstalled) {
       const devTimer = setTimeout(() => {
-        console.log('Dev mode: Making PWA installable for testing (forced)');
+        console.log('Dev mode: Making PWA installable for testing');
         setIsInstallable(true);
-      }, 1000); // Reduced delay for faster testing
+      }, 500);
 
       return () => {
         clearTimeout(devTimer);
@@ -137,8 +127,6 @@ export const usePWAInstall = () => {
     
     if (!deferredPrompt) {
       console.log('No install prompt available - this is normal in dev mode');
-      // In development mode or browsers that don't support beforeinstallprompt
-      // Still return true to show the manual instructions
       return false;
     }
 
@@ -158,21 +146,14 @@ export const usePWAInstall = () => {
       } else {
         // User cancelled - set cookie to remember they attempted install
         setPWAStateCookie('attempted', 7); // 1 week
-        markAsDismissed();
         return false;
       }
     } catch (error) {
       console.error('Install prompt failed:', error);
       // Set cookie even on error to remember the attempt
       setPWAStateCookie('attempted', 7); // 1 week
-      markAsDismissed();
       return false;
     }
-  };
-
-  const dismissPrompt = () => {
-    markAsDismissed(); // Only session-based dismissal
-    setIsInstallable(false);
   };
 
   // Debug function for development
@@ -181,27 +162,22 @@ export const usePWAInstall = () => {
       deletePWAStateCookie();
       setIsInstalled(false);
       setIsInstallable(false);
-      setIsDismissed(false);
       setDeferredPrompt(null);
       console.log('PWA state reset for development');
     }
   };
 
-  // Expose state for debugging
   console.log('PWA Install Hook State:', {
     isInstallable,
     isInstalled,
-    isDismissed,
     hasDeferredPrompt: !!deferredPrompt,
     isDev: import.meta.env.DEV
   });
 
   return {
-    isInstallable: isInstallable && !isInstalled && !isDismissed,
+    isInstallable,
     isInstalled,
-    isDismissed,
     promptInstall,
-    dismissPrompt,
     deferredPrompt: !!deferredPrompt,
     resetPWAState: import.meta.env.DEV ? resetPWAState : undefined
   };

@@ -21,7 +21,7 @@ const PWAInstallCard = ({
   const { t } = useLanguage();
 
   return (
-    <Card className="fixed bottom-4 left-4 right-4 md:right-auto md:max-w-sm bg-white shadow-xl border border-sage-200 z-50 animate-in slide-in-from-bottom-2 backdrop-blur-sm">
+    <Card className="w-full max-w-md bg-white shadow-xl border border-sage-200 animate-in zoom-in-95 backdrop-blur-sm">
       <div className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
