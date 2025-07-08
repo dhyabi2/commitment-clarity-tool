@@ -93,9 +93,7 @@ const Navigation = () => {
             {/* Desktop Right Side Items */}
             <div className="flex items-center gap-3">
               {/* PWA Install Icon */}
-              {(isInstallable || import.meta.env.DEV) && !isInstalled && (
-                <PWAInstallIcon onInstallClick={showPopup} />
-              )}
+              <PWAInstallIcon onInstallClick={showPopup} />
               
               <ElegantLanguageSwitcher />
               <Link to="/profile" className={`p-2 ${isActive('/profile') ? 'text-sage-600' : 'text-gray-600'} hover:text-sage-500 transition-colors`}>

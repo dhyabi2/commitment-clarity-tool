@@ -16,17 +16,6 @@ interface PWAInstallIconProps {
 
 const PWAInstallIcon = ({ onInstallClick }: PWAInstallIconProps) => {
   const { t } = useLanguage();
-  const { isInstallable, isInstalled } = usePWAInstall();
-
-  // Don't show if already installed
-  if (isInstalled) {
-    return null;
-  }
-
-  // Only show if installable (or in dev mode)
-  if (!isInstallable && !import.meta.env.DEV) {
-    return null;
-  }
 
   // Detect if we should show mobile icon (for iOS manual instructions)
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
