@@ -14,8 +14,7 @@ const PWAInstallPrompt = () => {
     isDismissed,
     promptInstall, 
     dismissPrompt,
-    deferredPrompt,
-    resetPWAState 
+    deferredPrompt 
   } = usePWAInstall();
   
   const [isVisible, setIsVisible] = useState(false);
@@ -161,18 +160,6 @@ const PWAInstallPrompt = () => {
               </>
             )}
           </Button>
-
-          {/* Development reset button */}
-          {import.meta.env.DEV && resetPWAState && (
-            <Button
-              onClick={resetPWAState}
-              variant="outline"
-              size="sm"
-              className="w-full mt-2 text-xs"
-            >
-              Reset PWA State (Dev Only)
-            </Button>
-          )}
         </div>
       </Card>
 
