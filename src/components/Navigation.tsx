@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Brain, CheckSquare, BarChart, HelpCircle, User } from 'lucide-react';
+import { Home, Brain, CheckSquare, BarChart, HelpCircle, User, Download, Smartphone } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -124,6 +124,27 @@ const Navigation = () => {
                 </TooltipContent>
               </Tooltip>
             ))}
+            
+            {/* PWA Install Icon for Mobile */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={showPopup}
+                  className="p-3 text-sage-600 hover:text-sage-500 transition-colors touch-manipulation active:scale-95"
+                >
+                  {/* Use Smartphone icon for iOS, Download for others */}
+                  {/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.navigator.standalone ? (
+                    <Smartphone className="h-7 w-7" />
+                  ) : (
+                    <Download className="h-7 w-7" />
+                  )}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t('pwa.install.title')}</p>
+              </TooltipContent>
+            </Tooltip>
+            
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
