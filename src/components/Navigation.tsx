@@ -114,9 +114,9 @@ const Navigation = () => {
                 <TooltipTrigger asChild>
                   <Link
                     to={path}
-                    className={`p-3 ${getIconColor(path)} hover:text-sage-500 transition-colors touch-manipulation active:scale-95`}
-                  >
-                    <Icon className={`${getIconSize(path)} transition-all duration-300`} />
+                     className={`p-3 ${getIconColor(path)} hover:text-sage-500 transition-colors touch-manipulation active:scale-95`}
+                   >
+                     <Icon className={`${getIconSize(path)} transition-all duration-300 ${path === '/thoughts' ? 'animate-pulse hover:animate-bounce' : ''}`} />
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -133,16 +133,16 @@ const Navigation = () => {
             {/* PWA Install Icon for Mobile */}
             <Tooltip>
               <TooltipTrigger asChild>
-                <button
-                  onClick={showPopup}
-                  className="p-3 text-sage-600 hover:text-sage-500 transition-colors touch-manipulation active:scale-95"
-                >
-                  {/* Use Smartphone icon for iOS, Download for others */}
-                  {/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.navigator.standalone ? (
-                    <Smartphone className="h-7 w-7" />
-                  ) : (
-                    <Download className="h-7 w-7" />
-                  )}
+                 <button
+                   onClick={showPopup}
+                   className="p-3 text-sage-600 hover:text-sage-500 transition-colors touch-manipulation active:scale-95"
+                 >
+                   {/* Use Smartphone icon for iOS, Download for others */}
+                   {/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.navigator.standalone ? (
+                     <Smartphone className="h-7 w-7 animate-pulse hover:animate-bounce" />
+                   ) : (
+                     <Download className="h-7 w-7 animate-pulse hover:animate-bounce" />
+                   )}
                 </button>
               </TooltipTrigger>
               <TooltipContent>

@@ -30,11 +30,11 @@ const PWAInstallIcon = ({ onInstallClick }: PWAInstallIconProps) => {
           onClick={onInstallClick}
           className="flex items-center gap-2 px-3 py-2 h-auto bg-sage-50 hover:bg-sage-100 border border-sage-200 rounded-full transition-all duration-200 text-sage-700 hover:text-sage-800"
         >
-          {showMobileIcon ? (
-            <Smartphone className="h-4 w-4" />
-          ) : (
-            <Download className="h-4 w-4" />
-          )}
+           {showMobileIcon ? (
+             <Smartphone className="h-4 w-4 animate-pulse hover:animate-bounce" />
+           ) : (
+             <Download className="h-4 w-4 animate-pulse hover:animate-bounce" />
+           )}
           <span className="text-sm font-medium hidden sm:inline">
             {t('pwa.install.button')}
           </span>
