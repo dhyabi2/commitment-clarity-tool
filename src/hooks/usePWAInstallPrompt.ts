@@ -32,6 +32,12 @@ export const usePWAInstallPrompt = () => {
       return () => clearTimeout(timer);
     } else {
       setIsVisible(false);
+      console.log('PWA prompt conditions not met', {
+        isInstallable,
+        isInstalled,
+        isDismissed,
+        timestamp: new Date().toISOString()
+      });
     }
   }, [isInstallable, isInstalled, isDismissed, deferredPrompt]);
 
@@ -63,25 +69,26 @@ export const usePWAInstallPrompt = () => {
     console.log('PWA prompt dismissed by user (session only)');
   };
 
-  // Show in development mode for testing, or if conditions are met
-  const shouldShow = isVisible && (isInstallable || (import.meta.env.DEV && !isInstalled));
-
-  // Don't render if already installed
-  if (isInstalled) {
-    console.log('PWA already installed, not showing prompt');
-    return { shouldShow: false };
-  }
-
-  // Don't render if dismissed for this session (but will show again on page reload)
-  if (isDismissed) {
-    console.log('PWA prompt dismissed for this session');
-    return { shouldShow: false };
-  }
-
   // Detect if we should show manual installation instructions
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
   const isInStandaloneMode = window.navigator.standalone;
   const showManualInstructions = isIOS && !isInStandaloneMode && !deferredPrompt;
+
+  // Show in development mode for testing, or if conditions are met
+  const shouldShow = isVisible && (isInstallable || (import.meta.env.DEV && !isInstalled));
+
+  console.log('PWA Install Prompt State:', {
+    isVisible,
+    isInstallable,
+    isInstalled,
+    isDismissed,
+    shouldShow,
+    showManualInstructions,
+    isIOS,
+    isInStandaloneMode,
+    hasDeferredPrompt: !!deferredPrompt,
+    isDev: import.meta.env.DEV
+  });
 
   return {
     shouldShow,

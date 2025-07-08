@@ -38,6 +38,12 @@ export const usePWAInstall = () => {
       return;
     }
 
+    console.log('PWA Install Hook initialized', {
+      isCurrentlyInstalled,
+      isDev: import.meta.env.DEV,
+      userAgent: navigator.userAgent
+    });
+
     const beforeInstallHandler = (e: Event) => {
       const event = e as BeforeInstallPromptEvent;
       console.log('beforeinstallprompt event fired', {
@@ -50,7 +56,7 @@ export const usePWAInstall = () => {
       
       // Always show as installable when event fires (no dismissal check)
       setIsInstallable(true);
-      console.log('PWA install prompt available');
+      console.log('PWA install prompt available - setting installable to true');
     };
 
     const installedHandler = () => {
@@ -89,14 +95,12 @@ export const usePWAInstall = () => {
       standaloneQuery.addListener(handleDisplayModeChange);
     }
 
-    // Development mode simulation with delay
+    // Development mode simulation with delay - ALWAYS show in dev if not installed
     if (import.meta.env.DEV && !isCurrentlyInstalled) {
       const devTimer = setTimeout(() => {
-        if (!deferredPrompt && !isCurrentlyInstalled) {
-          console.log('Dev mode: Making PWA installable for testing');
-          setIsInstallable(true);
-        }
-      }, 3000);
+        console.log('Dev mode: Making PWA installable for testing (forced)');
+        setIsInstallable(true);
+      }, 1000); // Reduced delay for faster testing
 
       return () => {
         clearTimeout(devTimer);
@@ -132,9 +136,9 @@ export const usePWAInstall = () => {
     });
     
     if (!deferredPrompt) {
-      console.log('No install prompt available');
-      // For browsers that don't support beforeinstallprompt
-      // Show manual installation instructions
+      console.log('No install prompt available - this is normal in dev mode');
+      // In development mode or browsers that don't support beforeinstallprompt
+      // Still return true to show the manual instructions
       return false;
     }
 
@@ -182,6 +186,15 @@ export const usePWAInstall = () => {
       console.log('PWA state reset for development');
     }
   };
+
+  // Expose state for debugging
+  console.log('PWA Install Hook State:', {
+    isInstallable,
+    isInstalled,
+    isDismissed,
+    hasDeferredPrompt: !!deferredPrompt,
+    isDev: import.meta.env.DEV
+  });
 
   return {
     isInstallable: isInstallable && !isInstalled && !isDismissed,

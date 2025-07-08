@@ -13,9 +13,19 @@ const PWAInstallPrompt = () => {
     handleDismiss
   } = usePWAInstallPrompt();
 
+  console.log('PWAInstallPrompt render:', {
+    shouldShow,
+    isInstalling,
+    showManualInstructions,
+    timestamp: new Date().toISOString()
+  });
+
   if (!shouldShow) {
+    console.log('PWAInstallPrompt: Not showing because shouldShow is false');
     return null;
   }
+
+  console.log('PWAInstallPrompt: Rendering prompt');
 
   return (
     <>
