@@ -116,7 +116,7 @@ const Navigation = () => {
                     to={path}
                      className={`p-3 ${getIconColor(path)} hover:text-sage-500 transition-colors touch-manipulation active:scale-95`}
                    >
-                     <Icon className={`${getIconSize(path)} transition-all duration-300 ${path === '/thoughts' ? 'animate-pulse hover:animate-bounce' : ''}`} />
+                     <Icon className={`${getIconSize(path)} transition-all duration-300 ${path === '/thoughts' ? 'animate-[pulse_3s_ease-in-out_infinite] hover:animate-bounce' : ''}`} />
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent>
