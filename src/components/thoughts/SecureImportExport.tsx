@@ -19,7 +19,7 @@ export const SecureImportExport = () => {
         <CardContent className="p-4">
           <div className="flex items-center gap-2 text-yellow-700">
             <Shield className="h-4 w-4" />
-            <span>Please sign in to access import/export features.</span>
+            <span>{t('thoughts.secureImportExport.signInRequired')}</span>
           </div>
         </CardContent>
       </Card>
@@ -31,7 +31,7 @@ export const SecureImportExport = () => {
     if (file) {
       // Security: Validate file size (max 10MB)
       if (file.size > 10 * 1024 * 1024) {
-        alert('File too large. Maximum size is 10MB.');
+        alert(t('thoughts.secureImportExport.fileTooLarge'));
         return;
       }
 
@@ -40,7 +40,7 @@ export const SecureImportExport = () => {
       const allowedExtensions = ['.json', '.xml'];
       
       if (!allowedTypes.includes(file.type) && !allowedExtensions.some(ext => file.name.toLowerCase().endsWith(ext))) {
-        alert('Invalid file type. Please select a JSON or XML file.');
+        alert(t('thoughts.secureImportExport.invalidFileType'));
         return;
       }
 
@@ -57,14 +57,13 @@ export const SecureImportExport = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Shield className="h-5 w-5" />
-          {t('import.secureTitle') || 'Secure Data Management'}
+          {t('thoughts.secureImportExport.secureTitle')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
           <p className="text-sm text-blue-700">
-            <strong>Security Notice:</strong> All imports are automatically filtered to your account. 
-            Only you can access your exported data.
+            <strong>{t('thoughts.secureImportExport.securityNotice').split(':')[0]}:</strong> {t('thoughts.secureImportExport.securityNotice').split(':')[1]}
           </p>
         </div>
         
@@ -75,7 +74,7 @@ export const SecureImportExport = () => {
             className="flex-1"
           >
             <Download className="h-4 w-4 mr-2" />
-            {isExporting ? 'Exporting...' : (t('import.export') || 'Export My Data')}
+            {isExporting ? t('thoughts.secureImportExport.exporting') : t('thoughts.secureImportExport.exportMyData')}
           </Button>
           
           <Button
@@ -85,7 +84,7 @@ export const SecureImportExport = () => {
             className="flex-1"
           >
             <Upload className="h-4 w-4 mr-2" />
-            {isImporting ? 'Importing...' : (t('import.import') || 'Import Data')}
+            {isImporting ? t('thoughts.secureImportExport.importing') : t('thoughts.secureImportExport.importData')}
           </Button>
         </div>
 
@@ -98,9 +97,9 @@ export const SecureImportExport = () => {
         />
 
         <div className="text-xs text-gray-500 space-y-1">
-          <p>• Supported formats: JSON, XML</p>
-          <p>• Maximum file size: 10MB</p>
-          <p>• Data is automatically secured to your account</p>
+          <p>• {t('thoughts.secureImportExport.supportedFormats')}</p>
+          <p>• {t('thoughts.secureImportExport.maxFileSize')}</p>
+          <p>• {t('thoughts.secureImportExport.dataSecured')}</p>
         </div>
       </CardContent>
     </Card>
