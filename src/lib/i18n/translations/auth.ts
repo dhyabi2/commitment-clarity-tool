@@ -27,6 +27,8 @@ export const authTranslations = {
       invalidEmail: 'Please enter a valid email address',
       checkEmail: 'Check your email for the confirmation link',
       passwordResetSent: 'Password reset email sent',
+      signInToViewCommitments: 'Sign in to view your commitments',
+      signInCommitmentsDescription: 'Access your personal commitments and track your progress by signing in or continuing anonymously.',
       migrateData: {
         title: 'Link Your Data',
         description: 'You have data from anonymous usage. Would you like to link it to your account?',
@@ -63,6 +65,8 @@ export const authTranslations = {
       invalidEmail: 'يرجى إدخال عنوان بريد إلكتروني صحيح',
       checkEmail: 'تحقق من بريدك الإلكتروني لرابط التأكيد',
       passwordResetSent: 'تم إرسال رابط إعادة تعيين كلمة المرور',
+      signInToViewCommitments: 'سجل دخولك لعرض التزاماتك',
+      signInCommitmentsDescription: 'اصل إلى التزاماتك الشخصية وتتبع تقدمك عن طريق تسجيل الدخول أو المتابعة بشكل مجهول.',
       migrateData: {
         title: 'ربط بياناتك',
         description: 'لديك بيانات من الاستخدام المجهول. هل تريد ربطها بحسابك؟',
