@@ -1,14 +1,16 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Brain, CheckSquare, BarChart, HelpCircle, User, Download, Smartphone } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { NotificationBadge } from "@/components/ui/notification-badge";
 import ElegantLanguageSwitcher from './ElegantLanguageSwitcher';
 import PWAInstallIcon from './pwa/PWAInstallIcon';
 import PWAInstallPrompt from './pwa/PWAInstallPrompt';
 import { usePWAInstallPopup } from '@/hooks/usePWAInstallPopup';
+import { useNewThoughtsIndicator } from '@/hooks/useNewThoughtsIndicator';
 import {
   Tooltip,
   TooltipContent,
@@ -19,6 +21,7 @@ const Navigation = () => {
   const location = useLocation();
   const { t, dir } = useLanguage();
   const { user } = useAuth();
+  const { hasNewThoughts, markAsViewed } = useNewThoughtsIndicator();
   const {
     isPopupVisible,
     isInstalling,
@@ -31,6 +34,13 @@ const Navigation = () => {
   } = usePWAInstallPopup();
   
   const isActive = (path: string) => location.pathname === path;
+
+  // Mark thoughts as viewed when navigating to thoughts page
+  useEffect(() => {
+    if (location.pathname === '/thoughts' && hasNewThoughts) {
+      markAsViewed();
+    }
+  }, [location.pathname, hasNewThoughts, markAsViewed]);
 
   const getIconSize = (path: string) => {
     if (path === '/thoughts') {
@@ -80,7 +90,13 @@ const Navigation = () => {
                       to={path}
                       className={`p-2 rounded-lg transition-colors ${getIconColor(path)} hover:text-sage-500 hover:bg-sage-50`}
                     >
-                      <Icon className="h-5 w-5" />
+                      {path === '/thoughts' ? (
+                        <NotificationBadge showBadge={hasNewThoughts}>
+                          <Icon className="h-5 w-5" />
+                        </NotificationBadge>
+                      ) : (
+                        <Icon className="h-5 w-5" />
+                      )}
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -116,7 +132,13 @@ const Navigation = () => {
                     to={path}
                      className={`p-3 ${getIconColor(path)} hover:text-sage-500 transition-colors touch-manipulation active:scale-95`}
                    >
-                     <Icon className={`${getIconSize(path)} transition-all duration-300`} />
+                     {path === '/thoughts' ? (
+                       <NotificationBadge showBadge={hasNewThoughts}>
+                         <Icon className={`${getIconSize(path)} transition-all duration-300`} />
+                       </NotificationBadge>
+                     ) : (
+                       <Icon className={`${getIconSize(path)} transition-all duration-300`} />
+                     )}
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent>
