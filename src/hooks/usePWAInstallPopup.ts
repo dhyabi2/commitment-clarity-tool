@@ -21,11 +21,16 @@ export const usePWAInstallPopup = () => {
   };
 
   const handleDirectInstall = async () => {
+    // Detect platforms for logging
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+    
     // If no deferred prompt is available (dev mode, iOS, or unsupported browsers), show popup
     if (!deferredPrompt) {
       setIsPopupVisible(true);
       console.log('PWA install popup opened - no deferred prompt available', {
         isIOS,
+        isAndroid,
         isDev: import.meta.env.DEV,
         userAgent: navigator.userAgent
       });
@@ -81,8 +86,10 @@ export const usePWAInstallPopup = () => {
 
   // Detect if we should show manual installation instructions
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isAndroid = /Android/.test(navigator.userAgent);
   const isInStandaloneMode = window.navigator.standalone;
-  const showManualInstructions = isIOS && !isInStandaloneMode && !deferredPrompt;
+  const showManualInstructions = (isIOS && !isInStandaloneMode && !deferredPrompt) || 
+                                (isAndroid && !deferredPrompt && import.meta.env.DEV);
 
   console.log('PWA Install Popup State:', {
     isPopupVisible,
@@ -90,6 +97,7 @@ export const usePWAInstallPopup = () => {
     isInstalled,
     showManualInstructions,
     isIOS,
+    isAndroid,
     isInStandaloneMode,
     hasDeferredPrompt: !!deferredPrompt,
     isDev: import.meta.env.DEV
