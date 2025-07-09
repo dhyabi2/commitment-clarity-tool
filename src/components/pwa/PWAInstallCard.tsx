@@ -1,9 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { X, Download, Zap, Smartphone } from 'lucide-react';
+import { X, Download, Zap, Smartphone, Bug } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import PWADebugPanel from './PWADebugPanel';
 
 interface PWAInstallCardProps {
   isInstalling: boolean;
@@ -19,6 +20,7 @@ const PWAInstallCard = ({
   onDismiss 
 }: PWAInstallCardProps) => {
   const { t } = useLanguage();
+  const [showDebug, setShowDebug] = useState(false);
 
   return (
     <Card className="w-full max-w-md bg-white shadow-xl border border-sage-200 animate-in zoom-in-95 backdrop-blur-sm">
@@ -83,7 +85,26 @@ const PWAInstallCard = ({
             </>
           )}
         </Button>
+        
+        {/* Debug button for development */}
+        {import.meta.env.DEV && (
+          <Button
+            onClick={() => setShowDebug(true)}
+            variant="outline"
+            size="sm"
+            className="w-full mt-2"
+          >
+            <Bug className="h-4 w-4 mr-2" />
+            Debug PWA
+          </Button>
+        )}
       </div>
+      
+      {/* Debug Panel */}
+      <PWADebugPanel 
+        isVisible={showDebug} 
+        onClose={() => setShowDebug(false)} 
+      />
     </Card>
   );
 };

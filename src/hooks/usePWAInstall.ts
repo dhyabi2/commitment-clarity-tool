@@ -120,36 +120,42 @@ export const usePWAInstall = () => {
   }, [isInstalled]);
 
   const promptInstall = async (): Promise<boolean> => {
-    console.log('promptInstall called', { 
+    console.log('🔄 promptInstall called', { 
       deferredPrompt: !!deferredPrompt,
-      userAgent: navigator.userAgent 
+      userAgent: navigator.userAgent,
+      isAndroid: /Android/.test(navigator.userAgent),
+      isIOS: /iPad|iPhone|iPod/.test(navigator.userAgent),
+      isInStandaloneMode: window.navigator.standalone,
+      displayMode: window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser'
     });
     
     if (!deferredPrompt) {
-      console.log('No install prompt available - this is normal in dev mode');
+      console.log('❌ No install prompt available - this is normal in dev mode or if already installed');
       return false;
     }
 
     try {
-      console.log('Showing install prompt...');
+      console.log('🚀 Showing install prompt...');
       await deferredPrompt.prompt();
       const choiceResult = await deferredPrompt.userChoice;
       
-      console.log('Install prompt result:', choiceResult.outcome, {
+      console.log('✅ Install prompt result:', choiceResult.outcome, {
         platform: choiceResult.platform,
         timestamp: new Date().toISOString()
       });
       
       if (choiceResult.outcome === 'accepted') {
+        console.log('✅ User accepted installation');
         markAsInstalled();
         return true;
       } else {
+        console.log('❌ User cancelled installation');
         // User cancelled - set cookie to remember they attempted install
         setPWAStateCookie('attempted', 7); // 1 week
         return false;
       }
     } catch (error) {
-      console.error('Install prompt failed:', error);
+      console.error('💥 Install prompt failed:', error);
       // Set cookie even on error to remember the attempt
       setPWAStateCookie('attempted', 7); // 1 week
       return false;
