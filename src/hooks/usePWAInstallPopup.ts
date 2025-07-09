@@ -67,40 +67,8 @@ export const usePWAInstallPopup = () => {
       timestamp: new Date().toISOString(),
       userAgent: navigator.userAgent,
       hasDeferredPrompt: !!deferredPrompt,
-      isInstallable,
-      showManualInstructions
+      isInstallable
     });
-    
-    // If showing manual instructions, try alternative installation methods
-    if (showManualInstructions) {
-      console.log('📱 Manual installation needed - trying alternative methods');
-      
-      // For Android: try to trigger browser's install dialog
-      if (isAndroid) {
-        console.log('🤖 Android: Attempting to trigger install via browser');
-        
-        // Try to prompt user about browser menu
-        alert(`To install this app:
-1. Tap the Chrome menu (⋮)
-2. Select "Install app" or "Add to Home screen"
-3. Confirm installation
-
-If you don't see an install option, this app may already be installed or your browser doesn't support PWA installation.`);
-        
-        // Don't hide popup - let user try again
-        return;
-      }
-      
-      // For iOS: instructions are already shown
-      if (isIOS) {
-        console.log('🍎 iOS: Manual installation instructions displayed');
-        return;
-      }
-      
-      // For other platforms
-      console.log('🖥️ Desktop: Manual installation instructions displayed');
-      return;
-    }
     
     setIsInstalling(true);
     
@@ -121,12 +89,11 @@ If you don't see an install option, this app may already be installed or your br
     }
   };
 
-  // Detect if we should show manual installation instructions
+  // For Android, always show as installable if not already installed
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
   const isAndroid = /Android/.test(navigator.userAgent);
   const isInStandaloneMode = window.navigator.standalone;
-  const showManualInstructions = (isIOS && !isInStandaloneMode && !deferredPrompt) || 
-                                (isAndroid && !deferredPrompt && !isInstalled);
+  const showManualInstructions = isIOS && !isInStandaloneMode && !deferredPrompt;
 
   console.log('PWA Install Popup State:', {
     isPopupVisible,
@@ -148,8 +115,8 @@ If you don't see an install option, this app may already be installed or your br
     hidePopup,
     handleInstall,
     handleDirectInstall,
-    // Expose install state for the icon
-    isInstallable: isInstallable || import.meta.env.DEV,
+    // For Android, make it installable even without deferred prompt
+    isInstallable: isInstallable || (isAndroid && !isInstalled),
     isInstalled
   };
 };

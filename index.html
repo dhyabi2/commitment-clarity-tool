@@ -79,12 +79,13 @@
 
     // PWA install prompt debugging
     window.addEventListener('beforeinstallprompt', (e) => {
-      console.log('beforeinstallprompt event triggered');
+      console.log('🎯 beforeinstallprompt event triggered in HTML');
       console.log('Platforms:', e.platforms);
+      console.log('User can install:', true);
     });
 
     window.addEventListener('appinstalled', (e) => {
-      console.log('PWA was installed');
+      console.log('🎉 PWA was installed via HTML listener');
     });
 
     // Debug function to test PWA features

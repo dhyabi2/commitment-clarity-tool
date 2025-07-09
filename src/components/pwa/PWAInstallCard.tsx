@@ -75,11 +75,6 @@ const PWAInstallCard = ({
               <Zap className="h-5 w-5 mr-2 animate-pulse" />
               {t('pwa.install.installing')}
             </>
-          ) : showManualInstructions ? (
-            <>
-              <Smartphone className="h-5 w-5 mr-2" />
-              Install App
-            </>
           ) : (
             <>
               <Download className="h-5 w-5 mr-2" />

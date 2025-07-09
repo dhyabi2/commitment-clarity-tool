@@ -130,7 +130,42 @@ export const usePWAInstall = () => {
     });
     
     if (!deferredPrompt) {
-      console.log('❌ No install prompt available - this is normal in dev mode or if already installed');
+      console.log('❌ No native install prompt available');
+      
+      // For Android, try to trigger installation through browser
+      if (/Android/.test(navigator.userAgent)) {
+        console.log('🤖 Android: Attempting to show installation guidance');
+        
+        // Check if we can force the prompt
+        const canInstall = await new Promise<boolean>((resolve) => {
+          if ('getInstalledRelatedApps' in navigator) {
+            (navigator as any).getInstalledRelatedApps().then((apps: any[]) => {
+              console.log('🔍 Related apps:', apps);
+              resolve(apps.length === 0);
+            }).catch(() => resolve(true));
+          } else {
+            resolve(true);
+          }
+        });
+        
+        if (canInstall) {
+          console.log('✅ PWA can be installed - showing browser-specific install method');
+          
+          // Show platform-specific install alert
+          const userAgent = navigator.userAgent;
+          if (userAgent.includes('Chrome')) {
+            alert('To install this app:\n1. Tap the menu (⋮) in Chrome\n2. Select "Install app" or "Add to Home screen"\n3. Tap "Install"');
+          } else if (userAgent.includes('Firefox')) {
+            alert('To install this app:\n1. Tap the menu (⋮) in Firefox\n2. Select "Install" or "Add to Home screen"\n3. Tap "Add"');
+          } else {
+            alert('To install this app:\n1. Look for an "Install" option in your browser menu\n2. Or try "Add to Home screen" from the browser menu');
+          }
+          
+          return true; // Consider this a successful "install" prompt
+        }
+      }
+      
+      console.log('❌ Cannot install PWA - requirements not met');
       return false;
     }
 
