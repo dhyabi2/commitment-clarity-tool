@@ -29,6 +29,7 @@ const Navigation = () => {
     showPopup,
     hidePopup,
     handleInstall,
+    handleDirectInstall,
     isInstallable,
     isInstalled
   } = usePWAInstallPopup();
@@ -109,7 +110,7 @@ const Navigation = () => {
             {/* Desktop Right Side Items */}
             <div className="flex items-center gap-3">
               {/* PWA Install Icon */}
-              <PWAInstallIcon onInstallClick={showPopup} />
+              <PWAInstallIcon onInstallClick={handleDirectInstall} />
               
               <ElegantLanguageSwitcher />
               <Link to="/profile" className={`p-2 ${isActive('/profile') ? 'text-sage-600' : 'text-gray-600'} hover:text-sage-500 transition-colors`}>
@@ -151,8 +152,8 @@ const Navigation = () => {
             {/* PWA Install Icon for Mobile */}
             <Tooltip>
               <TooltipTrigger asChild>
-                 <button
-                   onClick={showPopup}
+               <button
+                   onClick={handleDirectInstall}
                    className="p-3 text-sage-600 hover:text-sage-500 transition-colors touch-manipulation active:scale-95"
                  >
                    {/* Use Smartphone icon for iOS, Download for others */}

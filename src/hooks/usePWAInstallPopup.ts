@@ -20,6 +20,34 @@ export const usePWAInstallPopup = () => {
     }
   };
 
+  const handleDirectInstall = async () => {
+    // For iOS devices without native prompt, show manual instructions
+    if (showManualInstructions) {
+      setIsPopupVisible(true);
+      console.log('PWA install popup opened for iOS manual instructions');
+      return;
+    }
+
+    // For devices with native install prompt, install directly
+    if (!isInstalled && (isInstallable || import.meta.env.DEV)) {
+      console.log('Direct install initiated from icon click', {
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent
+      });
+      
+      setIsInstalling(true);
+      
+      try {
+        const success = await promptInstall();
+        console.log('Direct install result:', success);
+      } catch (error) {
+        console.error('Direct install failed:', error);
+      } finally {
+        setIsInstalling(false);
+      }
+    }
+  };
+
   const hidePopup = () => {
     setIsPopupVisible(false);
     console.log('PWA install popup closed');
@@ -70,6 +98,7 @@ export const usePWAInstallPopup = () => {
     showPopup,
     hidePopup,
     handleInstall,
+    handleDirectInstall,
     // Expose install state for the icon
     isInstallable: isInstallable || import.meta.env.DEV,
     isInstalled

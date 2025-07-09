@@ -25,7 +25,8 @@ const Index = () => {
     showManualInstructions, 
     showPopup, 
     hidePopup, 
-    handleInstall 
+    handleInstall,
+    handleDirectInstall 
   } = usePWAInstallPopup();
 
   useEffect(() => {
@@ -63,7 +64,7 @@ const Index = () => {
     >
       {/* Mobile Top Controls */}
       <div className="md:hidden mb-4 flex justify-center items-center gap-3">
-        <PWAInstallIcon onInstallClick={showPopup} />
+        <PWAInstallIcon onInstallClick={handleDirectInstall} />
         <ElegantLanguageSwitcher />
       </div>
       
