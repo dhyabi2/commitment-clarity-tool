@@ -63,22 +63,34 @@ export const usePWAInstallPopup = () => {
   };
 
   const handleInstall = async () => {
-    console.log('Install button clicked from popup', {
+    console.log('🚀 Install button clicked from popup', {
       timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent
+      userAgent: navigator.userAgent,
+      hasDeferredPrompt: !!deferredPrompt,
+      isInstallable,
+      showManualInstructions
     });
+    
+    // If showing manual instructions, don't try to install - just keep popup open
+    if (showManualInstructions) {
+      console.log('📱 Showing manual instructions - not attempting install');
+      return;
+    }
     
     setIsInstalling(true);
     
     try {
       const success = await promptInstall();
-      console.log('Install result:', success);
+      console.log('✅ Install result:', success);
       
-      // Always hide the popup after install attempt
-      hidePopup();
+      if (success) {
+        hidePopup();
+      } else {
+        console.log('❌ Install was not successful - keeping popup open');
+      }
     } catch (error) {
-      console.error('Install failed:', error);
-      hidePopup();
+      console.error('💥 Install failed:', error);
+      // Don't hide popup on error - let user try again
     } finally {
       setIsInstalling(false);
     }

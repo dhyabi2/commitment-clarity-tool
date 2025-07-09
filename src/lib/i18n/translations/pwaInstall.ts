@@ -8,6 +8,9 @@ export const pwaInstallTranslations = {
         button: 'Install Now',
         installing: 'Installing...',
       },
+      manual: {
+        button: 'Show Instructions',
+      },
       installPrompt: {
         title: 'Install App',
         description: 'Get the full experience by installing our app on your device.',
@@ -110,6 +113,9 @@ export const pwaInstallTranslations = {
         subtitle: 'الوصول بدون إنترنت وتحميل أسرع',
         button: 'تثبيت الآن',
         installing: 'جارٍ التثبيت...',
+      },
+      manual: {
+        button: 'عرض التعليمات',
       },
       installPrompt: {
         title: 'تثبيت التطبيق',
