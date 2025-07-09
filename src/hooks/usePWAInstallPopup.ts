@@ -101,7 +101,7 @@ export const usePWAInstallPopup = () => {
   const isAndroid = /Android/.test(navigator.userAgent);
   const isInStandaloneMode = window.navigator.standalone;
   const showManualInstructions = (isIOS && !isInStandaloneMode && !deferredPrompt) || 
-                                (isAndroid && !deferredPrompt && import.meta.env.DEV);
+                                (isAndroid && !deferredPrompt && !isInstalled);
 
   console.log('PWA Install Popup State:', {
     isPopupVisible,
