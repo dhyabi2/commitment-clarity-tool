@@ -21,10 +21,14 @@ export const usePWAInstallPopup = () => {
   };
 
   const handleDirectInstall = async () => {
-    // For iOS devices without native prompt, show manual instructions
-    if (showManualInstructions) {
+    // If no deferred prompt is available (dev mode, iOS, or unsupported browsers), show popup
+    if (!deferredPrompt) {
       setIsPopupVisible(true);
-      console.log('PWA install popup opened for iOS manual instructions');
+      console.log('PWA install popup opened - no deferred prompt available', {
+        isIOS,
+        isDev: import.meta.env.DEV,
+        userAgent: navigator.userAgent
+      });
       return;
     }
 
