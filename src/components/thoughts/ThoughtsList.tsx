@@ -101,68 +101,30 @@ const ThoughtsList = ({ thoughts, onDelete, onToggleComplete, selectedTag, onTag
       
       <div className="grid gap-4">
         {thoughts.map((thought) => (
-          <Card key={thought.id} className="group hover:shadow-md transition-all duration-300 bg-white/80 backdrop-blur-sm">
-            <CardHeader className="flex flex-row items-center justify-between p-4">
-              <div className="flex items-center gap-2">
-                <CheckCircle className={`h-5 w-5 ${thought.completed ? 'text-green-500' : 'text-gray-300'}`} />
-                <time className="text-sm text-sage-500">
+          <Card key={thought.id} className="hover:shadow-md transition-all duration-300 bg-white/80 backdrop-blur-sm border border-sage-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-2">
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={() => onToggleComplete(thought.id, !thought.completed)}
+                  title={thought.completed ? t('thoughts.markIncomplete') : t('thoughts.markComplete')}
+                >
+                  <CheckCircle className={`h-5 w-5 ${thought.completed ? 'text-green-500' : 'text-gray-300'}`} />
+                </Button>
+                <time className="text-sm text-sage-500 whitespace-nowrap">
                   {format(new Date(thought.created_at), 'MMM d, yyyy h:mm a')}
                 </time>
               </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                  onClick={() => setEditingThoughtId(editingThoughtId === thought.id ? null : thought.id)}
-                >
-                  <TagIcon className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:text-red-600"
-                  onClick={() => onDelete(thought.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                  onClick={() => onToggleComplete(thought.id, !thought.completed)}
-                >
-                  <CheckCircle className={`h-4 w-4 ${thought.completed ? 'text-green-500' : ''}`} />
-                </Button>
-                {!thought.completed && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                    onClick={() => navigate('/commitment-clarifier', { state: { thought: thought.content } })}
-                  >
-                    {t('thoughts.clarify')} <ArrowRightCircle className="ml-2 h-4 w-4" />
-                  </Button>
-                )}
-              </div>
             </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <p className={`text-gray-800 text-left ${thought.completed ? 'line-through text-gray-500' : ''}`}>
+            <CardContent className="p-4 pt-0 space-y-3">
+              <p className={`text-gray-800 leading-relaxed ${thought.completed ? 'line-through text-gray-500' : ''}`}>
                 {thought.content}
               </p>
-              {editingThoughtId === thought.id && (
-                <div className="mt-2 flex items-center gap-2">
-                  <Input
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    onKeyDown={(e) => handleTagInputKeyDown(e, thought.id)}
-                    placeholder={t('thoughts.addTag')}
-                    className="flex-1"
-                  />
-                </div>
-              )}
+              
               {thought.tags && thought.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-3">
+                <div className="flex flex-wrap gap-2">
                   {thought.tags.map(tag => (
                     <Badge key={tag.id} variant="secondary" className="text-xs">
                       {tag.name}
@@ -170,6 +132,62 @@ const ThoughtsList = ({ thoughts, onDelete, onToggleComplete, selectedTag, onTag
                   ))}
                 </div>
               )}
+
+              {editingThoughtId === thought.id && (
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={(e) => handleTagInputKeyDown(e, thought.id)}
+                    placeholder={t('thoughts.addTag')}
+                    className="flex-1"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setEditingThoughtId(null)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between pt-2 border-t border-sage-100">
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 px-3 text-xs"
+                    onClick={() => setEditingThoughtId(editingThoughtId === thought.id ? null : thought.id)}
+                  >
+                    <TagIcon className="h-3 w-3 mr-1" />
+                    Add Tag
+                  </Button>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  {!thought.completed && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 px-3 text-xs bg-sage-50 hover:bg-sage-100 border-sage-200 text-sage-700"
+                      onClick={() => navigate('/commitment-clarifier', { state: { thought: thought.content } })}
+                    >
+                      <ArrowRightCircle className="h-3 w-3 mr-1" />
+                      Convert
+                    </Button>
+                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 px-3 text-xs hover:bg-red-50 hover:border-red-200 hover:text-red-600"
+                    onClick={() => onDelete(thought.id)}
+                  >
+                    <Trash2 className="h-3 w-3 mr-1" />
+                    Delete
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
         ))}
