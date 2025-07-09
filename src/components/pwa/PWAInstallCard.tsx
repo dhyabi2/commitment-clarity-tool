@@ -2,9 +2,10 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { X, Download, Zap, Smartphone, Bug } from 'lucide-react';
+import { X, Download, Zap, Smartphone, Bug, Terminal } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import PWADebugPanel from './PWADebugPanel';
+import MobileConsole from './MobileConsole';
 
 interface PWAInstallCardProps {
   isInstalling: boolean;
@@ -21,6 +22,7 @@ const PWAInstallCard = ({
 }: PWAInstallCardProps) => {
   const { t } = useLanguage();
   const [showDebug, setShowDebug] = useState(false);
+  const [showConsole, setShowConsole] = useState(false);
 
   return (
     <Card className="w-full max-w-md bg-white shadow-xl border border-sage-200 animate-in zoom-in-95 backdrop-blur-sm">
@@ -86,24 +88,42 @@ const PWAInstallCard = ({
           )}
         </Button>
         
-        {/* Debug button for development */}
-        {import.meta.env.DEV && (
+        {/* Debug and Console buttons */}
+        <div className="flex gap-2 mt-2">
           <Button
-            onClick={() => setShowDebug(true)}
+            onClick={() => setShowConsole(true)}
             variant="outline"
             size="sm"
-            className="w-full mt-2"
+            className="flex-1"
           >
-            <Bug className="h-4 w-4 mr-2" />
-            Debug PWA
+            <Terminal className="h-4 w-4 mr-2" />
+            Console
           </Button>
-        )}
+          
+          {import.meta.env.DEV && (
+            <Button
+              onClick={() => setShowDebug(true)}
+              variant="outline"
+              size="sm"
+              className="flex-1"
+            >
+              <Bug className="h-4 w-4 mr-2" />
+              Debug
+            </Button>
+          )}
+        </div>
       </div>
       
       {/* Debug Panel */}
       <PWADebugPanel 
         isVisible={showDebug} 
         onClose={() => setShowDebug(false)} 
+      />
+      
+      {/* Mobile Console */}
+      <MobileConsole 
+        isVisible={showConsole} 
+        onClose={() => setShowConsole(false)} 
       />
     </Card>
   );
