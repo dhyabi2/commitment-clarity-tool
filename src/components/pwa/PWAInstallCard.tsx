@@ -83,30 +83,18 @@ const PWAInstallCard = ({
           )}
         </Button>
         
-        {/* Debug and Console buttons */}
-        <div className="flex gap-2 mt-2">
+        {/* Debug button for development */}
+        {import.meta.env.DEV && (
           <Button
-            onClick={() => setShowConsole(true)}
+            onClick={() => setShowDebug(true)}
             variant="outline"
             size="sm"
-            className="flex-1"
+            className="w-full mt-2"
           >
-            <Terminal className="h-4 w-4 mr-2" />
-            Console
+            <Bug className="h-4 w-4 mr-2" />
+            Debug PWA
           </Button>
-          
-          {import.meta.env.DEV && (
-            <Button
-              onClick={() => setShowDebug(true)}
-              variant="outline"
-              size="sm"
-              className="flex-1"
-            >
-              <Bug className="h-4 w-4 mr-2" />
-              Debug
-            </Button>
-          )}
-        </div>
+        )}
       </div>
       
       {/* Debug Panel */}
