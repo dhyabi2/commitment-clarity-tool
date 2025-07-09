@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, CheckCircle, Tag as TagIcon, ArrowRight, Circle } from 'lucide-react';
+import { Trash2, CheckCircle, Tag as TagIcon } from 'lucide-react';
 import { TagInput } from './TagInput';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useToast } from "@/components/ui/use-toast";
@@ -87,29 +87,56 @@ const ThoughtCard = ({
     : [];
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-300 bg-white/90 backdrop-blur-sm border border-sage-100" dir={dir()}>
-      <CardContent className="p-5">
-        {/* Content */}
-        <div className="mb-4">
-          <p className={`text-gray-800 leading-relaxed ${isRTL ? 'text-right' : 'text-left'} ${thought.completed ? 'line-through text-gray-500' : ''}`}>
-            {thought.content}
-          </p>
+    <Card className="group hover:shadow-md transition-all duration-300 bg-white/80 backdrop-blur-sm" dir={dir()}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4">
+        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
+            onClick={() => handleToggleComplete(thought.id, !thought.completed)}
+          >
+            <CheckCircle className={`h-5 w-5 ${thought.completed ? 'text-green-500' : 'text-gray-300'}`} />
+          </Button>
+          <time className="text-sm text-sage-500 whitespace-nowrap" dir="ltr">
+            {format(new Date(thought.created_at), 'MMM d, yyyy h:mm a')}
+          </time>
         </div>
-
-        {/* Tags */}
-        {thought.tags && thought.tags.length > 0 && (
-          <div className={`flex flex-wrap gap-2 mb-4 ${isRTL ? 'justify-end' : 'justify-start'}`}>
-            {thought.tags.map(tag => (
-              <Badge key={tag.id} variant="secondary" className="text-xs bg-sage-100 text-sage-700 hover:bg-sage-200">
-                {tag.name}
-              </Badge>
-            ))}
-          </div>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 p-0"
+            onClick={handleTagClick}
+          >
+            <TagIcon className="h-4 w-4 hover:text-sage-600" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:text-red-600 h-8 w-8 p-0"
+            onClick={() => handleDelete(thought.id)}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent className="p-4 pt-0 space-y-3">
+        <p className={`text-gray-800 ${isRTL ? 'text-right' : 'text-left'} ${thought.completed ? 'line-through text-gray-500' : ''}`}>
+          {thought.content}
+        </p>
+        {!thought.completed && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full bg-sage-50 hover:bg-sage-100 border-sage-200 text-sage-700"
+            onClick={() => navigate('/commitment-clarifier', { state: { thought: thought.content } })}
+          >
+            Convert to commitment
+          </Button>
         )}
-
-        {/* Tag Input */}
         {showTagInput && (
-          <div className="mb-4">
+          <div className="mt-2">
             <TagInput 
               onTagAdd={(tag) => handleAddTag(thought.id, tag)}
               existingTags={validExistingTags}
@@ -117,79 +144,15 @@ const ThoughtCard = ({
             />
           </div>
         )}
-
-        {/* Actions Row */}
-        <div className="flex flex-col gap-3">
-          {/* Primary Actions */}
-          <div className="flex flex-wrap gap-2">
-            {/* Mark Complete/Incomplete */}
-            <Button
-              variant={thought.completed ? "secondary" : "outline"}
-              size="sm"
-              className={`flex items-center gap-2 h-9 ${
-                thought.completed 
-                  ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100' 
-                  : 'border-sage-200 text-sage-700 hover:bg-sage-50'
-              }`}
-              onClick={() => handleToggleComplete(thought.id, !thought.completed)}
-            >
-              {thought.completed ? (
-                <CheckCircle className="h-4 w-4" />
-              ) : (
-                <Circle className="h-4 w-4" />
-              )}
-              <span className="text-sm">
-                {thought.completed ? t('thoughts.markIncomplete') || 'Mark Incomplete' : t('thoughts.markComplete') || 'Mark Complete'}
-              </span>
-            </Button>
-
-            {/* Convert to Commitment - Only show for incomplete thoughts */}
-            {!thought.completed && (
-              <Button
-                variant="default"
-                size="sm"
-                className="flex items-center gap-2 h-9 bg-sage-600 hover:bg-sage-700 text-white"
-                onClick={() => navigate('/commitment-clarifier', { state: { thought: thought.content } })}
-              >
-                <ArrowRight className="h-4 w-4" />
-                <span className="text-sm">{t('thoughts.convertToCommitment') || 'Convert to Commitment'}</span>
-              </Button>
-            )}
+        {thought.tags && thought.tags.length > 0 && (
+          <div className={`flex flex-wrap gap-2 ${isRTL ? 'justify-end' : 'justify-start'}`}>
+            {thought.tags.map(tag => (
+              <Badge key={tag.id} variant="secondary" className="text-xs">
+                {tag.name}
+              </Badge>
+            ))}
           </div>
-
-          {/* Secondary Actions */}
-          <div className="flex justify-between items-center pt-2 border-t border-sage-100">
-            <div className="flex items-center gap-1">
-              <time className="text-xs text-sage-500" dir="ltr">
-                {format(new Date(thought.created_at), 'MMM d, yyyy h:mm a')}
-              </time>
-            </div>
-            
-            <div className="flex items-center gap-1">
-              {/* Add Tag */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 px-3 text-sage-600 hover:text-sage-700 hover:bg-sage-50"
-                onClick={handleTagClick}
-              >
-                <TagIcon className="h-4 w-4 mr-1" />
-                <span className="text-xs">{t('thoughts.addTag') || 'Tag'}</span>
-              </Button>
-
-              {/* Delete */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 px-3 text-red-500 hover:text-red-600 hover:bg-red-50"
-                onClick={() => handleDelete(thought.id)}
-              >
-                <Trash2 className="h-4 w-4 mr-1" />
-                <span className="text-xs">{t('thoughts.delete') || 'Delete'}</span>
-              </Button>
-            </div>
-          </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );
