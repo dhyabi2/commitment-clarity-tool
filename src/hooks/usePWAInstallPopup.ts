@@ -1,8 +1,10 @@
 
 import { useState } from 'react';
 import { usePWAInstall } from './usePWAInstall';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export const usePWAInstallPopup = () => {
+  const { t } = useLanguage();
   const { 
     isInstallable, 
     isInstalled, 
@@ -73,7 +75,32 @@ export const usePWAInstallPopup = () => {
     setIsInstalling(true);
     
     try {
-      const success = await promptInstall();
+      // Create a custom prompt function that uses translations
+      const customPromptInstall = async (): Promise<boolean> => {
+        if (!deferredPrompt) {
+          // For Android, show translated browser instructions
+          if (/Android/.test(navigator.userAgent)) {
+            const userAgent = navigator.userAgent;
+            let instructionKey = 'generic';
+            
+            if (userAgent.includes('Chrome')) {
+              instructionKey = 'chrome';
+            } else if (userAgent.includes('Firefox')) {
+              instructionKey = 'firefox';
+            }
+            
+            const instructions = t(`pwa.android.browserInstructions.${instructionKey}`);
+            alert(instructions);
+            return true;
+          }
+          return false;
+        }
+        
+        // Use the original promptInstall for native prompts
+        return await promptInstall();
+      };
+      
+      const success = await customPromptInstall();
       console.log('✅ Install result:', success);
       
       if (success) {

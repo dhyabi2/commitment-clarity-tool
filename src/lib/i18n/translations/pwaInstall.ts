@@ -80,6 +80,11 @@ export const pwaInstallTranslations = {
         step4: {
           title: 'Launch App',
           desc: 'Find the app in your app drawer or home screen'
+        },
+        browserInstructions: {
+          chrome: 'To install this app:\n1. Tap the menu (⋮) in Chrome\n2. Select "Install app" or "Add to Home screen"\n3. Tap "Install"',
+          firefox: 'To install this app:\n1. Tap the menu (⋮) in Firefox\n2. Select "Install" or "Add to Home screen"\n3. Tap "Add"',
+          generic: 'To install this app:\n1. Look for an "Install" option in your browser menu\n2. Or try "Add to Home screen" from the browser menu'
         }
       },
       desktop: {
@@ -186,6 +191,11 @@ export const pwaInstallTranslations = {
         step4: {
           title: 'تشغيل التطبيق',
           desc: 'ابحث عن التطبيق في درج التطبيقات أو الشاشة الرئيسية'
+        },
+        browserInstructions: {
+          chrome: 'لتثبيت هذا التطبيق:\n1. اضغط على القائمة (⋮) في Chrome\n2. اختر "تثبيت التطبيق" أو "إضافة إلى الشاشة الرئيسية"\n3. اضغط على "تثبيت"',
+          firefox: 'لتثبيت هذا التطبيق:\n1. اضغط على القائمة (⋮) في Firefox\n2. اختر "تثبيت" أو "إضافة إلى الشاشة الرئيسية"\n3. اضغط على "إضافة"',
+          generic: 'لتثبيت هذا التطبيق:\n1. ابحث عن خيار "تثبيت" في قائمة المتصفح\n2. أو جرب "إضافة إلى الشاشة الرئيسية" من قائمة المتصفح'
         }
       },
       desktop: {
