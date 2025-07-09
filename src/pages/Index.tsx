@@ -4,6 +4,9 @@ import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { gsap } from 'gsap';
 import WelcomeSteps from '@/components/home/WelcomeSteps';
 import ElegantLanguageSwitcher from '@/components/ElegantLanguageSwitcher';
+import PWAInstallIcon from '@/components/pwa/PWAInstallIcon';
+import PWAInstallPrompt from '@/components/pwa/PWAInstallPrompt';
+import { usePWAInstallPopup } from '@/hooks/usePWAInstallPopup';
 import { Button } from "@/components/ui/button";
 import { Link } from 'react-router-dom';
 import { Chrome, UserX } from 'lucide-react';
@@ -16,6 +19,14 @@ const Index = () => {
   const { user, signInWithGoogle } = useAuth();
   const { isAnonymous } = useAnonymousMode();
   const containerRef = useRef<HTMLDivElement>(null);
+  const { 
+    isPopupVisible, 
+    isInstalling, 
+    showManualInstructions, 
+    showPopup, 
+    hidePopup, 
+    handleInstall 
+  } = usePWAInstallPopup();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -50,8 +61,9 @@ const Index = () => {
       ref={containerRef}
       dir={dir()}
     >
-      {/* Mobile Language Switcher */}
-      <div className="md:hidden mb-4 flex justify-center">
+      {/* Mobile Top Controls */}
+      <div className="md:hidden mb-4 flex justify-center items-center gap-3">
+        <PWAInstallIcon onInstallClick={showPopup} />
         <ElegantLanguageSwitcher />
       </div>
       
@@ -103,6 +115,15 @@ const Index = () => {
           </p>
         </div>
       )}
+      
+      {/* PWA Install Popup */}
+      <PWAInstallPrompt
+        isVisible={isPopupVisible}
+        isInstalling={isInstalling}
+        showManualInstructions={showManualInstructions}
+        onInstall={handleInstall}
+        onDismiss={hidePopup}
+      />
     </div>
   );
 };
